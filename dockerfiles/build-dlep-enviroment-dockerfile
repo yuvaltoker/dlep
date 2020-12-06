@@ -1,5 +1,5 @@
 # What image do we start from
-FROM ubuntu:16.04
+FROM updated-ubuntu-16.04:latest
 
 RUN apt-get update
 RUN apt-get install build-essential
@@ -20,7 +20,7 @@ RUN apt-get install -y cmake
 RUN mkdir LL-DLEP
 ADD LL-DLEP/ /LL-DLEP
 
-RUN cd /LL-DLEP/build
-RUN cmake ..
-RUN make
-RUN make install
+#RUN cd /LL-DLEP/build
+#RUN cmake ..
+#RUN make
+#RUN make install
