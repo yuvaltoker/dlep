@@ -4,6 +4,7 @@
 import socket
 import struct
 import sys
+import redis
 
 multicast_group = '224.3.29.71'
 server_address = ('', 10000)
