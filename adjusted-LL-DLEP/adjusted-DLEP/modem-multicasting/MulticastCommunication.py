@@ -12,6 +12,8 @@ from threading import Thread, Lock, Event
 mutex = Lock()
 event = Event()
 event.set()
+client = redis.Redis(host = 'redis_db', port = 6379)
+routers = []
 
 class multicastSenderHandler(threading.Thread):
     def __init__(self, routerIP):
@@ -94,17 +96,68 @@ class multicastReceiverHandler(threading.Thread):
             print('heartbeat from modem of router %s' % data, file = sys.stderr)
 
             # print('sending acknowledgement to', address, file = sys.stderr)
-            # self.updateRouterOnDB(data) - yet to be made
+            self.updateRouterOnDB(data)
+
+    def isFamiliarWithRouterIP(self, other_routerIP):
+        global routers
+        for routerIP in routers:
+            if other_routerIP == routerIP:
+                return True
+        return False
+
+    def updateRouterOnDB(self, other_routerIP):
+        global client
+        if not self.isFamiliarWithRouterIP(other_routerIP):
+            global routers
+            routers.append(other_routerIP)
+        # sets this router's perspective view of other_routerIP to 0, means just got heartbeat from other_routerIP 
+        client.hset(self.routerIP, other_routerIP, str(0))
 
     def run(self):
         if event.is_set():
             self.receiveMulticast()
 
+class mcastCheckStatusHandler(threading.Thread):
+    def __init__(self, routerIP):
+        threading.Thread.__init__(self)
+        self.routerIP = routerIP
+
+    def checkHeartbeatAndIncrement(self):
+        global routers
+        global client
+        dead_routers = []
+        for other_routerIP in routers:
+            lastHeartbeat = int(client.hget(self.routerIP, other_routerIP))
+            if(lastHeartbeat > 3):
+                dead_routers.append(other_routerIP)
+            else:
+                client.hset(self.routerIP, other_routerIP, str(lastHeartbeat))
+        
+        return dead_routers
+
+    def deleteDeadRouters(self, dead_routers):
+        global routers
+        for dead in dead_routers:
+            routers.remove(dead)
+    
+    def run(self):
+        time.sleep(2)
+        while event.is_set():
+            dead_routers = self.checkHeartbeatAndIncrement()
+            self.deleteDeadRouters(dead_routers)
+            time.sleep(2)    
+
 def main(routerIP):
     mCastSenderHandler = multicastSenderHandler(str(routerIP))
     mCastSenderHandler.start()
+
     mcastReceiverHandler = multicastReceiverHandler(str(routerIP))
     mcastReceiverHandler.start()
+
+    # yet to be checked
+    #mcastCheckStatusHandler = multicastCheckStatusHandler(str(routerIP))
+    #mcastCheckStatusHandler.start()
+
     
 
 
