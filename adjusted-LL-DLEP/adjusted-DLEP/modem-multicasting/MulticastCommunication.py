@@ -110,6 +110,7 @@ class multicastReceiverHandler(threading.Thread):
         if not self.isFamiliarWithRouterIP(other_routerIP):
             global routers
             routers.append(other_routerIP)
+            print('router %s is sconnected' % other_routerIP, file = sys.stderr)
         # sets this router's perspective view of other_routerIP to 0, means just got heartbeat from other_routerIP 
         client.hset(self.routerIP, other_routerIP, str(0))
 
@@ -117,7 +118,7 @@ class multicastReceiverHandler(threading.Thread):
         if event.is_set():
             self.receiveMulticast()
 
-class mcastCheckStatusHandler(threading.Thread):
+class multicastCheckStatusHandler(threading.Thread):
     def __init__(self, routerIP):
         threading.Thread.__init__(self)
         self.routerIP = routerIP
@@ -128,10 +129,11 @@ class mcastCheckStatusHandler(threading.Thread):
         dead_routers = []
         for other_routerIP in routers:
             lastHeartbeat = int(client.hget(self.routerIP, other_routerIP))
+            print('lastHeartbeat of router %s is %d' %(other_routerIP, lastHeartbeat), file = sys.stderr)
             if(lastHeartbeat > 3):
                 dead_routers.append(other_routerIP)
             else:
-                client.hset(self.routerIP, other_routerIP, str(lastHeartbeat))
+                client.hset(self.routerIP, other_routerIP, str(lastHeartbeat + 1))
         
         return dead_routers
 
@@ -139,6 +141,7 @@ class mcastCheckStatusHandler(threading.Thread):
         global routers
         for dead in dead_routers:
             routers.remove(dead)
+            print('router %s disconnected' % dead, file = sys.stderr)
     
     def run(self):
         time.sleep(2)
@@ -148,6 +151,8 @@ class mcastCheckStatusHandler(threading.Thread):
             time.sleep(2)    
 
 def main(routerIP):
+    print(routerIP, file = sys.stderr)
+
     mCastSenderHandler = multicastSenderHandler(str(routerIP))
     mCastSenderHandler.start()
 
@@ -155,13 +160,13 @@ def main(routerIP):
     mcastReceiverHandler.start()
 
     # yet to be checked
-    #mcastCheckStatusHandler = multicastCheckStatusHandler(str(routerIP))
-    #mcastCheckStatusHandler.start()
+    mcastCheckStatusHandler = multicastCheckStatusHandler(str(routerIP))
+    mcastCheckStatusHandler.start()
 
     
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main(sys.argv[1])
     
             
