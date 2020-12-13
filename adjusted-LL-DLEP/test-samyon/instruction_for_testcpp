@@ -1,0 +1,7 @@
+apt install libboost-all-dev
+
+apt install aptitude
+
+#aptitude search boost
+
+g++ test.cpp -o prog -lboost_system
