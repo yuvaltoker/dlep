@@ -4,4 +4,4 @@ apt install aptitude
 
 #aptitude search boost
 
-g++ test.cpp -o prog -lboost_system
+g++ test.cpp -o prog -lboost_system -pthread
