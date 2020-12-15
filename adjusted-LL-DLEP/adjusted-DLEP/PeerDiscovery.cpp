@@ -13,6 +13,8 @@
 #include "PeerDiscovery.h"
 #include "ProtocolConfig.h"
 #include "ProtocolMessage.h"
+#include "OutLoggerMsg.h"
+#include "OutLogger.h"
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
@@ -121,6 +123,11 @@ PeerDiscovery::get_message_to_send()
 
     std::string err = pm.parse_and_validate(dlep->is_modem(), __func__);
     assert(err == "");
+
+    // Copy the protocol message into an OutLoggerMsg, then send it out
+
+    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Peer_Discovery, pm.get_data_items(), "TX");
+    OutLogger::send_out(out_msg.get_message());
 
     // Copy the protocol message into a DlepMessageBuffer
 

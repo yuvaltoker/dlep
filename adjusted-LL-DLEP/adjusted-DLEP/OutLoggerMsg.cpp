@@ -36,19 +36,19 @@ OutLoggerMsg::build_message()
 void
 OutLoggerMsg::add_protocol()
 {
-    message += "\"Protocol\":\"" + protocol + "\"," 
+    message += "\"Protocol\":\"" + protocol + "\"," ;
 }
 
 void
 OutLoggerMsg::add_msg_type()
 {
-    message += "\"Message Type\":\"" + msg_type + "\"," 
+    message += "\"Message Type\":\"" + msg_type + "\"," ;
 }
 
 void 
 OutLoggerMsg::add_data_item(const LLDLEP::DataItem & di)
 {
-    message += "\"" + di -> name() + "\":" + di -> value_to_string() + "\","
+    message += "\"" + di -> name() + "\":" + di -> value_to_string() + "\",";
 }
 
 void 
@@ -66,5 +66,5 @@ OutLoggerMsg::add_data_items()
 void 
 OutLoggerMsg::add_direction()
 {
-    message += "\"Direction\":\"" + direction + "\"" 
+    message += "\"Direction\":\"" + direction + "\"";
 }
