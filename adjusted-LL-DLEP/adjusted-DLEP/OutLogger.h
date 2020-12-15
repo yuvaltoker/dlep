@@ -21,11 +21,12 @@ public:
     static bool send_out(const std::string & mesage);
 
 private:
-    static boost::asio::ip::tcp::socket sock;
+    OutLogger();
+    static boost::asio::ip::tcp::socket* sock;
     static std::string host;
     static std::string port;
     static bool is_connected;
-}
+};
 
 } // namespace internal
 } // namespace LLDLEP

@@ -26,6 +26,7 @@ int main() {
      // Step 3. Creating a socket.
      boost::asio::ip::tcp::socket sock(io_service);
      
+     
      // Step 4. asio::connect() method iterates over
      // each endpoint until successfully connects to one
      // of them. It will throw an exception if it fails
