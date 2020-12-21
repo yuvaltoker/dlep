@@ -812,7 +812,12 @@ Peer::start_peer()
 
         // Copy the protocol message into an OutLoggerMsg, then send it out
 
-        OutLoggerMsg out_msg("DLEP", ProtocolStrings::Session_Initialization, pm.get_data_items(), "RtM");
+        OutLoggerMsg out_msg("DLEP",
+                             ProtocolStrings::Session_Initialization,
+                             "RtM",
+                             "src",
+                             "dest",
+                             pm.get_data_items());
         OutLogger::send_out(out_msg.get_message());
 
         ResponsePendingPtr rp(new ResponsePending(dlep->protocfg, pm));
@@ -933,7 +938,12 @@ Peer::handle_heartbeat_timeout(const boost::system::error_code & error)
         {
             // Copy the received protocol message into an OutLoggerMsg, then send it out
 
-            OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Heartbeat, heartbeat_msg->get_data_items(), "RtM");
+            OutLoggerMsg out_msg("DLEP",
+                                LLDLEP::ProtocolStrings::Heartbeat,
+                                "RtM",
+                                "src",
+                                "dest",
+                                heartbeat_msg->get_data_items());
             OutLogger::send_out(out_msg.get_message());
         }
         
@@ -1288,7 +1298,12 @@ Peer::handle_peer_initialization_response(ProtocolMessage & pm)
 
     // Copy the received protocol message into an OutLoggerMsg, then send it out
 
-    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Session_Initialization_Response, pm.get_data_items(), "MtR");
+    OutLoggerMsg out_msg("DLEP",
+                        LLDLEP::ProtocolStrings::Session_Initialization_Response,
+                        "MtR",
+                        "src",
+                        "dest",
+                        pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
 
     // get optional peer type from the message
@@ -1361,7 +1376,12 @@ Peer::handle_peer_update(ProtocolMessage & pm)
 
     // Copy the received protocol message into an OutLoggerMsg, then send it out
 
-    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Session_Update, pm.get_data_items(), "MtR");
+    OutLoggerMsg out_msg("DLEP",
+                         LLDLEP::ProtocolStrings::Session_Update,
+                         "MtR",
+                         "src",
+                         "dest", 
+                         pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
     
     if (status_message != "")
@@ -1438,7 +1458,12 @@ Peer::handle_destination_up(ProtocolMessage & pm)
         // Copy the protocol message into an OutLoggerMsg, then send it out
         if(!dlep->is_modem())
         {
-            OutLoggerMsg out_msg("DLEP", pm.get_signal_name(), pm.get_data_items(), "MtR");
+            OutLoggerMsg out_msg("DLEP",
+                                 pm.get_signal_name(),
+                                 "MtR",
+                                 "src",
+                                 "dest",
+                                 pm.get_data_items());
             OutLogger::send_out(out_msg.get_message());
         }
 
@@ -1720,7 +1745,12 @@ Peer::handle_destination_down(ProtocolMessage & pm)
 
     // Copy the received protocol message into an OutLoggerMsg, then send it out
 
-    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Destination_Down, pm.get_data_items(), "MtR");
+    OutLoggerMsg out_msg("DLEP",
+                         LLDLEP::ProtocolStrings::Destination_Down,
+                         "MtR",
+                         "src",
+                         "dest",
+                         pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
 
     bool ok = peer_pdp->removeDestination(destination_mac, false);

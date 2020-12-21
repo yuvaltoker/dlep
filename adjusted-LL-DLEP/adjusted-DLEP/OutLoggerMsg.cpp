@@ -11,13 +11,17 @@ namespace internal
 
 OutLoggerMsg::OutLoggerMsg(const std::string & protocol,
                            const std::string & msg_type,
-                           const DataItems & msg_data_items,
-                           const std::string & direction) :
+                           const std::string & direction,
+                           const std::string & src,
+                           const std::string & dest,
+                           const DataItems & msg_data_items) :
     message(""),
     protocol(protocol),
     msg_type(msg_type),
-    msg_data_items(msg_data_items),
-    direction(direction)
+    direction(direction),
+    src(src),
+    dest(dest),
+    msg_data_items(msg_data_items)
 {
 }
 
@@ -38,9 +42,13 @@ OutLoggerMsg::build_message()
     message += "\n    ";
     add_direction_to_message();
     message += "\n    ";
-    message += "\"Status\": \"S\",";
+    add_src_to_message();
     message += "\n    ";
-    //message += "\"Error\": \"none\",";
+    add_dest_to_message();
+    message += "\n    ";
+    message += "\"Status\":\"S\",";
+    message += "\n    ";
+    //message += "\"Error\":\"none\",";
     //message += "\n    ";
     add_data_items_to_message();
     message += "\n}";
@@ -59,29 +67,42 @@ OutLoggerMsg::add_msg_type_to_message()
 }
 
 void 
+OutLoggerMsg::add_direction_to_message()
+{
+    message += "\"Direction\":\"" + direction + "\",";
+}
+
+void 
+OutLoggerMsg::add_src_to_message()
+{
+    message += "\"Source\":\"" + src + "\",";
+}
+
+void 
+OutLoggerMsg::add_dest_to_message()
+{
+    message += "\"Destintaion\":\"" + dest + "\",";
+}
+
+void 
 OutLoggerMsg::add_data_item_to_message(const DataItem & di)
 {
-    message += "\"Name\": \"" + di.name() + "\", \"Value\": \"" + di.value_to_string() + "\"";
+    message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string() + "\"";
 }
 
 void 
 OutLoggerMsg::add_data_items_to_message()
 {
-    message += "\"Data Items\": ["; 
+    message += "\"Data Items\":["; 
     for (const DataItem & di : msg_data_items)
     {
         message += "\n        {";
         add_data_item_to_message(di);
         message += "},";
     }
-    message.resize(message.size() - 1); // removing the last ','. the last object should not have ','.
+    if(message.back() == ',')
+        message.resize(message.size() - 1); // removing the last ','. the last object should not have ','.
     message += "\n    ]";
-}
-
-void 
-OutLoggerMsg::add_direction_to_message()
-{
-    message += "\"Direction\":\"" + direction + "\",";
 }
 
 } // namespace internal

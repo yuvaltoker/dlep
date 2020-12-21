@@ -126,7 +126,12 @@ PeerDiscovery::get_message_to_send()
 
     // Copy the protocol message into an OutLoggerMsg, then send it out
 
-    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Peer_Discovery, pm.get_data_items(), "RtM");
+    OutLoggerMsg out_msg("DLEP",
+                         LLDLEP::ProtocolStrings::Peer_Discovery,
+                        "RtM",
+                        "src",
+                        "dest",
+                        pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
 
     // Copy the protocol message into a DlepMessageBuffer
@@ -290,7 +295,13 @@ PeerDiscovery::handle_peer_offer(ProtocolMessage & pm,
     
     // Copy the received protocol message into an OutLoggerMsg, then send it out
 
-    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Peer_Offer, pm.get_data_items(), "MtR");
+    OutLoggerMsg out_msg("DLEP",
+                         LLDLEP::ProtocolStrings::Peer_Offer,
+                         "MtR",
+                         boost::asio::ip::address_v4::to_string(pm.get_ipv4_address().field2.source_address())
+                         //pm.get_ipv4_address().field2.source_address().to_string(),
+                         from_endpoint.address().to_string(),
+                         pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
 
     // By default, connect to the configured session port and the
