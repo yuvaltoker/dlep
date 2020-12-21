@@ -11,6 +11,8 @@
 #include "Peer.h"
 #include "NetUtils.h"
 #include "DestAdvert.h"
+#include "OutLoggerMsg.h"
+#include "OutLogger.h"
 
 #include <time.h>
 #include <ctype.h>
@@ -808,6 +810,11 @@ Peer::start_peer()
             pm.rebuild_from_data_items(dlep->is_modem(), data_items);
         }
 
+        // Copy the protocol message into an OutLoggerMsg, then send it out
+
+        OutLoggerMsg out_msg("DLEP", ProtocolStrings::Session_Initialization, pm.get_data_items(), "RtM");
+        OutLogger::send_out(out_msg.get_message());
+
         ResponsePendingPtr rp(new ResponsePending(dlep->protocfg, pm));
         send_message_expecting_response(rp);
     }
@@ -920,6 +927,16 @@ Peer::handle_heartbeat_timeout(const boost::system::error_code & error)
 
         send_session_message(heartbeat_msg->get_buffer(),
                              heartbeat_msg->get_length());
+
+        
+        if(! dlep -> is_modem())
+        {
+            // Copy the received protocol message into an OutLoggerMsg, then send it out
+
+            OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Heartbeat, heartbeat_msg->get_data_items(), "RtM");
+            OutLogger::send_out(out_msg.get_message());
+        }
+        
     }
 
     schedule_heartbeat();
@@ -1269,6 +1286,11 @@ Peer::handle_peer_initialization_response(ProtocolMessage & pm)
         return;
     }
 
+    // Copy the received protocol message into an OutLoggerMsg, then send it out
+
+    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Session_Initialization_Response, pm.get_data_items(), "MtR");
+    OutLogger::send_out(out_msg.get_message());
+
     // get optional peer type from the message
 
     try
@@ -1337,6 +1359,11 @@ Peer::handle_peer_update(ProtocolMessage & pm)
     std::string status_message =
         validate_ip_data_items(data_items, peer_pdp->get_ip_data_items());
 
+    // Copy the received protocol message into an OutLoggerMsg, then send it out
+
+    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Session_Update, pm.get_data_items(), "MtR");
+    OutLogger::send_out(out_msg.get_message());
+    
     if (status_message != "")
     {
         terminate(ProtocolStrings::Inconsistent_Data, status_message);
@@ -1344,6 +1371,8 @@ Peer::handle_peer_update(ProtocolMessage & pm)
     }
 
     std::string update_status = peer_pdp->update_data_items(data_items, false);
+
+    
 
     // We always send the update to the client, even if there was an error.
     // Is that OK?
@@ -1406,6 +1435,13 @@ Peer::handle_destination_up(ProtocolMessage & pm)
     std::string statusname;
     if (! already_have_this_dest)
     {
+        // Copy the protocol message into an OutLoggerMsg, then send it out
+        if(!dlep->is_modem())
+        {
+            OutLoggerMsg out_msg("DLEP", pm.get_signal_name(), pm.get_data_items(), "MtR");
+            OutLogger::send_out(out_msg.get_message());
+        }
+
         DataItems data_items = pm.get_data_items();
         DataItems empty_data_items;
         std::string status_message =
@@ -1681,6 +1717,11 @@ Peer::handle_destination_down(ProtocolMessage & pm)
 
     msg << "from peer=" << peer_id << " destination=" << destination_mac;
     LOG(DLEP_LOG_INFO, msg);
+
+    // Copy the received protocol message into an OutLoggerMsg, then send it out
+
+    OutLoggerMsg out_msg("DLEP", LLDLEP::ProtocolStrings::Destination_Down, pm.get_data_items(), "MtR");
+    OutLogger::send_out(out_msg.get_message());
 
     bool ok = peer_pdp->removeDestination(destination_mac, false);
     if (! ok)

@@ -8,10 +8,15 @@ using std::string;
 using std::cout;
 using std::endl;
 
+namespace LLDLEP
+{
+namespace internal
+{
+
 bool 
 OutLogger::connect()
 {
-    cout << " Connecting ... " << endl;
+    cout << "Connecting ... " << endl;
     try
     {
         boost::asio::io_service io_service;
@@ -22,21 +27,31 @@ OutLogger::connect()
                                                              OutLogger::port,
                                                              boost::asio::ip::tcp::resolver::query::numeric_service);
 
+        std::cout << "after resolver's query..." << endl;
+
         // Creating a resolver.
         boost::asio::ip::tcp::resolver resolver(io_service);
      
+        std::cout << "after creating a resolver..." << endl;
+
         // Resolving a DNS name.
         boost::asio::ip::tcp::resolver::iterator it = resolver.resolve(resolver_query);
    
+        std::cout << "after resolving a DNS name..." << endl;
+        
         // Creating a socket.
         OutLogger::sock = new boost::asio::ip::tcp::socket(io_service);
      
+        std::cout << "after creating a socket..." << endl;
+
         // asio::connect() method iterates over
         // each endpoint until successfully connects to one
         // of them. It will throw an exception if it fails
         // to connect to all the endpoints or if other
         // error occurs.
         boost::asio::connect(*OutLogger::sock, it);
+
+        std::cout << "after connecting..." << endl;
     }
     catch (boost::system::system_error &e) {
         std::cout << "Error occured! Error code = " << e.code()
@@ -46,6 +61,7 @@ OutLogger::connect()
         return false;
     }
     OutLogger::is_connected = true;
+    std::cout << "after connecting..." << endl;
     return true;
 }
 
@@ -89,3 +105,6 @@ bool OutLogger::is_connected = false;
 std::string OutLogger::host = "sam-server";
 std::string OutLogger::port = "3090";
 boost::asio::ip::tcp::socket* OutLogger::sock = NULL;
+
+} // namespace internal
+} // namespace LL-DLEP

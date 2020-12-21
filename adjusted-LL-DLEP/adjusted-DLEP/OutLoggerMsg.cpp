@@ -2,15 +2,21 @@
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
+using std::string;
+
+namespace LLDLEP
+{
+namespace internal
+{
 
 OutLoggerMsg::OutLoggerMsg(const std::string & protocol,
                            const std::string & msg_type,
-                           const LLDLEP::DataItems & data_items,
+                           const DataItems & msg_data_items,
                            const std::string & direction) :
     message(""),
     protocol(protocol),
-    msg_type(msg_type)
-    data_items(data_items),
+    msg_type(msg_type),
+    msg_data_items(msg_data_items),
     direction(direction)
 {
 }
@@ -25,46 +31,60 @@ OutLoggerMsg::get_message()
 void 
 OutLoggerMsg::build_message()
 {
-    message += "{";
-    add_protocol();
-    add_msg_type();
-    add_data_items();
-    add_direction();
-    message += "}";
+    message += "{\n    ";
+    add_protocol_to_message();
+    message += "\n    ";
+    add_msg_type_to_message();
+    message += "\n    ";
+    add_direction_to_message();
+    message += "\n    ";
+    message += "\"Status\": \"S\",";
+    message += "\n    ";
+    //message += "\"Error\": \"none\",";
+    //message += "\n    ";
+    add_data_items_to_message();
+    message += "\n}";
 }
 
 void
-OutLoggerMsg::add_protocol()
+OutLoggerMsg::add_protocol_to_message()
 {
     message += "\"Protocol\":\"" + protocol + "\"," ;
 }
 
 void
-OutLoggerMsg::add_msg_type()
+OutLoggerMsg::add_msg_type_to_message()
 {
     message += "\"Message Type\":\"" + msg_type + "\"," ;
 }
 
 void 
-OutLoggerMsg::add_data_item(const LLDLEP::DataItem & di)
+OutLoggerMsg::add_data_item_to_message(const DataItem & di)
 {
-    message += "\"" + di -> name() + "\":" + di -> value_to_string() + "\",";
+    message += "\"Name\": \"" + di.name() + "\", \"Value\": \"" + di.value_to_string() + "\"";
 }
 
 void 
-OutLoggerMsg::add_data_items()
+OutLoggerMsg::add_data_items_to_message()
 {
-    message += "\"Data Items\":{"; 
-    for (const DataItem & di : data_items)
+    message += "\"Data Items\": ["; 
+    for (const DataItem & di : msg_data_items)
     {
-        add_data_item(di);
+        message += "\n        {";
+        add_data_item_to_message(di);
+        message += "},";
     }
-    message.popback(); // removing the last ','. the last object should not have ','.
-    message += "}";
+    message.resize(message.size() - 1); // removing the last ','. the last object should not have ','.
+    message += "\n    ]";
 }
 
 void 
-OutLoggerMsg::add_direction()
+OutLoggerMsg::add_direction_to_message()
 {
-    message += "\"Direction\":\"" + direction + "\"";
+    message += "\"Direction\":\"" + direction + "\",";
 }
+
+} // namespace internal
+} // namespace LL-DLEP
+
+
