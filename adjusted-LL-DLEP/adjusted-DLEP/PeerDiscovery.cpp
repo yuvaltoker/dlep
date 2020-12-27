@@ -18,6 +18,8 @@
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
+using std::cout;
+using std::endl;
 
 PeerDiscovery::PeerDiscovery(
     DlepPtr dlep,
@@ -129,8 +131,7 @@ PeerDiscovery::get_message_to_send()
     OutLoggerMsg out_msg("DLEP",
                          LLDLEP::ProtocolStrings::Peer_Discovery,
                         "RtM",
-                        "src",
-                        "dest",
+                        "NULL",
                         pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
 
@@ -293,15 +294,17 @@ PeerDiscovery::handle_peer_offer(ProtocolMessage & pm,
         return;
     }
     
+    std::cout << "before" << endl;
+
     // Copy the received protocol message into an OutLoggerMsg, then send it out
 
     OutLoggerMsg out_msg("DLEP",
                          LLDLEP::ProtocolStrings::Peer_Offer,
                          "MtR",
-                         boost::asio::ip::address_v4::to_string(pm.get_ipv4_address().field2.source_address())
-                         //pm.get_ipv4_address().field2.source_address().to_string(),
                          from_endpoint.address().to_string(),
                          pm.get_data_items());
+
+    std::cout << "after" << endl;                     
     OutLogger::send_out(out_msg.get_message());
 
     // By default, connect to the configured session port and the

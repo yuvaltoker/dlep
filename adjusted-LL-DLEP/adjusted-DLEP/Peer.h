@@ -217,6 +217,10 @@ public:
     std::string validate_ip_data_items(const DataItems & new_data_items,
                                        const DataItems & existing_ip_data_items);
 
+    // yuval's function
+    // Returns the modem's address
+    std::string get_peer_endpoint_tcp_ip_address();
+
     /// Unique string identifying this peer.
     std::string peer_id;
 

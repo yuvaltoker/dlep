@@ -16,11 +16,11 @@ as a modem.
 
                 <!-- override default privileged address 224.0.0.117 -->
 		<discovery-mcast-address>225.0.0.117</discovery-mcast-address>
-		<discovery-interval>60</discovery-interval>
+		<discovery-interval>15</discovery-interval>
 
                 <!-- override default privileged port 854 -->
 		<session-port>4854</session-port>
-		<heartbeat-interval>60</heartbeat-interval>
+		<heartbeat-interval>15</heartbeat-interval>
 		<heartbeat-threshold>2</heartbeat-threshold>
 		<peer-type>emulated-modem</peer-type>
                 <log-file>dlep-modem.log</log-file>

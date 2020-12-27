@@ -810,17 +810,17 @@ Peer::start_peer()
             pm.rebuild_from_data_items(dlep->is_modem(), data_items);
         }
 
+        ResponsePendingPtr rp(new ResponsePending(dlep->protocfg, pm));
+
         // Copy the protocol message into an OutLoggerMsg, then send it out
 
         OutLoggerMsg out_msg("DLEP",
                              ProtocolStrings::Session_Initialization,
                              "RtM",
-                             "src",
-                             "dest",
+                             get_peer_endpoint_tcp_ip_address(),
                              pm.get_data_items());
         OutLogger::send_out(out_msg.get_message());
 
-        ResponsePendingPtr rp(new ResponsePending(dlep->protocfg, pm));
         send_message_expecting_response(rp);
     }
 }
@@ -941,8 +941,7 @@ Peer::handle_heartbeat_timeout(const boost::system::error_code & error)
             OutLoggerMsg out_msg("DLEP",
                                 LLDLEP::ProtocolStrings::Heartbeat,
                                 "RtM",
-                                "src",
-                                "dest",
+                                get_peer_endpoint_tcp_ip_address(),
                                 heartbeat_msg->get_data_items());
             OutLogger::send_out(out_msg.get_message());
         }
@@ -1301,8 +1300,7 @@ Peer::handle_peer_initialization_response(ProtocolMessage & pm)
     OutLoggerMsg out_msg("DLEP",
                         LLDLEP::ProtocolStrings::Session_Initialization_Response,
                         "MtR",
-                        "src",
-                        "dest",
+                        get_peer_endpoint_tcp_ip_address(),
                         pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
 
@@ -1379,8 +1377,7 @@ Peer::handle_peer_update(ProtocolMessage & pm)
     OutLoggerMsg out_msg("DLEP",
                          LLDLEP::ProtocolStrings::Session_Update,
                          "MtR",
-                         "src",
-                         "dest", 
+                         get_peer_endpoint_tcp_ip_address(),
                          pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
     
@@ -1461,8 +1458,7 @@ Peer::handle_destination_up(ProtocolMessage & pm)
             OutLoggerMsg out_msg("DLEP",
                                  pm.get_signal_name(),
                                  "MtR",
-                                 "src",
-                                 "dest",
+                                 get_peer_endpoint_tcp_ip_address(),
                                  pm.get_data_items());
             OutLogger::send_out(out_msg.get_message());
         }
@@ -1748,8 +1744,7 @@ Peer::handle_destination_down(ProtocolMessage & pm)
     OutLoggerMsg out_msg("DLEP",
                          LLDLEP::ProtocolStrings::Destination_Down,
                          "MtR",
-                         "src",
-                         "dest",
+                         get_peer_endpoint_tcp_ip_address(),
                          pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
 
@@ -2195,4 +2190,10 @@ Peer::extension_is_active(const std::string & extension_name)
     {
         return false;
     }
+}
+
+std::string
+Peer::get_peer_endpoint_tcp_ip_address()
+{
+    return peer_endpoint_tcp.address().to_string();
 }

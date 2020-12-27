@@ -3,6 +3,8 @@
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
 using std::string;
+using std::cout;
+using std::endl;
 
 namespace LLDLEP
 {
@@ -12,15 +14,13 @@ namespace internal
 OutLoggerMsg::OutLoggerMsg(const std::string & protocol,
                            const std::string & msg_type,
                            const std::string & direction,
-                           const std::string & src,
-                           const std::string & dest,
+                           const std::string & modem_address,
                            const DataItems & msg_data_items) :
     message(""),
     protocol(protocol),
     msg_type(msg_type),
     direction(direction),
-    src(src),
-    dest(dest),
+    modem_address(modem_address),
     msg_data_items(msg_data_items)
 {
 }
@@ -42,9 +42,7 @@ OutLoggerMsg::build_message()
     message += "\n    ";
     add_direction_to_message();
     message += "\n    ";
-    add_src_to_message();
-    message += "\n    ";
-    add_dest_to_message();
+    add_modem_address_to_message();
     message += "\n    ";
     message += "\"Status\":\"S\",";
     message += "\n    ";
@@ -73,15 +71,9 @@ OutLoggerMsg::add_direction_to_message()
 }
 
 void 
-OutLoggerMsg::add_src_to_message()
+OutLoggerMsg::add_modem_address_to_message()
 {
-    message += "\"Source\":\"" + src + "\",";
-}
-
-void 
-OutLoggerMsg::add_dest_to_message()
-{
-    message += "\"Destintaion\":\"" + dest + "\",";
+    message += "\"Modem Address\":\"" + modem_address + "\",";
 }
 
 void 
@@ -93,7 +85,7 @@ OutLoggerMsg::add_data_item_to_message(const DataItem & di)
 void 
 OutLoggerMsg::add_data_items_to_message()
 {
-    message += "\"Data Items\":["; 
+    message += "\"Data Items\":[";
     for (const DataItem & di : msg_data_items)
     {
         message += "\n        {";

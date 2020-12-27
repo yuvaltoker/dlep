@@ -16,8 +16,8 @@ as a router.
 
                 <!-- override default privileged address 224.0.0.117 -->
 		<discovery-mcast-address>225.0.0.117</discovery-mcast-address>
-		<discovery-interval>60</discovery-interval>
-		<heartbeat-interval>60</heartbeat-interval>
+		<discovery-interval>15</discovery-interval>
+		<heartbeat-interval>15</heartbeat-interval>
 		<heartbeat-threshold>2</heartbeat-threshold>
 
                 <!-- override default privileged port 854 -->
