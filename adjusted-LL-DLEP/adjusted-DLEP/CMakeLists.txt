@@ -4,8 +4,8 @@ project (dlep)
 SET(DLEP_VERSION 2.1) # Release version of the software
 SET(SOVERSION 2.1) # The library version (e.g. libdlep.so.1.0 would be SOVERSION 1.0)
 
-SET(YUVAL_DLEPLIB_SRC_ADDED OutLogger.cpp OutLoggerMsg.cpp)
-SET(YUVAL_PUBLIC_HDRS_ADDED OutLogger.h OutLoggerMsg.h)
+SET(YUVAL_DLEPLIB_SRC_ADDED OutLogger.cpp Parameter.cpp ConfigOutLoggerMsg.cpp ProgressionOutLoggerMsg.cpp  OutLoggerMsg.cpp)
+SET(YUVAL_PUBLIC_HDRS_ADDED OutLogger.h Parameter.h ConfigOutLoggerMsg.h ProgressionOutLoggerMsg.h  OutLoggerMsg.h)
 SET(YUVAL_LIBS_ADDED -lboost_system -pthread)
 
 SET(DLEPLIB_SRCS ${YUVAL_DLEPLIB_SRC_ADDED} DestAdvert.cpp DlepInit.cpp DlepLogger.cpp Dlep.cpp Peer.cpp InfoBaseMgr.cpp PeerDiscovery.cpp DlepServiceImpl.cpp DlepMac.cpp PeriodicMcastSendRcv.cpp NetUtils.cpp ProtocolMessage.cpp DataItem.cpp ProtocolConfigImpl.cpp)
@@ -16,10 +16,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 # By default, treat all warnings as errors
 # Can be disalbed with -DWARNINGS_AS_ERRORS:OFF
-set(WARNINGS_AS_ERRORS ON CACHE BOOL "Treat all warnings as errors")
-if(WARNINGS_AS_ERRORS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-endif()
+#set(WARNINGS_AS_ERRORS ON CACHE BOOL "Treat all warnings as errors")
+#if(WARNINGS_AS_ERRORS)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+#endif()
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)

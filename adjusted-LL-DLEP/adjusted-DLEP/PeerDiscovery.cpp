@@ -13,7 +13,7 @@
 #include "PeerDiscovery.h"
 #include "ProtocolConfig.h"
 #include "ProtocolMessage.h"
-#include "OutLoggerMsg.h"
+#include "ProgressionOutLoggerMsg.h"
 #include "OutLogger.h"
 
 using namespace LLDLEP;
@@ -128,11 +128,13 @@ PeerDiscovery::get_message_to_send()
 
     // Copy the protocol message into an OutLoggerMsg, then send it out
 
-    OutLoggerMsg out_msg("DLEP",
-                         LLDLEP::ProtocolStrings::Peer_Discovery,
-                        "RtM",
-                        "NULL",
-                        pm.get_data_items());
+    ProgressionOutLoggerMsg out_msg("DLEP",
+                                    "S",
+                                    LLDLEP::ProtocolStrings::Peer_Discovery,
+                                    "RtM",
+                                    "NULL",
+                                    "",
+                                    pm.get_data_items());
     OutLogger::send_out(out_msg.get_message());
 
     // Copy the protocol message into a DlepMessageBuffer
@@ -293,16 +295,16 @@ PeerDiscovery::handle_peer_offer(ProtocolMessage & pm,
         LOG(DLEP_LOG_INFO, msg);
         return;
     }
-    
-    std::cout << "before" << endl;
 
     // Copy the received protocol message into an OutLoggerMsg, then send it out
 
-    OutLoggerMsg out_msg("DLEP",
-                         LLDLEP::ProtocolStrings::Peer_Offer,
-                         "MtR",
-                         from_endpoint.address().to_string(),
-                         pm.get_data_items());
+    ProgressionOutLoggerMsg out_msg("DLEP",
+                                    "S",
+                                    LLDLEP::ProtocolStrings::Peer_Offer,
+                                    "MtR",
+                                    from_endpoint.address().to_string(),
+                                    "",
+                                    pm.get_data_items());
 
     std::cout << "after" << endl;                     
     OutLogger::send_out(out_msg.get_message());

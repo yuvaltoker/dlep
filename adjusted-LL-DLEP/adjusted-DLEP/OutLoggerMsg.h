@@ -12,31 +12,22 @@ namespace internal
 class OutLoggerMsg
 {
 public:
-    OutLoggerMsg(const std::string & protocol,
-                 const std::string & msg_type,
-                 const std::string & direction,
-                 const std::string & modem_address,
-                 const LLDLEP::DataItems & msg_data_items);
+    OutLoggerMsg(const std::string & protocol,      // DLEP/SNMP 
+                 const std::string & stage);        // config/progression
 
-    std::string get_message();
+    virtual ~OutLoggerMsg();
+
+    virtual std::string get_message() = 0;
 
 
 private:
-    std::string message;
     std::string protocol;
-    std::string msg_type;
-    std::string direction;
-    std::string modem_address;
-    LLDLEP::DataItems msg_data_items;
+    std::string stage;
     
-
-    void build_message();
-    void add_protocol_to_message();
-    void add_msg_type_to_message();
-    void add_direction_to_message();
-    void add_modem_address_to_message();
-    void add_data_item_to_message(const LLDLEP::DataItem & di);
-    void add_data_items_to_message();
+protected:
+    virtual void build_message() = 0;
+    void add_protocol_to_message(std::string & message);
+    void add_stage_to_message(std::string & message);
     
 };
 
