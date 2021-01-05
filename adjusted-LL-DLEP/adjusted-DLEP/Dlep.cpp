@@ -16,6 +16,7 @@
 using namespace std;
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
+using namespace LLDLEP::internal::ConfigStrings;
 
 Dlep::Dlep(bool is_modem, DlepClient & dlep_client, DlepLoggerPtr logger) :
     dlep_client(dlep_client),
@@ -59,7 +60,7 @@ Dlep::initialize()
     ostringstream msg;
     msg << "entered";
     LOG(DLEP_LOG_DEBUG, msg);
-
+    std::vector<Parameter> config_parameters;
     try
     {
         InfoBaseMgrPtr ib_ptr(new InfoBaseMgr(this));
@@ -134,8 +135,17 @@ Dlep::initialize()
 
         dlep_client.get_config_parameter("discovery-enable",
                                          &discovery_enable);
+
+        
+        std::string is_discovery_enabled = "";
+        //std::string* const is_discovery_enabled_ptr = *is_discovery_enabled; 
         if (discovery_enable)
         {
+            is_discovery_enabled += "True";
+            pushParameter(config_parameters,
+                          ConfigStrings::Discovery_Enable,
+                          is_discovery_enabled);
+
             dlep_client.get_config_parameter("discovery-iface",
                                              &discovery_iface);
             dlep_client.get_config_parameter("discovery-port",
@@ -143,6 +153,19 @@ Dlep::initialize()
             dlep_client.get_config_parameter("discovery-mcast-address",
                                              &discovery_multicast_address);
             using_ipv6 = discovery_multicast_address.is_v6();
+
+            pushParameter(config_parameters,
+                          ConfigStrings::Discovery_Iface,
+                          discovery_iface);
+
+            pushParameter(config_parameters,
+                          ConfigStrings::Discovery_Port,
+                          std::to_string(discovery_port));
+
+            pushParameter(config_parameters,
+                          ConfigStrings::Discovery_Mcast_Address,
+                          discovery_multicast_address.to_string());
+
 
             if (modem)
             {
@@ -168,6 +191,13 @@ Dlep::initialize()
             {
             }
         } //  discovery enabled
+        else
+        {
+            is_discovery_enabled += "False";
+            pushParameter(config_parameters,
+                          ConfigStrings::Discovery_Enable,
+                          is_discovery_enabled);
+        }
 
         PeerDiscovery pd(this, io_service_, discovery_iface,
                          discovery_port, discovery_multicast_address,
@@ -237,6 +267,9 @@ Dlep::initialize()
             }
         }
 
+        ConfigOutLoggerMsg out_msg("DLEP",
+                                   config_parameters);
+        OutLogger::send_out(out_msg.get_message());
         if (start_dlep())
         {
             // start_dlep succeeded
@@ -621,4 +654,15 @@ Dlep::peer_state(std::string peer_id)
             return it->second->get_state();
         }
     }
+}
+
+// Yuval's function
+void
+Dlep::pushParameter(std::vector<Parameter> & parameters,
+                    const std::string & config_field,
+                    const std::string & value)
+{
+    Parameter par(config_field, value);
+    parameters.push_back(par);
+
 }

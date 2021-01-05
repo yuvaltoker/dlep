@@ -21,8 +21,8 @@ RUN apt-get install -y python3-pip
 RUN python3 -m pip install redis
 RUN apt install -y libboost-all-dev
 
-#RUN mkdir LL-DLEP
-#ADD LL-DLEP/ /LL-DLEP
+RUN mkdir LL-DLEP
+ADD LL-DLEP/ /lib_from_github
 
 #RUN cd /LL-DLEP/build
 #RUN cmake ..

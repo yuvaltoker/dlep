@@ -12,8 +12,8 @@ namespace LLDLEP
 namespace internal
 {
     
-Parameter::Parameter(std::string & config_field,
-                     std::string & value) :
+Parameter::Parameter(const std::string & config_field,
+                     const std::string & value) :
             config_field(config_field),
             value(value)
 {

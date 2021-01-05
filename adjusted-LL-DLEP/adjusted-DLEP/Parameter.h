@@ -11,7 +11,7 @@ namespace internal
 namespace ConfigStrings
 {
     const std::string Local_Type = "local-type";
-    const std::string Discovery_Enble = "discovery-enable";
+    const std::string Discovery_Enable = "discovery-enable";
     const std::string Discovery_Port = "discovery-port";
     const std::string Discovery_Iface = "discovery-iface";
     const std::string Discovery_Mcast_Address = "discovery-mcast-address";
@@ -26,8 +26,8 @@ namespace ConfigStrings
 class Parameter
 {
 public:
-    Parameter(std::string & config_field,
-              std::string & value);
+    Parameter(const std::string & config_field,
+              const std::string & value);
 
     ~Parameter();
 

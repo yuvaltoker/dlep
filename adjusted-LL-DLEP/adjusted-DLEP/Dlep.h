@@ -65,6 +65,11 @@ typedef boost::shared_ptr<std::vector<std::uint8_t>> DlepMessageBuffer;
 #include "Thread.h"
 #include "ProtocolConfig.h"
 
+#include "Parameter.h"
+#include "ConfigOutLoggerMsg.h"
+#include "OutLoggerMsg.h"
+#include "OutLogger.h"
+
 namespace LLDLEP
 {
 namespace internal
@@ -190,6 +195,10 @@ private:
     void handle_async_make_peer(boost::asio::ip::tcp::socket * peer_socket,
                                 const boost::system::error_code & error);
     void start_async_accept();
+
+    void pushParameter(std::vector<Parameter> & parameters,
+                       const std::string & config_field,
+                       const std::string & value);
 };
 
 } // namespace internal
