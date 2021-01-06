@@ -1,8 +1,10 @@
 # What image do we start from
-FROM updated-ubuntu-16.04:latest
+FROM ubuntu:16.04
 
 RUN apt-get update
-RUN apt-get install build-essential
+RUN apt-get install -y build-essential
+RUN apt-get install -y python3-pip
+
 RUN apt-get install -y nano
 RUN apt-get install -y libboost-thread-dev
 RUN apt-get install -y libboost-system-dev
@@ -17,14 +19,15 @@ RUN apt-get install -y doxygen
 RUN apt-get install -y graphviz
 RUN apt-get install -y cmake
 
-RUN apt-get install -y python3-pip
 RUN python3 -m pip install redis
 RUN apt install -y libboost-all-dev
 
-RUN mkdir LL-DLEP
-ADD LL-DLEP/ /lib_from_github
+RUN mkdir /adjusted-dlep
+ADD ./adjusted-LL-DLEP/adjusted-DLEP/ /adjusted-dlep/
 
-#RUN cd /LL-DLEP/build
-#RUN cmake ..
-#RUN make
-#RUN make install
+RUN cd /adjusted-dlep/build/ && cmake .. && make && make install
+
+ADD ./choose-implement.sh .
+RUN chmod 777 choose-implement.sh
+
+ENTRYPOINT ./choose-implement.sh

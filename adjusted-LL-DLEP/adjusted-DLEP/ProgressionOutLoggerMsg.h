@@ -15,7 +15,7 @@ class ProgressionOutLoggerMsg : public OutLoggerMsg
 public:
     ProgressionOutLoggerMsg(const std::string & protocol,
                             const std::string & status,
-                            const std::string & progress_type,
+                            const std::string & msg_type,
                             const std::string & direction,
                             const std::string & modem_address,
                             const std::string & error,
@@ -29,7 +29,7 @@ public:
 private:
     std::string message;
     std::string status;
-    std::string progress_type;
+    std::string msg_type;
     std::string direction;
     std::string modem_address;
     std::string error;
@@ -37,7 +37,7 @@ private:
     
     void build_message();
     void add_status_to_message();
-    void add_progress_type_to_message();
+    void add_msg_type_to_message();
     void add_direction_to_message();
     void add_modem_address_to_message();
     void add_error_to_message();

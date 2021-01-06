@@ -13,14 +13,14 @@ namespace internal
 
 ProgressionOutLoggerMsg::ProgressionOutLoggerMsg(const std::string & protocol,
                                                  const std::string & status,
-                                                 const std::string & progress_type,
+                                                 const std::string & msg_type,
                                                  const std::string & direction,
                                                  const std::string & modem_address,
                                                  const std::string & error,
                                                  const LLDLEP::DataItems & msg_data_items) :
     OutLoggerMsg(protocol, "Progression"),
     status(status),
-    progress_type(progress_type),
+    msg_type(msg_type),
     direction(direction),
     modem_address(modem_address),
     error(error),
@@ -51,7 +51,7 @@ ProgressionOutLoggerMsg::build_message()
     message += "\n    ";
     add_status_to_message();
     message += "\n    ";
-    add_progress_type_to_message();
+    add_msg_type_to_message();
     message += "\n    ";
     add_direction_to_message();
     message += "\n    ";
@@ -76,9 +76,9 @@ ProgressionOutLoggerMsg::add_status_to_message()
 }
 
 void
-ProgressionOutLoggerMsg::add_progress_type_to_message()
+ProgressionOutLoggerMsg::add_msg_type_to_message()
 {
-    message += "\"Progress Type\":\"" + progress_type + "\",";
+    message += "\"MessageType\":\"" + msg_type + "\",";
 }
 
 void 
@@ -90,7 +90,7 @@ ProgressionOutLoggerMsg::add_direction_to_message()
 void 
 ProgressionOutLoggerMsg::add_modem_address_to_message()
 {
-    message += "\"Modem Address\":\"" + modem_address + "\",";
+    message += "\"ModemAddress\":\"" + modem_address + "\",";
 }
 
 void
@@ -108,7 +108,7 @@ ProgressionOutLoggerMsg::add_data_item_to_message(const DataItem & di)
 void 
 ProgressionOutLoggerMsg::add_data_items_to_message()
 {
-    message += "\"Data Items\":[";
+    message += "\"DataItems\":[";
     for (const DataItem & di : msg_data_items)
     {
         message += "\n        {";

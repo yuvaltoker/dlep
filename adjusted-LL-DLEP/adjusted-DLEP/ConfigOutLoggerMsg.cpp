@@ -46,7 +46,7 @@ ConfigOutLoggerMsg::build_message()
 void 
 ConfigOutLoggerMsg::add_parameter_to_message(const Parameter & par)
 {
-    message += "\"Configure Field\":\"" + par.getConfigField() +
+    message += "\"ConfigureField\":\"" + par.getConfigField() +
                "\",\"Value\":\"" + par.getValue() + "\"";
 }
 
