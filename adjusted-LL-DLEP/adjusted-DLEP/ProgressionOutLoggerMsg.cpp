@@ -60,13 +60,12 @@ ProgressionOutLoggerMsg::build_message()
     if(status == "S")
     {
         add_data_items_to_message();
-        message += "\n}";
     }
     else
     {
         add_error_to_message();
-        message += "\n    ";
     } 
+    message += "\n}\n";
 }
 
 void

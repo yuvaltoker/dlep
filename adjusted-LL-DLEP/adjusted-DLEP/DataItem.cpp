@@ -1043,6 +1043,47 @@ public:
         return ss.str();
     }
 
+    //yuval added:
+    // to_string Div_u16_u16_u8_u4_u16_u4_sub_data_items_t
+    std::string operator()(const Div_u16_u16_u8_u4_u16_u4_sub_data_items_t & operand) const
+    {
+        std::ostringstream ss;
+
+        ss << std::uint16_t(operand.field1) << ";";
+        ss << std::uint16_t(operand.field2) << ";";
+        ss << std::uint8_t(operand.field3) << ";";
+        ss << std::uint4_t(operand.field4) << ";";
+        ss << std::uint16_t(operand.field5) << ";";
+        ss << std::uint4_t(operand.field6) << ";";
+        sub_data_items_to_string(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
+    // to_string Div_u16_u16_u8_u24_u8_sub_data_items_t
+    std::string operator()(const Div_u16_u16_u8_u24_u8_sub_data_items_t & operand) const
+    {
+        std::ostringstream ss;
+
+        ss << std::uint16_t(operand.field1) << ";";
+        ss << std::uint16_t(operand.field2) << ";";
+        ss << std::uint8_t(operand.field3) << ";";
+        ss << std::uint24_t(operand.field4) << ";";
+        ss << std::uint8_t(operand.field5) << ";";
+        sub_data_items_to_string(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
+    // to_string Div_u16_u16_sub_data_items_t
+    std::string operator()(const Div_u16_u16_sub_data_items_t & operand) const
+    {
+        std::ostringstream ss;
+
+        ss << std::uint16_t(operand.field1) << ";";
+        ss << std::uint16_t(operand.field2)<< ";";
+        sub_data_items_to_string(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
 private:
     const DataItemInfo * parent_di_info;
 }; // class DataItemToStringVisitor

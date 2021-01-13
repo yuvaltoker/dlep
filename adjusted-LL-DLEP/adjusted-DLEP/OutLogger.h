@@ -4,6 +4,8 @@
 #include <iostream>
 #include <boost/asio.hpp>
 
+#include <cstdlib>
+
 
 namespace LLDLEP
 {
