@@ -142,9 +142,7 @@ Dlep::initialize()
         if (discovery_enable)
         {
             is_discovery_enabled += "True";
-            pushParameter(config_parameters,
-                          ConfigStrings::Discovery_Enable,
-                          is_discovery_enabled);
+            
 
             dlep_client.get_config_parameter("discovery-iface",
                                              &discovery_iface);
@@ -154,17 +152,25 @@ Dlep::initialize()
                                              &discovery_multicast_address);
             using_ipv6 = discovery_multicast_address.is_v6();
 
-            pushParameter(config_parameters,
-                          ConfigStrings::Discovery_Iface,
-                          discovery_iface);
+            if(!modem)
+            {
+                pushParameter(config_parameters,
+                          ConfigStrings::Discovery_Enable,
+                          is_discovery_enabled);
+      
+                pushParameter(config_parameters,
+                              ConfigStrings::Discovery_Iface,
+                              discovery_iface);
 
-            pushParameter(config_parameters,
-                          ConfigStrings::Discovery_Port,
-                          std::to_string(discovery_port));
+                pushParameter(config_parameters,
+                              ConfigStrings::Discovery_Port,
+                              std::to_string(discovery_port));
 
-            pushParameter(config_parameters,
-                          ConfigStrings::Discovery_Mcast_Address,
-                          discovery_multicast_address.to_string());
+                pushParameter(config_parameters,
+                              ConfigStrings::Discovery_Mcast_Address,
+                              discovery_multicast_address.to_string());
+            }
+            
 
 
             if (modem)
@@ -178,6 +184,12 @@ Dlep::initialize()
                 sending = true;
                 dlep_client.get_config_parameter("discovery-interval",
                                                  &discovery_interval);
+                if(!modem)
+                {
+                    pushParameter(config_parameters,
+                                  ConfigStrings::Discovery_Interval,
+                                  std::to_string(discovery_interval));
+                }
             }
 
             // Now get optional parameters
@@ -266,10 +278,13 @@ Dlep::initialize()
                 }
             }
         }
-
-        ConfigOutLoggerMsg out_msg("DLEP",
-                                   config_parameters);
-        OutLogger::send_out(out_msg.get_message());
+        if(!modem)
+        {
+            ConfigOutLoggerMsg out_msg("DLEP",
+                                        config_parameters);
+            OutLogger::send_out(out_msg.get_message());
+        }
+        
         if (start_dlep())
         {
             // start_dlep succeeded

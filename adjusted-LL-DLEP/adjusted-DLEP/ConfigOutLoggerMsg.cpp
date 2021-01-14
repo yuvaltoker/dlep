@@ -40,7 +40,7 @@ ConfigOutLoggerMsg::build_message()
     add_stage_to_message(message);
     message += "\n    ";
     add_parameters_to_message();
-    message += "\n}";
+    message += "\n}\n";
 }
 
 void 

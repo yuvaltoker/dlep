@@ -102,8 +102,8 @@ OutLogger::OutLogger()
 }
 
 bool OutLogger::is_connected = false;
-std::string OutLogger::host = "sam-server";
-std::string OutLogger::port = "3090";
+std::string OutLogger::host = getenv("UI_HOST");
+std::string OutLogger::port = getenv("UI_PORT");
 boost::asio::ip::tcp::socket* OutLogger::sock = NULL;
 
 } // namespace internal
