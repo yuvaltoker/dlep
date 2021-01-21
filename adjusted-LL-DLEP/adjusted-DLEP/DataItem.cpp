@@ -123,14 +123,11 @@ DataItem::set_default_value(DataItemValueType di_value_type)
         case DataItemValueType::div_u16_sub_data_items:
             value = Div_u16_sub_data_items_t {0, std::vector<DataItem>()};
             break;
-        case DataItemValueType::div_u16_u16_u8_u8_u16_sub_data_items:
-            value = Div_u16_u16_u8_u8_u16_sub_data_items_t {0, 0, 0, 0, 0, std::vector<DataItem>()};
+        case DataItemValueType::div_u8_u8_u16_sub_data_items:
+            value = Div_u8_u8_u16_sub_data_items_t {0, 0, 0, std::vector<DataItem>()};
             break;
-        case DataItemValueType::div_u16_u16_u8_u8_u16_u8_sub_data_items:
-            value = Div_u16_u16_u8_u8_u16_u8_sub_data_items_t {0, 0, 0, 0, 0, 0, std::vector<DataItem>()};
-            break;
-        case DataItemValueType::div_u16_u16_sub_data_items:
-            value = Div_u16_u16_sub_data_items_t {0, 0, std::vector<DataItem>()};
+        case DataItemValueType::div_u8_u8_u16_u8_vu8:
+            value = Div_u8_u8_u16_u8_vu8_t {0, 0, 0, 0, std::vector<std::uint8_t>()};
             break;
     }
 }
@@ -428,6 +425,52 @@ public:
         return serialize_sub_data_items(operand.sub_data_items, buf);
     }
 
+    //yuval added:
+
+    // serialize Div_u8_u8_u16_sub_data_items_t
+    std::vector<std::uint8_t> operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
+    {
+        std::vector<std::uint8_t> buf;
+
+        // check number of sub data items
+        unsigned int num_sdis = operand.sub_data_items.size();
+        if (num_sdis > 255)
+        {
+            throw std::out_of_range(
+                "number of sub data items is " + std::to_string(num_sdis) +
+                ", must be <= 255");
+        }
+
+        buf.push_back(std::uint8_t(num_sdis));
+        LLDLEP::serialize(operand.field2, buf);
+        LLDLEP::serialize(operand.field3, buf);
+        return serialize_sub_data_items(operand.sub_data_items, buf);
+    }
+
+    //serialize Div_u8_u8_u16_u8_vu8_t
+    std::vector<std::uint8_t> operator()(const Div_u8_u8_u16_u8_vu8_t & operand) const
+    {
+        std::vector<std::uint8_t> buf;
+
+        // check number of sub data items
+        unsigned int num_sdis = operand.field5.size();
+        if (num_sdis > 255)
+        {
+            throw std::out_of_range(
+                "number of DSCPs is " + std::to_string(num_sdis) +
+                ", must be <= 255");
+        }
+
+        LLDLEP::serialize(operand.field1, buf);
+        LLDLEP::serialize(operand.field2, buf);
+        LLDLEP::serialize(operand.field3, buf);
+        buf.push_back(std::uint8_t(num_sdis)); // num of DSCPs Qn
+        //LLDLEP::serialize(num_sdis, 1, buf);
+        buf.insert(buf.end(), operand.field5.begin(), operand.field5.end());
+
+        return buf;
+    }
+
 private:
     const ProtocolConfig * protocfg;
 }; // DataItemSerializeVisitor
@@ -529,7 +572,6 @@ DataItem::deserialize_sub_data_items(
     }
     return val;
 }
-
 
 void
 DataItem::deserialize(std::vector<std::uint8_t>::const_iterator & it,
@@ -803,14 +845,12 @@ DataItem::deserialize(std::vector<std::uint8_t>::const_iterator & it,
             break;
         }
         //yuval added:
-        case DataItemValueType::div_u16_u16_u8_u8_u16_sub_data_items:
+        case DataItemValueType::div_u8_u8_u16_sub_data_items:
         {
             Div_u16_sub_data_items_t val;
             LLDLEP::deserialize(val.field1, it, di_end);
             LLDLEP::deserialize(val.field2, it, di_end);
             LLDLEP::deserialize(val.field3, it, di_end);
-            LLDLEP::deserialize(val.field4, it, di_end);
-            LLDLEP::deserialize(val.field5, it, di_end);
             /*if (reserved != 0) // an idea to check for 0 in reserved, or any checking that need to be done in this data item
             {
                 throw std::out_of_range(
@@ -819,39 +859,27 @@ DataItem::deserialize(std::vector<std::uint8_t>::const_iterator & it,
             }*/
             val.sub_data_items =
                 deserialize_sub_data_items(it, di_end, &di_info, protocfg);
-            /*if (val.sub_data_items.size() != num_sdis) // check of the sub data items, need to be done?
+            (val.sub_data_items.size() != val.field1) // check of the sub data items, need to be done?
             {
                 throw std::length_error(
                     "number of sub data items is " +
                     std::to_string(val.sub_data_items.size()) +
                     ", expected " + std::to_string(num_sdis));
-            }*/
+            }
             value = val;
             break;
         }
 
-        case DataItemValueType::div_u16_u16_u8_u8_u16_u8_sub_data_items:
+        case DataItemValueType::div_u8_u8_u16_u8_vu8:
         {
-            Div_u16_sub_data_items_t val;
+            Div_u8_u8_u16_u8_vu8_t val;
             LLDLEP::deserialize(val.field1, it, di_end);
             LLDLEP::deserialize(val.field2, it, di_end);
             LLDLEP::deserialize(val.field3, it, di_end);
             LLDLEP::deserialize(val.field4, it, di_end);
-            LLDLEP::deserialize(val.field5, it, di_end);
-            LLDLEP::deserialize(val.field6, it, di_end);
-            val.sub_data_items =
-                deserialize_sub_data_items(it, di_end, &di_info, protocfg);
-            value = val;
-            break;
-        }
 
-        case DataItemValueType::div_u16_u16_sub_data_items:
-        {
-            Div_u16_sub_data_items_t val;
-            LLDLEP::deserialize(val.field1, it, di_end);
-            LLDLEP::deserialize(val.field2, it, di_end);
-            val.sub_data_items =
-                deserialize_sub_data_items(it, di_end, &di_info, protocfg);
+            val.field5.insert(val.field5.end(), it, di_end);
+            it = di_end;
             value = val;
             break;
         }
@@ -1106,8 +1134,20 @@ public:
     }
 
     //yuval added:
-    // to_string Div_u16_u16_u8_u8_u16_sub_data_items_t
-    std::string operator()(const Div_u16_u16_u8_u8_u16_sub_data_items_t & operand) const
+    // to_string Div_u8_u8_u16_sub_data_items_t
+    std::string operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
+    {
+        std::ostringstream ss;
+
+        ss << std::uint16_t(operand.field1) << ";";
+        ss << std::uint16_t(operand.field2) << ";";
+        ss << std::uint8_t(operand.field3) << ";";
+        sub_data_items_to_string(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
+    // to_string Div_u8_u8_u16_u8_sub_data_items_t
+    std::string operator()(const Div_u8_u8_u16_u8_vu8_t & operand) const
     {
         std::ostringstream ss;
 
@@ -1115,34 +1155,12 @@ public:
         ss << std::uint16_t(operand.field2) << ";";
         ss << std::uint8_t(operand.field3) << ";";
         ss << std::uint8_t(operand.field4) << ";";
-        ss << std::uint16_t(operand.field5) << ";";
-        sub_data_items_to_string(operand.sub_data_items, ss);
-        return ss.str();
-    }
-
-    // to_string Div_u16_u16_u8_u8_u16_u8_sub_data_items_t
-    std::string operator()(const Div_u16_u16_u8_u8_u16_u8_sub_data_items_t & operand) const
-    {
-        std::ostringstream ss;
-
-        ss << std::uint16_t(operand.field1) << ";";
-        ss << std::uint16_t(operand.field2) << ";";
-        ss << std::uint8_t(operand.field3) << ";";
-        ss << std::uint8_t(operand.field4) << ";";
-        ss << std::uint16_t(operand.field5) << ";";
-        ss << std::uint8_t(operand.field6) << ";";
-        sub_data_items_to_string(operand.sub_data_items, ss);
-        return ss.str();
-    }
-
-    // to_string Div_u16_u16_sub_data_items_t
-    std::string operator()(const Div_u16_u16_sub_data_items_t & operand) const
-    {
-        std::ostringstream ss;
-
-        ss << std::uint16_t(operand.field1) << ";";
-        ss << std::uint16_t(operand.field2)<< ";";
-        sub_data_items_to_string(operand.sub_data_items, ss);
+        std::string comma = "";
+        for (auto & x : operand.field5)
+        {
+            ss << comma << std::to_string(std::uint64_t(x));
+            comma = ",";
+        }
         return ss.str();
     }
 
@@ -1558,31 +1576,32 @@ public:
 
     // yuval added:
 
-    // from_stringstream to Div_u16_u16_u8_u8_u16_sub_data_items_t
+    // from_stringstream to Div_u8_u8_u16_sub_data_items_t
     // This should never get called because sub data items are handled
     // directly in from_istringstream()
-    DataItemValue operator()(const Div_u16_u16_u8_u8_u16_sub_data_items_t &  /*operand*/) const
+    DataItemValue operator()(const Div_u8_u8_u16_sub_data_items_t &  /*operand*/) const
     {
-        Div_u16_u16_u8_u8_u16_sub_data_items_t sdi;
+        Div_u8_u8_u16_sub_data_items_t sdi;
         return sdi;
     }
 
-    // from_stringstream to Div_u16_u16_u8_u8_u16_u8_sub_data_items_t
-    // This should never get called because sub data items are handled
-    // directly in from_istringstream()
-    DataItemValue operator()(const Div_u16_u16_u8_u8_u16_u8_sub_data_items_t &  /*operand*/) const
+    // from_stringstream to Div_u8_u8_u16_u8_vu8_t
+    DataItemValue operator()(const Div_u8_u8_u16_u8_vu8_t &  /*operand*/) const
     {
-        Div_u16_u16_u8_u8_u16_u8_sub_data_items_t sdi;
-        return sdi;
-    }
+        Div_u8_u8_u16_u8_vu8_t u8u8u16u8vu8;
 
-    // from_stringstream to Div_u16_u16_sub_data_items_t
-    // This should never get called because sub data items are handled
-    // directly in from_istringstream()
-    DataItemValue operator()(const Div_u16_u16_sub_data_items_t &  /*operand*/) const
-    {
-        Div_u16_u16_sub_data_items_t sdi;
-        return sdi;
+        u8u8u16u8vu8.field1 = parse_uint<decltype(u8u8u16u8vu8.field1)>();
+        check_field_separator(ss);
+        u8u8u16u8vu8.field2 = parse_uint<decltype(u8u8u16u8vu8.field2)>();
+        check_field_separator(ss);
+        u8u8u16u8vu8.field3 = parse_uint<decltype(u8u8u16u8vu8.field3)>();
+        check_field_separator(ss);
+        u8u8u16u8vu8.field4 = parse_uint<decltype(u8u8u16u8vu8.field4)>();
+        check_field_separator(ss);
+
+
+        u8u8u16u8vu8.field5 = parse_vector<std::uint8_t>();
+        return u8u8u16u8vu8;
     }
 
 private:
@@ -1677,9 +1696,9 @@ DataItem::from_istringstream(std::istringstream & ss,
         div.sub_data_items = sub_data_items_from_istringstream(ss, di_info);
         value = div;
     }//yuval added:
-    else if(di_info.value_type == DataItemValueType::div_u16_u16_u8_u8_u16_sub_data_items)
+    else if(di_info.value_type == DataItemValueType::div_u8_u8_u16_sub_data_items)
     {
-        Div_u16_u16_u8_u8_u16_sub_data_items_t div;
+        Div_u8_u8_u16_sub_data_items_t div;
 
         DataItem di_u16(protocfg);
         DataItem di_u8(protocfg);
@@ -1688,91 +1707,20 @@ DataItem::from_istringstream(std::istringstream & ss,
 
         // Extract a u8/u16 value one by another from the ss stream and put it in div.fieldX
 
-        di_u16.value_from_istringstream(ss);
-        div.field1 = boost::get<std::uint16_t>(di_u16.value);
-
-        check_field_separator(ss);
-        di_u16.value_from_istringstream(ss);
-        div.field2 = boost::get<std::uint16_t>(di_u16.value);
+        di_u8.value_from_istringstream(ss);
+        div.field1 = boost::get<std::uint8_t>(di_u8.value);
 
         check_field_separator(ss);
         di_u8.value_from_istringstream(ss);
-        div.field3 = boost::get<std::uint8_t>(di_u8.value);
-
-        check_field_separator(ss);
-        di_u8.value_from_istringstream(ss);
-        div.field4 = boost::get<std::uint8_t>(di_u8.value);
+        div.field2 = boost::get<std::uint8_t>(di_u8.value);
 
         check_field_separator(ss);
         di_u16.value_from_istringstream(ss);
-        div.field5 = boost::get<std::uint16_t>(di_u16.value);
+        div.field3 = boost::get<std::uint16_t>(di_u16.value);
 
         check_field_separator(ss);
         div.sub_data_items = sub_data_items_from_istringstream(ss, di_info);
         value = div;
-    }
-    else if(di_info.value_type == DataItemValueType::div_u16_u16_u8_u8_u16_u8_sub_data_items)
-    {
-        Div_u16_u16_u8_u8_u16_u8_sub_data_items_t div;
-
-        DataItem di_u16(protocfg);
-        DataItem di_u8(protocfg);
-        di_u16.set_default_value(DataItemValueType::div_u16);
-        di_u8.set_default_value(DataItemValueType::div_u8);
-
-        // Extract a u8/u16 value one by another from the ss stream and put it in div.fieldX
-
-        di_u16.value_from_istringstream(ss);
-        div.field1 = boost::get<std::uint16_t>(di_u16.value);
-
-        check_field_separator(ss);
-        di_u16.value_from_istringstream(ss);
-        div.field2 = boost::get<std::uint16_t>(di_u16.value);
-
-        check_field_separator(ss);
-        di_u8.value_from_istringstream(ss);
-        div.field3 = boost::get<std::uint8_t>(di_u8.value);
-
-        check_field_separator(ss);
-        di_u8.value_from_istringstream(ss);
-        div.field4 = boost::get<std::uint8_t>(di_u8.value);
-
-        check_field_separator(ss);
-        di_u16.value_from_istringstream(ss);
-        div.field5 = boost::get<std::uint16_t>(di_u16.value);
-
-        check_field_separator(ss);
-        di_u8.value_from_istringstream(ss);
-        div.field6 = boost::get<std::uint8_t>(di_u8.value);
-
-        check_field_separator(ss);
-        div.sub_data_items = sub_data_items_from_istringstream(ss, di_info);
-        value = div;
-    }
-    else if (di_info.value_type == DataItemValueType::div_u16_u16_sub_data_items)
-    {
-        Div_u16_u16_sub_data_items_t div;
-        
-        DataItem di_u16(protocfg);
-        di_u16.set_default_value(DataItemValueType::div_u16);
-
-        // Extract a two u16 values one by another from the ss stream and put it in div.field1, div.field2 
-
-        di_u16.value_from_istringstream(ss);
-        div.field1 = boost::get<std::uint16_t>(di_u16.value);
-
-        check_field_separator(ss);
-        di_u16.value_from_istringstream(ss);
-        div.field2 = boost::get<std::uint16_t>(di_u16.value);
-
-        check_field_separator(ss);
-        div.sub_data_items = sub_data_items_from_istringstream(ss, di_info);
-        value = div;
-    }
-    else // value does not contain sub data items
-    {
-        set_default_value(di_info.value_type);
-        value_from_istringstream(ss);
     }
 }
 
@@ -1939,19 +1887,17 @@ public:
         return validate_sub_data_items(operand.sub_data_items);
     }
 
-    std::string operator()(const Div_u16_u16_u8_u8_u16_sub_data_items_t & operand) const
+    std::string operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
     {
-        return validate_sub_data_items(operand.sub_data_items);
+        //return validate_sub_data_items(operand.sub_data_items);
+        return "";
+        // For future editing in case of validating the values of this data item
     }
 
-    std::string operator()(const Div_u16_u16_u8_u8_u16_u8_sub_data_items_t & operand) const
+    std::string operator()(const Div_u8_u8_u16_u8_vu8_t & operand) const
     {
-        return validate_sub_data_items(operand.sub_data_items);
-    }
-
-    std::string operator()(const Div_u16_u16_sub_data_items_t & operand) const
-    {
-        return validate_sub_data_items(operand.sub_data_items);
+        return "";
+        // For future editing in case of validating the values of this data item
     }
 
 private:
@@ -2252,11 +2198,10 @@ static std::vector<DataItemValueMap::value_type> mapvals
     { DataItemValueType::div_u8_u8, "u8_u8" },
     { DataItemValueType::div_u64_u64, "u64_u64" },
     { DataItemValueType::div_sub_data_items, "sub_data_items" },
-    { DataItemValueType::div_u16_sub_data_items, "u16_sub_data_items" }
+    { DataItemValueType::div_u16_sub_data_items, "u16_sub_data_items" },
     //yuval added:
-    { DataItemValueType::div_u16_u16_u8_u8_u16_sub_data_items, "u16_u16_u8_u8_u16_sub_data_items" }
-    { DataItemValueType::div_u16_u16_u8_u8_u16_u8_sub_data_items, "u16_u16_u8_u8_u16_u8_sub_data_items" }
-    { DataItemValueType::div_u16_u16_sub_data_items, "u16_u16_sub_data_items" }
+    { DataItemValueType::div_u8_u8_u16_sub_data_items, "u8_u8_u16_sub_data_items" },
+    { DataItemValueType::div_u8_u8_u16_u8_vu8, "u8_u8_u16_u8_vu8" }
 };
 
 static DataItemValueMap data_item_value_type_map(mapvals.begin(),

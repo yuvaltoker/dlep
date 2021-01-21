@@ -42,9 +42,15 @@
 
     <data_item>
         <name>Pause</name>
-        <type>?</type>
+        <type></type>
         <id>24</id>
         <metric>false</metric>
+
+        <sub_data_item>
+            <name></name>
+            <type></type>
+            <occurs>1+</occurs>
+        </sub_data_item>
     </data_item>
 
     <data_item>

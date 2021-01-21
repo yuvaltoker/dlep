@@ -350,6 +350,12 @@ This protocol configuration file conforms to DLEP RFC 8175.
                 <name>IPv6_Attached_Subnet</name>
                 <occurs>0+</occurs>
             </data_item>
+
+            <!-- yuval added: -->
+            <data_item>
+                <name></name>
+                <occurs>0+</occurs>
+            </data_item>
         </signal>
 
         <signal>

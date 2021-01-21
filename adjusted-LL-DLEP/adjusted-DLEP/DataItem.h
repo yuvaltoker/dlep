@@ -243,62 +243,38 @@ struct Div_u16_sub_data_items_t
 
 /// Pause Extension /// yuval added
 // for queue parameters' use
-struct Div_u16_u16_u8_u8_u16_sub_data_items_t
+struct Div_u8_u8_u16_sub_data_items_t
 {
-    std::uint16_t field1; // data item type
-    std::uint16_t field2; // length
-    std::uint8_t field3;  // num queues
-    std::uint8_t field4;  // scale + 4bit of reserved
-    std::uint16_t field5; // rest of reserved
+    std::uint8_t field1;  // num queues
+    std::uint8_t field2;  // scale + 4bit of reserved
+    std::uint16_t field3; // rest of reserved
     std::vector<DataItem> sub_data_items; // queue parameter sub-data items
 
-    bool operator==(const Div_u16_u16_u8_u8_u16_sub_data_items_t & other) const
+    bool operator==(const Div_u8_u8_u16_sub_data_items_t & other) const
     {
         return ((field1 == other.field1) &&
                 (field2 == other.field2) &&
                 (field3 == other.field3) &&
-                (field4 == other.field4) &&
-                (field5 == other.field5) &&
                 (sub_data_items == other.sub_data_items));
     }
 };
 
 // for queue parameters sub-data item's use
-struct Div_u16_u16_u8_u8_u16_u8_sub_data_items_t
+struct Div_u8_u8_u16_u8_vu8_t
 {
-    std::uint16_t field1; // data item type
-    std::uint16_t field2; // length
-    std::uint8_t field3;  // queue index
-    std::uint8_t field4; // queue size Qn part 1
-    std::uint16_t field5; // queue size Qn part 2
-    std::uint8_t field6;  // num DSCPs Qn
-    std::vector<DataItem> sub_data_items; // DS fields Qn
+    std::uint8_t field1;  // queue index
+    std::uint8_t field2; // queue size Qn part 1
+    std::uint16_t field3; // queue size Qn part 2
+    std::uint8_t field4;  // num DSCPs Qn
+    std::vector<std::uint8_t> field5; // DS fields Qn
 
-    bool operator==(const Div_u16_u16_u8_u8_u16_u8_sub_data_items_t & other) const
+    bool operator==(const Div_u8_u8_u16_u8_vu8_t & other) const
     {
         return ((field1 == other.field1) &&
                 (field2 == other.field2) &&
                 (field3 == other.field3) &&
                 (field4 == other.field4) &&
-                (field5 == other.field5) &&
-                (field6 == other.field6) &&
-                (sub_data_items == other.sub_data_items));
-    }
-};
-
-
-// for pause's && restart's use
-struct Div_u16_u16_sub_data_items_t
-{
-    std::uint16_t field1; // data item type
-    std::uint16_t field2; // length
-    std::vector<DataItem> sub_data_items;
-
-    bool operator==(const Div_u16_u16_sub_data_items_t & other) const
-    {
-        return ((field1 == other.field1) &&
-                (field2 == other.field2) &&
-                (sub_data_items == other.sub_data_items));
+                (field5 == other.field5));
     }
 };
 
@@ -311,8 +287,8 @@ struct Div_u16_u16_sub_data_items_t
 /// Then you must update:
 /// - enum DataItemValueType below to add the new type // V
 /// - to/from_string support for the new DataItemValueType enum value // V
-/// - any switch statements that use DataItemValueType as the control variable
-/// - boost::variant visitor classes that use this variant (DataItem.cpp)
+/// - any switch statements that use DataItemValueType as the control variable // V
+/// - boost::variant visitor classes that use this variant (DataItem.cpp) // V
 /// - DataItemValueType in config/protocol/protocol-config.xsd
 /// - DataItemValueMap in DataItem.cpp // V
 /// - if the data item contains an IP address field,
@@ -347,9 +323,8 @@ typedef boost::variant <
       Div_sub_data_items_t,
       Div_u16_sub_data_items_t,
       //yuval added:
-      Div_u16_u16_u8_u8_u16_sub_data_items_t, // queue parameters' data item value type // yuval added
-      Div_u16_u16_u8_u8_u16_u8_sub_data_items_t, // queue parameters sub-data item's data item value type // yuval added
-      Div_u16_u16_sub_data_items_t // pause's && restart's data item value type // yuval added
+      Div_u8_u8_u16_sub_data_items_t, // queue parameters' data item value type // yuval added
+      Div_u8_u8_u16_u8_vu8_t, // queue parameters sub-data item's data item value type // yuval added
       > DataItemValue;
 
 /// DataItemValueType has one enum value for each type of value that
@@ -388,21 +363,15 @@ enum class DataItemValueType
     div_u16_sub_data_items, ///< unsigned 16 bit integer followed by sub data items
     // yuval added:
     
-    div_u16_u16_u8_u8_u16_sub_data_items, ///< unsigned 16 bit integer, 
-                                             ///< followed by unsigned 16 bit integer,
-                                             ///< followed by unsigned 8 bit integer,
+    div_u8_u8_u16_sub_data_items, ///< unsigned 8 bit integer,
                                              ///< followed by unsigned 8 bit integer,
                                              ///< followed by unsigned 16 bit integer,
                                              ///< followed by sub data items
-    div_u16_u16_u8_u8_u16_u8_sub_data_items, ///< unsigned 16 bit integer, 
-                                          ///< followed by unsigned 16 bit integer,
-                                          ///< followed by unsigned 8 bit integer,
+    div_u8_u8_u16_u8_vu8 ///< unsigned 8 bit integer,
                                           ///< followed by unsigned 8 bit integer,
                                           ///< followed by unsigned 16 bit integer,
                                           ///< followed by unsigned 8 bit integer,
                                           ///< followed by sub data items
-    div_u16_u16_sub_data_items ///< two unsigned 16 bit integer, 
-                               ///< followed by sub data items
 };
 
 /// @return string representation of the given data item value type
