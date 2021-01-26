@@ -1114,7 +1114,7 @@ Peer::send_peer_initialization_response()
     if (std::count(mutual_extensions.begin(), mutual_extensions.end(), 2))
     {
         // an example of queue parameters data item
-        
+        pm.add_queue_parameters();
     }
 
     // A freshly built message should be parsable.  However, this

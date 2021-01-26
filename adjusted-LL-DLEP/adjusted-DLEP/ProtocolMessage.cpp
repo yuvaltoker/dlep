@@ -402,9 +402,52 @@ ProtocolMessage::add_common_data_items(DlepClient & dlep_client)
 void
 ProtocolMessage::add_queue_parameters()
 {
-    /*create the data item*/
+    std::vector<DataItem> sub_data_items_parameters;
 
-    add_data_item(/*created_data_item*/);
+    /* creating 2 sub data items */
+
+    std::vector<uint8_t> vec1{1, 2, 3};
+    std::vector<uint8_t> vec2{4, 5, 6};
+
+    DataItemValue div1 = {std::uint8_t(0), // index
+                          std::uint8_t(0), // size part 1
+                          std::uint16_t(vec1.size()),// size part 2
+                          std::uint8_t(3), // num of DSCPs
+                          vec1};
+
+    DataItemValue div2 = {std::uint8_t(1), // index
+                          std::uint8_t(0), // size part 1
+                          std::uint16_t(vec2.size),// size part 2
+                          std::uint8_t(3), // num of DSCPs
+                          vec2};
+
+    LLDLEP::DataItemInfo di_info = protocfg->get_data_item_info(ProtocolStrings::Queue_Parameters);
+    DataItem sub_data1(ProtocolStrings::Queue_Parameter,
+                       div1,
+                       protocfg,
+                       di_info);
+
+    DataItem sub_data2(ProtocolStrings::Queue_Parameter,
+                       div2,
+                       protocfg,
+                       di_info);
+                       
+    sub_data_items_parameters.push_back(sub_data1);
+    sub_data_items_parameters.push_back(sub_data2);
+    
+    /*create the data item value of queue parameters*/
+    DataItemValue div = {std::uint8_t(2), // num of queues for this example - 2
+                         std::uint8_t(16), // the high octet (0001) for scale, low octet(0000) for reserved
+                         std::uint8_t(0), // reserved 0
+                         sub_data_items_parameters }; // sub data items
+    
+    /*create the data item*/
+    DataItem di_queue_parameters {ProtocolStrings::Queue_Parameters,
+                                  div, 
+                                  protocfg};
+
+    /*add the data item to message*/
+    add_data_item(di_queue_parameters);
 }
 
 void
