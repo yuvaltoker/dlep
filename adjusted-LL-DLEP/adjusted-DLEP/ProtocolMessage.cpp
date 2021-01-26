@@ -400,43 +400,43 @@ ProtocolMessage::add_common_data_items(DlepClient & dlep_client)
 }
 
 void
-ProtocolMessage::add_queue_parameters()
+ProtocolMessage::add_queue_parameters(DlepClient & dlep_client)
 {
     std::vector<DataItem> sub_data_items_parameters;
-
+    LLDLEP::DataItemInfo di_info = protocfg->get_data_item_info(ProtocolStrings::Queue_Parameters);
     /* creating 2 sub data items */
 
-    std::vector<uint8_t> vec1{1, 2, 3};
-    std::vector<uint8_t> vec2{4, 5, 6};
+    std::vector<std::uint8_t> vec1{std::uint8_t(1), std::uint8_t(2), std::uint8_t(3)};
+    std::vector<std::uint8_t> vec2{std::uint8_t(4), std::uint8_t(5), std::uint8_t(6)};
 
-    DataItemValue div1 = {std::uint8_t(0), // index
-                          std::uint8_t(0), // size part 1
-                          std::uint16_t(vec1.size()),// size part 2
-                          std::uint8_t(3), // num of DSCPs
-                          vec1};
+    Div_u8_u8_u16_u8_vu8_t div1 = {std::uint8_t(0), // index
+                                   std::uint8_t(0), // size part 1
+                                   std::uint16_t(vec1.size()),// size part 2
+                                   std::uint8_t(3), // num of DSCPs
+                                   vec1};
 
-    DataItemValue div2 = {std::uint8_t(1), // index
-                          std::uint8_t(0), // size part 1
-                          std::uint16_t(vec2.size),// size part 2
-                          std::uint8_t(3), // num of DSCPs
-                          vec2};
+    Div_u8_u8_u16_u8_vu8_t div2 = {std::uint8_t(1), // index
+                                   std::uint8_t(0), // size part 1
+                                   std::uint16_t(vec2.size()),// size part 2
+                                   std::uint8_t(3), // num of DSCPs
+                                   vec2};
 
-    LLDLEP::DataItemInfo di_info = protocfg->get_data_item_info(ProtocolStrings::Queue_Parameters);
-    DataItem sub_data1(ProtocolStrings::Queue_Parameter,
+    
+    DataItem sub_data1 {ProtocolStrings::Queue_Parameter,
                        div1,
-                       protocfg,
-                       di_info);
+                       protocfg/*,
+                       di_info*/};
 
-    DataItem sub_data2(ProtocolStrings::Queue_Parameter,
+    DataItem sub_data2 {ProtocolStrings::Queue_Parameter,
                        div2,
-                       protocfg,
-                       di_info);
-                       
+                       protocfg/*,
+                       di_info*/};
+
     sub_data_items_parameters.push_back(sub_data1);
     sub_data_items_parameters.push_back(sub_data2);
     
     /*create the data item value of queue parameters*/
-    DataItemValue div = {std::uint8_t(2), // num of queues for this example - 2
+    Div_u8_u8_u16_sub_data_items_t div = {std::uint8_t(2), // num of queues for this example - 2
                          std::uint8_t(16), // the high octet (0001) for scale, low octet(0000) for reserved
                          std::uint8_t(0), // reserved 0
                          sub_data_items_parameters }; // sub data items

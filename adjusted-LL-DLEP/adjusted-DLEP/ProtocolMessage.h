@@ -41,7 +41,7 @@ public:
     void add_common_data_items(LLDLEP::DlepClient & dlep_client);
 
     // yuval added
-    void add_queue_parameters();
+    void add_queue_parameters(LLDLEP::DlepClient & dlep_client);
 
     // clear all data items from the message, leaving just the header
     void clear_data_items();

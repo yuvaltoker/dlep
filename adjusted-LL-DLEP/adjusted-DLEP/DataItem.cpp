@@ -847,7 +847,7 @@ DataItem::deserialize(std::vector<std::uint8_t>::const_iterator & it,
         //yuval added:
         case DataItemValueType::div_u8_u8_u16_sub_data_items:
         {
-            Div_u16_sub_data_items_t val;
+            Div_u8_u8_u16_sub_data_items_t val;
             LLDLEP::deserialize(val.field1, it, di_end);
             LLDLEP::deserialize(val.field2, it, di_end);
             LLDLEP::deserialize(val.field3, it, di_end);
@@ -859,12 +859,12 @@ DataItem::deserialize(std::vector<std::uint8_t>::const_iterator & it,
             }*/
             val.sub_data_items =
                 deserialize_sub_data_items(it, di_end, &di_info, protocfg);
-            (val.sub_data_items.size() != val.field1) // check of the sub data items, need to be done?
+            if(val.sub_data_items.size() != val.field1) // check of the sub data items, need to be done?
             {
                 throw std::length_error(
                     "number of sub data items is " +
                     std::to_string(val.sub_data_items.size()) +
-                    ", expected " + std::to_string(num_sdis));
+                    ", expected " + std::to_string(val.field1));
             }
             value = val;
             break;

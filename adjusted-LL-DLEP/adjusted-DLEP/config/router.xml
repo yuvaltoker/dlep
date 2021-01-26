@@ -23,7 +23,6 @@ as a router.
                 <!-- override default privileged port 854 -->
 		<session-port>4854</session-port>
 		<peer-type>emulated-router</peer-type>
-        <log-file>dlep-router.log</log-file>
-		<extensions-suppported>2</extensions-suppported>
+                <log-file>dlep-router.log</log-file>
 	</params>
 </config>
