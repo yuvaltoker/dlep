@@ -1109,6 +1109,14 @@ Peer::send_peer_initialization_response()
 
     pm.add_allowed_data_items(dlep->local_pdp->get_data_items());
 
+    // Add Queue Parameters in case of mutual pause extension supported (Pause Extension id is 2)
+
+    if (std::count(mutual_extensions.begin(), mutual_extensions.end(), 2))
+    {
+        // an example of queue parameters data item
+        
+    }
+
     // A freshly built message should be parsable.  However, this
     // message contains data items that originated from the client, and
     // they could be invalid.  So we parse and validate the message before

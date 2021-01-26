@@ -400,6 +400,14 @@ ProtocolMessage::add_common_data_items(DlepClient & dlep_client)
 }
 
 void
+ProtocolMessage::add_queue_parameters()
+{
+    /*create the data item*/
+
+    add_data_item(/*created_data_item*/);
+}
+
+void
 ProtocolMessage::clear_data_items()
 {
     assert(header_length > 0);

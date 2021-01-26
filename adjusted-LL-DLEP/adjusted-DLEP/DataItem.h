@@ -324,7 +324,7 @@ typedef boost::variant <
       Div_u16_sub_data_items_t,
       //yuval added:
       Div_u8_u8_u16_sub_data_items_t, // queue parameters' data item value type // yuval added
-      Div_u8_u8_u16_u8_vu8_t, // queue parameters sub-data item's data item value type // yuval added
+      Div_u8_u8_u16_u8_vu8_t // queue parameters sub-data item's data item value type // yuval added
       > DataItemValue;
 
 /// DataItemValueType has one enum value for each type of value that

@@ -39,139 +39,33 @@
 
     <!-- New data items defined by this extension. -->
    
-
     <data_item>
-        <name>Pause</name>
-        <type></type>
-        <id>24</id>
+        <name>Queue_Parameters</name>
+        <type>u8_u8_u16_sub_data_items</type>
+        <id>23</id>
         <metric>false</metric>
 
         <sub_data_item>
-            <name></name>
-            <type></type>
+            <name>Queue_Parameter</name>
+            <type>u8_u8_u16_u8_vu8</type>
+            <id>1</id>
             <occurs>1+</occurs>
+            <metric>false</metric>
         </sub_data_item>
     </data_item>
 
     <data_item>
-        <name>Example_u64_Nonmetric_Data_Item</name>
-        <type>u64</type>
-        <id>65444</id>
+        <name>Pause</name>
+        <type>v_u8</type>
+        <id>24</id>
         <metric>false</metric>
     </data_item>
 
     <data_item>
-        <name>Example_u32_Metric_Data_Item</name>
-        <type>u32</type>
-        <id>65445</id>
-        <metric>true</metric>
+        <name>Restart</name>
+        <type>v_u8</type>
+        <id>25</id>
+        <metric>false</metric>
     </data_item>
-
-    <data_item>
-        <name>Example_u8_Metric_Data_Item_With_Units</name>
-        <type>u8</type>
-        <id>65446</id>
-        <metric>true</metric>
-        <units>octets</units>
-    </data_item>
-
-    <!--
-        New signals defined by this extension.
-        You will have to add C++ code to Dlep to actually send
-        and receive new signals.
-    -->
-
-    <signal>
-        <name>Example_Signal_No_Data_Items</name>
-        <id>65520</id>
-        <message>false</message>
-        <sender>router</sender>
-    </signal>
-
-    <signal>
-        <name>Example_Signal_One_Required_Data_Item</name>
-        <id>65521</id>
-        <message>false</message>
-        <sender>modem</sender>
-
-        <data_item>
-            <name>Example_u64_Nonmetric_Data_Item</name>
-            <occurs>1</occurs>
-        </data_item>
-    </signal>
-
-    <signal>
-        <name>Example_Signal_Two_Optional_Data_Items</name>
-        <id>65522</id>
-        <message>false</message>
-        <sender>modem</sender>
-
-        <data_item>
-            <name>Example_u32_Metric_Data_Item</name>
-            <occurs>0-1</occurs>
-        </data_item>
-
-        <!--
-            You can use data items defined by the core module or by
-            any extension defined prior to this (as defined by XML
-            include processing).
-        -->
-        <data_item>
-            <name>IPv4_Address</name>
-            <occurs>0-1</occurs>
-        </data_item>
-    </signal>
-
-    <!--
-        New messages defined by this extension. 
-        There is almost no difference between messages and signals,
-        so both are introduced by <signal> and distinguished by
-        the boolean <message> field.
-
-        As with signals, you will have to add C++ code to Dlep to
-        actually send and receive new messages.
-    -->
-
-    <!--
-        If there is a response to a message, it must be defined first
-        (we don't handle forward references).
-    -->
-    <signal>
-        <name>Example_Message_Response</name>
-        <id>65520</id>
-        <message>true</message>
-        <sender>both</sender>
-    </signal>
-
-    <signal>
-        <name>Example_Message_Optional_Repeatable_Data_Item</name>
-        <id>65521</id>
-        <message>true</message>
-        <sender>both</sender>
-        <response>Example_Message_Response</response>
-
-        <data_item>
-            <name>Example_u64_Nonmetric_Data_Item</name>
-            <occurs>0+</occurs>
-        </data_item>
-    </signal>
-
-    <!-- Signals/messages to which this extension adds new data items. -->
-
-    <signal>
-        <name>Destination_Update</name>
-        <data_item>
-            <name>Example_u8_Metric_Data_Item_With_Units</name>
-            <occurs>0-1</occurs>
-        </data_item>
-    </signal>
-
-    <!-- New Status Codes defined by this extension. -->
-
-    <status_code>
-        <name>Example_Status_Code</name>
-        <id>240</id>
-        <failure_mode>continue</failure_mode>
-    </status_code>
 
 </module>
