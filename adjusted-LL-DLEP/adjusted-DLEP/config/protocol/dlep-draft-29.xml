@@ -933,7 +933,7 @@ This protocol configuration file conforms to DLEP draft 29.
 
     </module>
 
-    <xi:include href="pause-extension.xml"/>
+    <xi:include href="pause-extension-8651.xml"/>
 
     <!--
         Include extension modules like this:

@@ -23,7 +23,6 @@ as a modem.
 		<heartbeat-interval>15</heartbeat-interval>
 		<heartbeat-threshold>2</heartbeat-threshold>
 		<peer-type>emulated-modem</peer-type>
-        <log-file>dlep-modem.log</log-file>
-		<extensions-suppported>2</extensions-suppported>
+                <log-file>dlep-modem.log</log-file>
 	</params>
 </config>
