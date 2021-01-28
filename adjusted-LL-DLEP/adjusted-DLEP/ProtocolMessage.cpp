@@ -411,26 +411,24 @@ ProtocolMessage::add_queue_parameters(DlepClient & dlep_client)
 
     Div_u8_u8_u16_u8_vu8_t div1 = {std::uint8_t(0), // index
                                    std::uint8_t(0), // size part 1
-                                   std::uint16_t(vec1.size()),// size part 2
+                                   std::uint16_t(3),// size part 2
                                    std::uint8_t(3), // num of DSCPs
                                    vec1};
 
     Div_u8_u8_u16_u8_vu8_t div2 = {std::uint8_t(1), // index
                                    std::uint8_t(0), // size part 1
-                                   std::uint16_t(vec2.size()),// size part 2
+                                   std::uint16_t(3),// size part 2
                                    std::uint8_t(3), // num of DSCPs
                                    vec2};
 
     
     DataItem sub_data1 {ProtocolStrings::Queue_Parameter,
                        div1,
-                       protocfg/*,
-                       di_info*/};
+                       protocfg};
 
     DataItem sub_data2 {ProtocolStrings::Queue_Parameter,
                        div2,
-                       protocfg/*,
-                       di_info*/};
+                       protocfg};
 
     sub_data_items_parameters.push_back(sub_data1);
     sub_data_items_parameters.push_back(sub_data2);

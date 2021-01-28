@@ -9,19 +9,19 @@ as a router.
 		<discovery-enable>1</discovery-enable>
 
                 <!-- override default privileged port 854 -->
-		<discovery-port>4854</discovery-port>
+		<discovery-port>854</discovery-port>
 
                 <!-- change this to reflect your chosen interface -->
 		<discovery-iface>eth0</discovery-iface>
 
                 <!-- override default privileged address 224.0.0.117 -->
-		<discovery-mcast-address>225.0.0.117</discovery-mcast-address>
+		<discovery-mcast-address>224.0.0.117</discovery-mcast-address>
 		<discovery-interval>15</discovery-interval>
 		<heartbeat-interval>15</heartbeat-interval>
 		<heartbeat-threshold>2</heartbeat-threshold>
 
                 <!-- override default privileged port 854 -->
-		<session-port>4854</session-port>
+		<session-port>854</session-port>
 		<peer-type>emulated-router</peer-type>
                 <log-file>dlep-router.log</log-file>
 	</params>

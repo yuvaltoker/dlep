@@ -246,7 +246,7 @@ struct Div_u16_sub_data_items_t
 struct Div_u8_u8_u16_sub_data_items_t
 {
     std::uint8_t field1;  // num queues
-    std::uint8_t field2;  // scale + 4bit of reserved
+    std::uint8_t field2;  // scale (high octet) + 4bit of reserved (low octet)
     std::uint16_t field3; // rest of reserved
     std::vector<DataItem> sub_data_items; // queue parameter sub-data items
 

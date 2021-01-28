@@ -1114,6 +1114,19 @@ public:
         ss << "} ";
     }
 
+    //yuval added
+    void sub_data_items_to_string_2(const std::vector<DataItem> & sub_data_items,
+                                  std::ostringstream & ss) const
+    {
+        ss << "{ ";
+        for (const DataItem & sdi : sub_data_items)
+        {
+            ss << sdi.to_string(parent_di_info) << " ";
+        }
+        ss << "} ";
+    }
+    // end of yuval add
+    
     // to_string Div_sub_data_items_t
     std::string operator()(const Div_sub_data_items_t & operand) const
     {
@@ -1138,23 +1151,26 @@ public:
     std::string operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
     {
         std::ostringstream ss;
-
-        ss << std::uint16_t(operand.field1) << ";";
-        ss << std::uint16_t(operand.field2) << ";";
-        ss << std::uint8_t(operand.field3) << ";";
-        sub_data_items_to_string(operand.sub_data_items, ss);
+        std::uint8_t scale = std::uint8_t(operand.field2); // copy the value of field 2
+        scale >>= 4; // creating the pure value of scale b pushing it toward the low octet
+        ss << unsigned(std::uint8_t(operand.field1)) << ";";
+        ss << unsigned(std::uint8_t(scale)) << ";";
+        ss << unsigned(std::uint16_t(operand.field3)) << ";";
+        sub_data_items_to_string_2(operand.sub_data_items, ss);
         return ss.str();
     }
 
-    // to_string Div_u8_u8_u16_u8_sub_data_items_t
+    // to_string Div_u8_u8_u16_u8_vu8_t
     std::string operator()(const Div_u8_u8_u16_u8_vu8_t & operand) const
     {
         std::ostringstream ss;
+        std::uint32_t queue_size = std::uint32_t(operand.field2);
+        queue_size <<= 16; // moving the high part of queue size (field2)
+        queue_size += std::uint32_t(operand.field3); // add the low part of queue size (field 3)
 
-        ss << std::uint16_t(operand.field1) << ";";
-        ss << std::uint16_t(operand.field2) << ";";
-        ss << std::uint8_t(operand.field3) << ";";
-        ss << std::uint8_t(operand.field4) << ";";
+        ss << unsigned(std::uint8_t(operand.field1)) << ";";
+        ss << unsigned(std::uint32_t(queue_size)) << ";";
+        ss << unsigned(std::uint8_t(operand.field4)) << ";";
         std::string comma = "";
         for (auto & x : operand.field5)
         {

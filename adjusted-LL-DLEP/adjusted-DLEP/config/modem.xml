@@ -12,14 +12,14 @@ as a modem.
 		<discovery-iface>eth0</discovery-iface>
 
                 <!-- override default privileged port 854 -->
-		<discovery-port>4854</discovery-port>
+		<discovery-port>854</discovery-port>
 
                 <!-- override default privileged address 224.0.0.117 -->
-		<discovery-mcast-address>225.0.0.117</discovery-mcast-address>
+		<discovery-mcast-address>224.0.0.117</discovery-mcast-address>
 		<discovery-interval>15</discovery-interval>
 
                 <!-- override default privileged port 854 -->
-		<session-port>4854</session-port>
+		<session-port>854</session-port>
 		<heartbeat-interval>15</heartbeat-interval>
 		<heartbeat-threshold>2</heartbeat-threshold>
 		<peer-type>emulated-modem</peer-type>
