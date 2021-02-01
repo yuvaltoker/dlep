@@ -6,7 +6,6 @@
 
 #include <cstdlib>
 
-
 namespace LLDLEP
 {
 namespace internal

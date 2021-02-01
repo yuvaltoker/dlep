@@ -182,10 +182,12 @@ Dlep::initialize()
                 sending = true;
                 dlep_client.get_config_parameter("discovery-interval",
                                                  &discovery_interval);
-
-                pushParameter(config_parameters,
-                              ConfigStrings::Discovery_Interval,
-                              std::to_string(discovery_interval));
+                if(!modem)
+                {
+                    pushParameter(config_parameters,
+                                  ConfigStrings::Discovery_Interval,
+                                  std::to_string(discovery_interval));
+                }
             }
 
             // Now get optional parameters
