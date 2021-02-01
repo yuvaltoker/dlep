@@ -11,10 +11,10 @@ namespace internal
 namespace ConfigStrings
 {
     const std::string Local_Type = "local-type";
-    const std::string Discovery_Enable = "discovery-enable";
-    const std::string Discovery_Port = "discovery-port";
-    const std::string Discovery_Iface = "discovery-iface";
-    const std::string Discovery_Mcast_Address = "discovery-mcast-address";
+    const std::string Discovery_Enable = "discovery-enable"; // V
+    const std::string Discovery_Port = "discovery-port"; // V
+    const std::string Discovery_Iface = "discovery-iface"; // V
+    const std::string Discovery_Mcast_Address = "discovery-mcast-address"; // V
     const std::string Discovery_Interval = "discovery-interval";
     const std::string Heartbeat_Interval = "heartbeat-interval";
     const std::string Heartbeat_Threshold = "heartbeat-threshold";

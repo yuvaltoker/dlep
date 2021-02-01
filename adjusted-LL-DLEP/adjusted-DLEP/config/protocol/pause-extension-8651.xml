@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * Dynamic Link Exchange Protocol (DLEP)
+ *
+ * Copyright (C) 2015, 2016 Massachusetts Institute of Technology
+-->
+
+<!--
+  This file defines an example extension module that may be useful
+  if you are defining your own DLEP extension.  Extensions can define
+  any combination of new data items, signals, messages, and status
+  codes.  Examples of each are given below.
+
+  All of the numeric ids in this file are drawn from the DLEP draft
+  "Private Use" space for the particular protocol element.
+  For your own extension, it is your responsibility to choose ids that
+  do not conflict with the core protocol or with any other extensions
+  you plan to use.
+
+  To run Dlep with this do-nothing extension turned on, uncomment the
+  line that includes this file in dlep-draft-XX.xml.
+-->
+
+<module>
+
+  <!--
+      Name and draft are informational only, though in earlier drafts the
+      name was used as the Experiment Name (since removed).
+  -->
+    <name>Pause-Extension</name>
+    <draft>RFC8651</draft>
+
+    <!--
+        The next id will be placed in the Extensions Supported
+        data item to indicate support for this extension.
+    -->
+    <extension_id>2</extension_id>
+
+    <!-- New data items defined by this extension. -->
+
+    <data_item>
+        <name>Queue_Parameter</name>
+        <type>u8_u8_u16_u8_vu8</type>
+        <metric>false</metric>
+    </data_item>
+
+    <data_item>
+        <name>Queue_Parameters</name>
+        <type>u8_u8_u16_sub_data_items</type>
+        <id>23</id>
+        <metric>false</metric>
+
+        <sub_data_item>
+            <name>Queue_Parameter</name>
+            <id>1</id>
+            <occurs>1+</occurs>
+        </sub_data_item>
+    </data_item>
+
+    <data_item>
+        <name>Pause</name>
+        <type>v_u8</type>
+        <id>24</id>
+        <metric>false</metric>
+    </data_item>
+
+    <data_item>
+        <name>Restart</name>
+        <type>v_u8</type>
+        <id>25</id>
+        <metric>false</metric>
+    </data_item>
+
+    <signal>
+        <name>Session_Initialization_Response</name>
+        <data_item>
+            <name>Queue_Parameters</name>
+            <occurs>0-1</occurs>
+        </data_item>
+    </signal>
+</module>

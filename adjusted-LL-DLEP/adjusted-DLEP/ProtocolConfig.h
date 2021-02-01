@@ -417,6 +417,10 @@ extern const std::string Extensions_Supported;
 extern const std::string Experimental_Definition;
 extern const std::string IPv4_Connection_Point;
 extern const std::string IPv6_Connection_Point;
+extern const std::string Queue_Parameters;
+extern const std::string Queue_Parameter;
+extern const std::string Pause;
+extern const std::string Restart;
 
 // required metrics strings
 

@@ -92,6 +92,7 @@ OutLogger::send_out(const std::string & message)
     }
     else {
        cout << "Sending message failed: " << error.message() << endl;
+       OutLogger::close();
        return false;
     }
     return true;

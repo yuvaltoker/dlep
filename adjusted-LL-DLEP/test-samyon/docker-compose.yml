@@ -1,0 +1,37 @@
+version: '3'
+services:  
+    server:
+        image: samyon196/tcpsvr
+        container_name: zzz
+        network_mode: "host"
+        stdin_open: true
+        tty: true
+        environment:
+          PORT: 3090
+          
+    router:
+        depends_on:
+            - server
+        image: yuvaltoker/adjusted-dlep:1.1.1
+        network_mode: "host"
+        stdin_open: true
+        tty: true
+        environment:
+            IMPLEMENTATION: router
+            UI_HOST: zzz
+            UI_PORT: 3090
+            DISCOVERY_IFACE: lo
+          
+    modem:
+        depends_on:
+                - server
+        image: yuvaltoker/adjusted-dlep:1.1.1
+        network_mode: "host"
+        stdin_open: true
+        tty: true
+        environment:
+            IMPLEMENTATION: modem
+            UI_HOST: zzz
+            UI_PORT: 3090
+            DISCOVERY_IFACE: lo
+

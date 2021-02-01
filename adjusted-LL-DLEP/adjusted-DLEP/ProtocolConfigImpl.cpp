@@ -65,6 +65,10 @@ const std::string Extensions_Supported = "Extensions_Supported";
 const std::string Experimental_Definition = "Experimental_Definition";
 const std::string IPv4_Connection_Point = "IPv4_Connection_Point";
 const std::string IPv6_Connection_Point = "IPv6_Connection_Point";
+const std::string Queue_Parameters = "Queue_Parameters";
+const std::string Queue_Parameter = "Queue_Parameter";
+const std::string Pause = "Pause";
+const std::string Restart = "Restart";
 
 // required metrics strings
 

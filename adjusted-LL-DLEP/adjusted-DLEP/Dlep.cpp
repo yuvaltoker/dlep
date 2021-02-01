@@ -155,9 +155,9 @@ Dlep::initialize()
             if(!modem)
             {
                 pushParameter(config_parameters,
-                          ConfigStrings::Discovery_Enable,
-                          is_discovery_enabled);
-      
+                              ConfigStrings::Discovery_Enable,
+                              is_discovery_enabled);
+
                 pushParameter(config_parameters,
                               ConfigStrings::Discovery_Iface,
                               discovery_iface);
@@ -170,8 +170,6 @@ Dlep::initialize()
                               ConfigStrings::Discovery_Mcast_Address,
                               discovery_multicast_address.to_string());
             }
-            
-
 
             if (modem)
             {
@@ -203,7 +201,7 @@ Dlep::initialize()
             {
             }
         } //  discovery enabled
-        else
+        else if(!modem)
         {
             is_discovery_enabled += "False";
             pushParameter(config_parameters,

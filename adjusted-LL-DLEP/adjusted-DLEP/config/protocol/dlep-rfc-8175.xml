@@ -935,4 +935,6 @@ This protocol configuration file conforms to DLEP RFC 8175.
 
     <xi:include href="multi-hop-06.xml"/>
 
+    <xi:include href="pause-extension-8651.xml"/>
+
 </dlep>

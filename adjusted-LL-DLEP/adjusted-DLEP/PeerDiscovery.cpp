@@ -134,7 +134,8 @@ PeerDiscovery::get_message_to_send()
                                     "RtM",
                                     "NULL",
                                     "",
-                                    pm.get_data_items());
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
     OutLogger::send_out(out_msg.get_message());
 
     // Copy the protocol message into a DlepMessageBuffer
@@ -304,7 +305,8 @@ PeerDiscovery::handle_peer_offer(ProtocolMessage & pm,
                                     "MtR",
                                     from_endpoint.address().to_string(),
                                     "",
-                                    pm.get_data_items());
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
 
     std::cout << "after" << endl;                     
     OutLogger::send_out(out_msg.get_message());

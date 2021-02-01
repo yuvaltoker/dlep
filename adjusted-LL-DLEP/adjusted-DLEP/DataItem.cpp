@@ -8,8 +8,13 @@
 #include <map>
 #include <bitset>
 #include <boost/bimap.hpp>
+
+#include <iostream>
+
 #include "DataItem.h"
 #include "ProtocolConfig.h"
+
+using std::cout;
 
 namespace LLDLEP
 {
@@ -122,6 +127,12 @@ DataItem::set_default_value(DataItemValueType di_value_type)
             break;
         case DataItemValueType::div_u16_sub_data_items:
             value = Div_u16_sub_data_items_t {0, std::vector<DataItem>()};
+            break;
+        case DataItemValueType::div_u8_u8_u16_sub_data_items:
+            value = Div_u8_u8_u16_sub_data_items_t {0, 0, 0, std::vector<DataItem>()};
+            break;
+        case DataItemValueType::div_u8_u8_u16_u8_vu8:
+            value = Div_u8_u8_u16_u8_vu8_t {0, 0, 0, 0, std::vector<std::uint8_t>()};
             break;
     }
 }
@@ -419,6 +430,52 @@ public:
         return serialize_sub_data_items(operand.sub_data_items, buf);
     }
 
+    //yuval added:
+
+    // serialize Div_u8_u8_u16_sub_data_items_t
+    std::vector<std::uint8_t> operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
+    {
+        std::vector<std::uint8_t> buf;
+
+        // check number of sub data items
+        unsigned int num_sdis = operand.sub_data_items.size();
+        if (num_sdis > 255)
+        {
+            throw std::out_of_range(
+                "number of sub data items is " + std::to_string(num_sdis) +
+                ", must be <= 255");
+        }
+
+        buf.push_back(std::uint8_t(num_sdis));
+        LLDLEP::serialize(operand.field2, buf);
+        LLDLEP::serialize(operand.field3, buf);
+        return serialize_sub_data_items(operand.sub_data_items, buf);
+    }
+
+    //serialize Div_u8_u8_u16_u8_vu8_t
+    std::vector<std::uint8_t> operator()(const Div_u8_u8_u16_u8_vu8_t & operand) const
+    {
+        std::vector<std::uint8_t> buf;
+
+        // check number of sub data items
+        unsigned int num_sdis = operand.field5.size();
+        if (num_sdis > 255)
+        {
+            throw std::out_of_range(
+                "number of DSCPs is " + std::to_string(num_sdis) +
+                ", must be <= 255");
+        }
+
+        LLDLEP::serialize(operand.field1, buf);
+        LLDLEP::serialize(operand.field2, buf);
+        LLDLEP::serialize(operand.field3, buf);
+        buf.push_back(std::uint8_t(num_sdis)); // num of DSCPs Qn
+        //LLDLEP::serialize(num_sdis, 1, buf);
+        buf.insert(buf.end(), operand.field5.begin(), operand.field5.end());
+
+        return buf;
+    }
+
 private:
     const ProtocolConfig * protocfg;
 }; // DataItemSerializeVisitor
@@ -520,7 +577,6 @@ DataItem::deserialize_sub_data_items(
     }
     return val;
 }
-
 
 void
 DataItem::deserialize(std::vector<std::uint8_t>::const_iterator & it,
@@ -793,6 +849,45 @@ DataItem::deserialize(std::vector<std::uint8_t>::const_iterator & it,
             value = val;
             break;
         }
+        //yuval added:
+        case DataItemValueType::div_u8_u8_u16_sub_data_items:
+        {
+            Div_u8_u8_u16_sub_data_items_t val;
+            LLDLEP::deserialize(val.field1, it, di_end);
+            LLDLEP::deserialize(val.field2, it, di_end);
+            LLDLEP::deserialize(val.field3, it, di_end);
+            /*if (reserved != 0) // an idea to check for 0 in reserved, or any checking that need to be done in this data item
+            {
+                throw std::out_of_range(
+                    "reserved byte is " + std::to_string(reserved) +
+                    ", must be 0");
+            }*/
+            val.sub_data_items =
+                deserialize_sub_data_items(it, di_end, &di_info, protocfg);
+            if(val.sub_data_items.size() != val.field1) // check of the sub data items, need to be done?
+            {
+                throw std::length_error(
+                    "number of sub data items is " +
+                    std::to_string(val.sub_data_items.size()) +
+                    ", expected " + std::to_string(val.field1));
+            }
+            value = val;
+            break;
+        }
+
+        case DataItemValueType::div_u8_u8_u16_u8_vu8:
+        {
+            Div_u8_u8_u16_u8_vu8_t val;
+            LLDLEP::deserialize(val.field1, it, di_end);
+            LLDLEP::deserialize(val.field2, it, di_end);
+            LLDLEP::deserialize(val.field3, it, di_end);
+            LLDLEP::deserialize(val.field4, it, di_end);
+
+            val.field5.insert(val.field5.end(), it, di_end);
+            it = di_end;
+            value = val;
+            break;
+        }
 
         // Do not add a default: case to this switch!  We need every
         // enum value to have a corresponding case so that values of
@@ -1024,6 +1119,19 @@ public:
         ss << "} ";
     }
 
+    //yuval added
+    void sub_data_items_to_string_2(const std::vector<DataItem> & sub_data_items,
+                                  std::ostringstream & ss) const
+    {
+        ss << "{ ";
+        for (const DataItem & sdi : sub_data_items)
+        {
+            ss << sdi.to_string(parent_di_info) << " ";
+        }
+        ss << "} ";
+    }
+    // end of yuval add
+    
     // to_string Div_sub_data_items_t
     std::string operator()(const Div_sub_data_items_t & operand) const
     {
@@ -1040,6 +1148,40 @@ public:
 
         ss << operand.field1 << ";";
         sub_data_items_to_string(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
+    //yuval added:
+    // to_string Div_u8_u8_u16_sub_data_items_t
+    std::string operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
+    {
+        std::ostringstream ss;
+        std::uint8_t scale = std::uint8_t(operand.field2); // copy the value of field 2
+        scale >>= 4; // creating the pure value of scale b pushing it toward the low octet
+        ss << unsigned(std::uint8_t(operand.field1)) << ";";
+        ss << unsigned(std::uint8_t(scale)) << ";";
+        ss << unsigned(std::uint16_t(operand.field3)) << ";";
+        sub_data_items_to_string_2(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
+    // to_string Div_u8_u8_u16_u8_vu8_t
+    std::string operator()(const Div_u8_u8_u16_u8_vu8_t & operand) const
+    {
+        std::ostringstream ss;
+        std::uint32_t queue_size = std::uint32_t(operand.field2);
+        queue_size <<= 16; // moving the high part of queue size (field2)
+        queue_size += std::uint32_t(operand.field3); // add the low part of queue size (field 3)
+
+        ss << unsigned(std::uint8_t(operand.field1)) << ";";
+        ss << unsigned(std::uint32_t(queue_size)) << ";";
+        ss << unsigned(std::uint8_t(operand.field4)) << ";";
+        std::string comma = "";
+        for (auto & x : operand.field5)
+        {
+            ss << comma << std::to_string(std::uint64_t(x));
+            comma = ",";
+        }
         return ss.str();
     }
 
@@ -1453,6 +1595,36 @@ public:
         return sdi;
     }
 
+    // yuval added:
+
+    // from_stringstream to Div_u8_u8_u16_sub_data_items_t
+    // This should never get called because sub data items are handled
+    // directly in from_istringstream()
+    DataItemValue operator()(const Div_u8_u8_u16_sub_data_items_t &  /*operand*/) const
+    {
+        Div_u8_u8_u16_sub_data_items_t sdi;
+        return sdi;
+    }
+
+    // from_stringstream to Div_u8_u8_u16_u8_vu8_t
+    DataItemValue operator()(const Div_u8_u8_u16_u8_vu8_t &  /*operand*/) const
+    {
+        Div_u8_u8_u16_u8_vu8_t u8u8u16u8vu8;
+
+        u8u8u16u8vu8.field1 = parse_uint<decltype(u8u8u16u8vu8.field1)>();
+        check_field_separator(ss);
+        u8u8u16u8vu8.field2 = parse_uint<decltype(u8u8u16u8vu8.field2)>();
+        check_field_separator(ss);
+        u8u8u16u8vu8.field3 = parse_uint<decltype(u8u8u16u8vu8.field3)>();
+        check_field_separator(ss);
+        u8u8u16u8vu8.field4 = parse_uint<decltype(u8u8u16u8vu8.field4)>();
+        check_field_separator(ss);
+
+
+        u8u8u16u8vu8.field5 = parse_vector<std::uint8_t>();
+        return u8u8u16u8vu8;
+    }
+
 private:
     // stringstream to parse
     std::istringstream & ss;
@@ -1544,11 +1716,32 @@ DataItem::from_istringstream(std::istringstream & ss,
         check_field_separator(ss);
         div.sub_data_items = sub_data_items_from_istringstream(ss, di_info);
         value = div;
-    }
-    else // value does not contain sub data items
+    }//yuval added:
+    else if(di_info.value_type == DataItemValueType::div_u8_u8_u16_sub_data_items)
     {
-        set_default_value(di_info.value_type);
-        value_from_istringstream(ss);
+        Div_u8_u8_u16_sub_data_items_t div;
+
+        DataItem di_u16(protocfg);
+        DataItem di_u8(protocfg);
+        di_u16.set_default_value(DataItemValueType::div_u16);
+        di_u8.set_default_value(DataItemValueType::div_u8);
+
+        // Extract a u8/u16 value one by another from the ss stream and put it in div.fieldX
+
+        di_u8.value_from_istringstream(ss);
+        div.field1 = boost::get<std::uint8_t>(di_u8.value);
+
+        check_field_separator(ss);
+        di_u8.value_from_istringstream(ss);
+        div.field2 = boost::get<std::uint8_t>(di_u8.value);
+
+        check_field_separator(ss);
+        di_u16.value_from_istringstream(ss);
+        div.field3 = boost::get<std::uint16_t>(di_u16.value);
+
+        check_field_separator(ss);
+        div.sub_data_items = sub_data_items_from_istringstream(ss, di_info);
+        value = div;
     }
 }
 
@@ -1713,6 +1906,19 @@ public:
     std::string operator()(const Div_u16_sub_data_items_t & operand) const
     {
         return validate_sub_data_items(operand.sub_data_items);
+    }
+
+    std::string operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
+    {
+        //return validate_sub_data_items(operand.sub_data_items);
+        return "";
+        // For future editing in case of validating the values of this data item
+    }
+
+    std::string operator()(const Div_u8_u8_u16_u8_vu8_t & operand) const
+    {
+        return "";
+        // For future editing in case of validating the values of this data item
     }
 
 private:
@@ -2013,7 +2219,10 @@ static std::vector<DataItemValueMap::value_type> mapvals
     { DataItemValueType::div_u8_u8, "u8_u8" },
     { DataItemValueType::div_u64_u64, "u64_u64" },
     { DataItemValueType::div_sub_data_items, "sub_data_items" },
-    { DataItemValueType::div_u16_sub_data_items, "u16_sub_data_items" }
+    { DataItemValueType::div_u16_sub_data_items, "u16_sub_data_items" },
+    //yuval added:
+    { DataItemValueType::div_u8_u8_u16_sub_data_items, "u8_u8_u16_sub_data_items" },
+    { DataItemValueType::div_u8_u8_u16_u8_vu8, "u8_u8_u16_u8_vu8" }
 };
 
 static DataItemValueMap data_item_value_type_map(mapvals.begin(),

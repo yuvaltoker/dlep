@@ -4,6 +4,7 @@
 #include <iostream>
 #include "DataItem.h"
 #include "OutLoggerMsg.h"
+#include "ProtocolConfig.h"
 
 namespace LLDLEP
 {
@@ -19,7 +20,8 @@ public:
                             const std::string & direction,
                             const std::string & modem_address,
                             const std::string & error,
-                            const LLDLEP::DataItems & msg_data_items);
+                            const LLDLEP::DataItems & msg_data_items,
+                            LLDLEP::ProtocolConfig * protocfg);
 
     ~ProgressionOutLoggerMsg();
 
@@ -34,6 +36,7 @@ private:
     std::string modem_address;
     std::string error;
     LLDLEP::DataItems msg_data_items;
+    LLDLEP::ProtocolConfig * protocfg;
     
     void build_message();
     void add_status_to_message();

@@ -820,7 +820,8 @@ Peer::start_peer()
                                         "RtM",
                                         get_peer_endpoint_tcp_ip_address(),
                                         "",
-                                        pm.get_data_items());
+                                        pm.get_data_items(),
+                                        dlep->protocfg);
         OutLogger::send_out(out_msg.get_message());
 
         send_message_expecting_response(rp);
@@ -946,7 +947,8 @@ Peer::handle_heartbeat_timeout(const boost::system::error_code & error)
                                             "RtM",
                                             get_peer_endpoint_tcp_ip_address(),
                                             "",
-                                            heartbeat_msg->get_data_items());
+                                            heartbeat_msg->get_data_items(),
+                                            dlep->protocfg);
             OutLogger::send_out(out_msg.get_message());
         }
         
@@ -1108,6 +1110,14 @@ Peer::send_peer_initialization_response()
     // Add default metrics
 
     pm.add_allowed_data_items(dlep->local_pdp->get_data_items());
+
+    // Add Queue Parameters in case of mutual pause extension supported (Pause Extension id is 2)
+
+    if (std::count(mutual_extensions.begin(), mutual_extensions.end(), 2))
+    {
+        // an example of queue parameters data item
+        pm.add_queue_parameters(dlep->dlep_client);
+    }
 
     // A freshly built message should be parsable.  However, this
     // message contains data items that originated from the client, and
@@ -1307,7 +1317,8 @@ Peer::handle_peer_initialization_response(ProtocolMessage & pm)
                                     "MtR",
                                     get_peer_endpoint_tcp_ip_address(),
                                     "",
-                                    pm.get_data_items());
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
     OutLogger::send_out(out_msg.get_message());
 
     // get optional peer type from the message
@@ -1386,7 +1397,8 @@ Peer::handle_peer_update(ProtocolMessage & pm)
                                     "MtR",
                                     get_peer_endpoint_tcp_ip_address(),
                                     "",
-                                    pm.get_data_items());
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
     OutLogger::send_out(out_msg.get_message());
     
     if (status_message != "")
@@ -1469,7 +1481,8 @@ Peer::handle_destination_up(ProtocolMessage & pm)
                                             "MtR",
                                             get_peer_endpoint_tcp_ip_address(),
                                             "",
-                                            pm.get_data_items());
+                                            pm.get_data_items(),
+                                            dlep->protocfg);
             OutLogger::send_out(out_msg.get_message());
         }
 
@@ -1757,7 +1770,8 @@ Peer::handle_destination_down(ProtocolMessage & pm)
                                     "MtR",
                                     get_peer_endpoint_tcp_ip_address(),
                                     "",
-                                    pm.get_data_items());
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
     OutLogger::send_out(out_msg.get_message());
 
     bool ok = peer_pdp->removeDestination(destination_mac, false);

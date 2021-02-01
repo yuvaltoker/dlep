@@ -307,6 +307,11 @@ This protocol configuration file conforms to DLEP draft 29.
                 <name>IPv6_Attached_Subnet</name>
                 <occurs>0+</occurs>
             </data_item>
+
+            <data_item>
+                <name>Queue_Parameters</name>
+                <occurs>0+</occurs>
+            </data_item>
         </signal>
 
         <signal>
@@ -433,6 +438,16 @@ This protocol configuration file conforms to DLEP draft 29.
 
             <data_item>
                 <name>Maximum_Transmission_Unit</name>
+                <occurs>0-1</occurs>
+            </data_item>
+
+            <data_item>
+                <name>Pause</name>
+                <occurs>0-1</occurs>
+            </data_item>
+
+            <data_item>
+                <name>Restart</name>
                 <occurs>0-1</occurs>
             </data_item>
         </signal>
@@ -917,6 +932,8 @@ This protocol configuration file conforms to DLEP draft 29.
         </status_code>
 
     </module>
+
+    <xi:include href="pause-extension-8651.xml"/>
 
     <!--
         Include extension modules like this:
