@@ -424,11 +424,13 @@ ProtocolMessage::add_queue_parameters(DlepClient & dlep_client)
     
     DataItem sub_data1 {ProtocolStrings::Queue_Parameter,
                        div1,
-                       protocfg};
+                       protocfg,
+                       &di_info};
 
     DataItem sub_data2 {ProtocolStrings::Queue_Parameter,
                        div2,
-                       protocfg};
+                       protocfg,
+                       &di_info};
 
     sub_data_items_parameters.push_back(sub_data1);
     sub_data_items_parameters.push_back(sub_data2);
@@ -436,7 +438,7 @@ ProtocolMessage::add_queue_parameters(DlepClient & dlep_client)
     /*create the data item value of queue parameters*/
     Div_u8_u8_u16_sub_data_items_t div = {std::uint8_t(2), // num of queues for this example - 2
                          std::uint8_t(16), // the high octet (0001) for scale, low octet(0000) for reserved
-                         std::uint8_t(0), // reserved 0
+                         std::uint16_t(0), // reserved 0
                          sub_data_items_parameters }; // sub data items
     
     /*create the data item*/

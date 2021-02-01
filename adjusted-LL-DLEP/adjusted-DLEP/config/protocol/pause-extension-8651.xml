@@ -42,7 +42,6 @@
     <data_item>
         <name>Queue_Parameter</name>
         <type>u8_u8_u16_u8_vu8</type>
-        <id>26</id>
         <metric>false</metric>
     </data_item>
 
@@ -54,6 +53,7 @@
 
         <sub_data_item>
             <name>Queue_Parameter</name>
+            <id>1</id>
             <occurs>1+</occurs>
         </sub_data_item>
     </data_item>

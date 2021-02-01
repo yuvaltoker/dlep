@@ -8,8 +8,13 @@
 #include <map>
 #include <bitset>
 #include <boost/bimap.hpp>
+
+#include <iostream>
+
 #include "DataItem.h"
 #include "ProtocolConfig.h"
+
+using std::cout;
 
 namespace LLDLEP
 {

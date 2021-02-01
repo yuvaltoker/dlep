@@ -17,7 +17,8 @@ ProgressionOutLoggerMsg::ProgressionOutLoggerMsg(const std::string & protocol,
                                                  const std::string & direction,
                                                  const std::string & modem_address,
                                                  const std::string & error,
-                                                 const LLDLEP::DataItems & msg_data_items) :
+                                                 const LLDLEP::DataItems & msg_data_items,
+                                                 ProtocolConfig * protocfg) :
     OutLoggerMsg(protocol, "Progression"),
     status(status),
     msg_type(msg_type),
@@ -25,6 +26,7 @@ ProgressionOutLoggerMsg::ProgressionOutLoggerMsg(const std::string & protocol,
     modem_address(modem_address),
     error(error),
     msg_data_items(msg_data_items),
+    protocfg(protocfg),
     message("")
 {
 }
@@ -101,7 +103,11 @@ ProgressionOutLoggerMsg::add_error_to_message()
 void 
 ProgressionOutLoggerMsg::add_data_item_to_message(const DataItem & di)
 {
-    message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string() + "\"";
+    const LLDLEP::DataItemInfo di_info = protocfg->get_data_item_info(di.name());
+    if (di_info.sub_data_items.size() > 0)
+        message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string(&di_info) + "\"";
+    else
+        message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string() + "\"";
 }
 
 void 
