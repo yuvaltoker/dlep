@@ -469,7 +469,8 @@ public:
         LLDLEP::serialize(operand.field1, buf);
         LLDLEP::serialize(operand.field2, buf);
         LLDLEP::serialize(operand.field3, buf);
-        buf.push_back(std::uint8_t(num_sdis)); // num of DSCPs Qn
+        LLDLEP::serialize(operand.field4, buf);
+        //buf.push_back(std::uint8_t(num_sdis)); // num of DSCPs Qn
         //LLDLEP::serialize(num_sdis, 1, buf);
         buf.insert(buf.end(), operand.field5.begin(), operand.field5.end());
 
@@ -1173,9 +1174,9 @@ public:
         queue_size <<= 16; // moving the high part of queue size (field2)
         queue_size += std::uint32_t(operand.field3); // add the low part of queue size (field 3)
 
-        ss << unsigned(std::uint8_t(operand.field1)) << ";";
-        ss << unsigned(std::uint32_t(queue_size)) << ";";
-        ss << unsigned(std::uint8_t(operand.field4)) << ";";
+        ss << std::uint64_t(operand.field1) << ";";
+        ss << std::uint64_t(queue_size) << ";";
+        ss << std::uint64_t(operand.field4) << ";";
         std::string comma = "";
         for (auto & x : operand.field5)
         {
