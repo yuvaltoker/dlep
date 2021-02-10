@@ -44,6 +44,7 @@ ProgressionOutLoggerMsg::ProgressionOutLoggerMsg(const std::string & protocol,
     direction(direction),
     modem_address(modem_address),
     error(error),
+    msg_data_items(),
     message("")
 {
 }
@@ -76,11 +77,11 @@ ProgressionOutLoggerMsg::build_message()
     message += "\n    ";
     add_modem_address_to_message();
     message += "\n    ";
-    if(status == "S")
+    if(protocfg != nullptr)
     {
         add_data_items_to_message();
     }
-    else
+    if(error != "")
     {
         add_error_to_message();
     } 

@@ -335,7 +335,9 @@ Peer::handle_response(const ProtocolMessage & pm)
                                         pm.get_signal_name(),
                                         "MtR",
                                         get_peer_endpoint_tcp_ip_address(),
-                                        msg.str());
+                                        msg.str(),
+                                        pm.get_data_items(),
+                                        dlep->protocfg);
                 OutLogger::send_out(out_msg.get_message());
             }
         }
@@ -360,7 +362,9 @@ Peer::handle_response(const ProtocolMessage & pm)
                                     pm.get_signal_name(),
                                     "MtR",
                                     get_peer_endpoint_tcp_ip_address(),
-                                    msg.str());
+                                    msg.str(),
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
             OutLogger::send_out(out_msg.get_message());
         }
 
@@ -1800,10 +1804,12 @@ Peer::handle_destination_update(ProtocolMessage & pm)
         {
             ProgressionOutLoggerMsg out_msg("DLEP",
                                     "F",
-                                    pm.get_signal_name,
+                                    pm.get_signal_name(),
                                     "MtR",
                                     get_peer_endpoint_tcp_ip_address(),
-                                    msg.str());
+                                    msg.str(),
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
             OutLogger::send_out(out_msg.get_message());
         }
 
@@ -1850,7 +1856,9 @@ Peer::handle_destination_down(ProtocolMessage & pm)
                                             LLDLEP::ProtocolStrings::Destination_Down,
                                             "MtR",
                                             get_peer_endpoint_tcp_ip_address(),
-                                            msg.str());
+                                            msg.str(),
+                                            pm.get_data_items(),
+                                            dlep->protocfg);
             OutLogger::send_out(out_msg.get_message());
 
             terminate(ProtocolStrings::Invalid_Destination, msg.str());
@@ -1918,7 +1926,9 @@ Peer::handle_link_characteristics_request(ProtocolMessage & pm)
                                     pm.get_signal_name(),
                                     "MtR",
                                     get_peer_endpoint_tcp_ip_address(),
-                                    msg.str());
+                                    msg.str(),
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
             OutLogger::send_out(out_msg.get_message());
         }
 
@@ -1988,7 +1998,9 @@ Peer::handle_link_characteristics_response(ProtocolMessage & pm)
                                     pm.get_signal_name(),
                                     "MtR",
                                     get_peer_endpoint_tcp_ip_address(),
-                                    msg.str());
+                                    msg.str(),
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
             OutLogger::send_out(out_msg.get_message());
         }
 
@@ -2040,7 +2052,9 @@ Peer::check_status_code_failure(ProtocolMessage & pm)
                                             pm.get_signal_name(),
                                             "MtR",
                                             get_peer_endpoint_tcp_ip_address(),
-                                            msg.str());
+                                            msg.str(),
+                                            pm.get_data_items(),
+                                            dlep->protocfg);
                     OutLogger::send_out(out_msg.get_message());
                 }
 
