@@ -327,6 +327,17 @@ Peer::handle_response(const ProtocolMessage & pm)
                 << expected_response->response_name
                 << " got " << received_response_name;
             LOG(DLEP_LOG_ERROR, msg);
+
+            if(! dlep -> is_modem())
+            {
+                ProgressionOutLoggerMsg out_msg("DLEP",
+                                        "F",
+                                        pm.get_signal_name(),
+                                        "MtR",
+                                        get_peer_endpoint_tcp_ip_address(),
+                                        msg.str());
+                OutLogger::send_out(out_msg.get_message());
+            }
         }
     }
     catch (const std::exception &)
@@ -341,6 +352,18 @@ Peer::handle_response(const ProtocolMessage & pm)
     {
         msg << "unexpected " << received_response_name;
         LOG(DLEP_LOG_ERROR, msg);
+
+        if(! dlep -> is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                    "F",
+                                    pm.get_signal_name(),
+                                    "MtR",
+                                    get_peer_endpoint_tcp_ip_address(),
+                                    msg.str());
+            OutLogger::send_out(out_msg.get_message());
+        }
+
         terminate(ProtocolStrings::Unexpected_Message,
                   received_response_name);
     }
@@ -391,6 +414,18 @@ Peer::check_for_activity(std::time_t current_time)
             << " has been inactive for " << current_time - active_time
             << " seconds; terminating peer";
         LOG(DLEP_LOG_ERROR, msg);
+
+        if(! dlep -> is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                    "F",
+                                    ProtocolStrings::Timed_Out,
+                                    "MtR",
+                                    get_peer_endpoint_tcp_ip_address(),
+                                    msg.str());
+            OutLogger::send_out(out_msg.get_message());
+        }
+
         terminate(ProtocolStrings::Timed_Out, msg.str());
         return false;
     }
@@ -450,6 +485,18 @@ Peer::check_for_retransmits(std::time_t current_time)
                         << expected_response->response_name
                         << ", terminating peer";
                     LOG(DLEP_LOG_ERROR, msg);
+
+                    if(! dlep -> is_modem())
+                    {
+                        ProgressionOutLoggerMsg out_msg("DLEP",
+                                                "F",
+                                                ProtocolStrings::Timed_Out,
+                                                "MtR",
+                                                get_peer_endpoint_tcp_ip_address(),
+                                                msg.str());
+                        OutLogger::send_out(out_msg.get_message());
+                    }
+
                     terminate(ProtocolStrings::Timed_Out, msg.str());
                     break;
                 }
@@ -1748,6 +1795,18 @@ Peer::handle_destination_update(ProtocolMessage & pm)
     {
         msg << " unknown mac=" << destination_mac;
         LOG(DLEP_LOG_ERROR, msg);
+
+        if(! dlep -> is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                    "F",
+                                    pm.get_signal_name,
+                                    "MtR",
+                                    get_peer_endpoint_tcp_ip_address(),
+                                    msg.str());
+            OutLogger::send_out(out_msg.get_message());
+        }
+
         terminate(ProtocolStrings::Invalid_Message);
     }
 }
@@ -1761,18 +1820,6 @@ Peer::handle_destination_down(ProtocolMessage & pm)
 
     msg << "from peer=" << peer_id << " destination=" << destination_mac;
     LOG(DLEP_LOG_INFO, msg);
-
-    // Copy the received protocol message into an OutLoggerMsg, then send it out
-
-    ProgressionOutLoggerMsg out_msg("DLEP",
-                                    "S",
-                                    LLDLEP::ProtocolStrings::Destination_Down,
-                                    "MtR",
-                                    get_peer_endpoint_tcp_ip_address(),
-                                    "",
-                                    pm.get_data_items(),
-                                    dlep->protocfg);
-    OutLogger::send_out(out_msg.get_message());
 
     bool ok = peer_pdp->removeDestination(destination_mac, false);
     if (! ok)
@@ -1795,9 +1842,34 @@ Peer::handle_destination_down(ProtocolMessage & pm)
             msg << "destination=" << destination_mac
                 << " does not exist, terminating peer=" << peer_id;
             LOG(DLEP_LOG_ERROR, msg);
+
+            // Copy the received protocol message into an OutLoggerMsg, then send it out
+
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                            "F",
+                                            LLDLEP::ProtocolStrings::Destination_Down,
+                                            "MtR",
+                                            get_peer_endpoint_tcp_ip_address(),
+                                            msg.str());
+            OutLogger::send_out(out_msg.get_message());
+
             terminate(ProtocolStrings::Invalid_Destination, msg.str());
             return;
         }
+    }
+    else
+    {
+        // Copy the received protocol message into an OutLoggerMsg, then send it out
+
+        ProgressionOutLoggerMsg out_msg("DLEP",
+                                        "S",
+                                        LLDLEP::ProtocolStrings::Destination_Down,
+                                        "MtR",
+                                        get_peer_endpoint_tcp_ip_address(),
+                                        "",
+                                        pm.get_data_items(),
+                                        dlep->protocfg);
+        OutLogger::send_out(out_msg.get_message());
     }
 
     DataItems data_items = pm.get_data_items_no_mac();
@@ -1838,6 +1910,18 @@ Peer::handle_link_characteristics_request(ProtocolMessage & pm)
     {
         msg << "destination " << destination_mac << " is invalid";
         LOG(DLEP_LOG_ERROR, msg);
+
+        if(! dlep -> is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                    "F",
+                                    pm.get_signal_name(),
+                                    "MtR",
+                                    get_peer_endpoint_tcp_ip_address(),
+                                    msg.str());
+            OutLogger::send_out(out_msg.get_message());
+        }
+
         terminate(ProtocolStrings::Invalid_Destination, msg.str());
         return;
     }
@@ -1896,6 +1980,18 @@ Peer::handle_link_characteristics_response(ProtocolMessage & pm)
     {
         msg << "destination " << destination_mac << " is invalid";
         LOG(DLEP_LOG_ERROR, msg);
+
+        if(! dlep -> is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                    "F",
+                                    pm.get_signal_name(),
+                                    "MtR",
+                                    get_peer_endpoint_tcp_ip_address(),
+                                    msg.str());
+            OutLogger::send_out(out_msg.get_message());
+        }
+
         terminate(ProtocolStrings::Invalid_Destination, msg.str());
     }
 }
@@ -1936,6 +2032,17 @@ Peer::check_status_code_failure(ProtocolMessage & pm)
                     << " from peer=" << peer_id
                     << " contained termination status=" << status_name;
                 LOG(DLEP_LOG_ERROR, msg);
+
+                if(! dlep -> is_modem())
+                {
+                    ProgressionOutLoggerMsg out_msg("DLEP",
+                                            "F",
+                                            pm.get_signal_name(),
+                                            "MtR",
+                                            get_peer_endpoint_tcp_ip_address(),
+                                            msg.str());
+                    OutLogger::send_out(out_msg.get_message());
+                }
 
                 // the same status code gets echoed back to the peer
                 terminate(status_name, msg.str());

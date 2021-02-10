@@ -31,6 +31,23 @@ ProgressionOutLoggerMsg::ProgressionOutLoggerMsg(const std::string & protocol,
 {
 }
 
+// constructor with out data items for when an error occurs
+ProgressionOutLoggerMsg::ProgressionOutLoggerMsg(const std::string & protocol,
+                                                 const std::string & status,
+                                                 const std::string & msg_type,
+                                                 const std::string & direction,
+                                                 const std::string & modem_address,
+                                                 const std::string & error) :
+    OutLoggerMsg(protocol, "Progression"),
+    status(status),
+    msg_type(msg_type),
+    direction(direction),
+    modem_address(modem_address),
+    error(error),
+    message("")
+{
+}
+
 ProgressionOutLoggerMsg::~ProgressionOutLoggerMsg()
 {
     

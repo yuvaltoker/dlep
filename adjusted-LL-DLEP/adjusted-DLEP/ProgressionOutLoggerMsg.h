@@ -23,6 +23,13 @@ public:
                             const LLDLEP::DataItems & msg_data_items,
                             LLDLEP::ProtocolConfig * protocfg);
 
+    ProgressionOutLoggerMsg(const std::string & protocol,
+                            const std::string & status,
+                            const std::string & msg_type,
+                            const std::string & direction,
+                            const std::string & modem_address,
+                            const std::string & error);
+
     ~ProgressionOutLoggerMsg();
 
     std::string get_message();
