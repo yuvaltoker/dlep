@@ -2088,6 +2088,20 @@ Peer::handle_peer_signal(uint8_t * buf, std::size_t buflen)
     {
         msg << "invalid message: " << err << ", terminating peer=" << peer_id;
         LOG(DLEP_LOG_ERROR, msg);
+
+        if(! dlep -> is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                    "F",
+                                    pm.get_signal_name(),
+                                    "MtR",
+                                    get_peer_endpoint_tcp_ip_address(),
+                                    msg.str(),
+                                    pm.get_data_items(),
+                                    dlep->protocfg);
+            OutLogger::send_out(out_msg.get_message());
+        }
+
         terminate(ProtocolStrings::Invalid_Message, err);
         return;
     }
