@@ -81,6 +81,7 @@ ProgressionOutLoggerMsg::build_message()
     {
         add_data_items_to_message();
     }
+    message += "\n    ";
     if(error != "")
     {
         add_error_to_message();

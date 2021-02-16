@@ -1,2 +1,4 @@
 # ignoring object files
 *.o
+#ignore build files
+adjusted-LL-DLEP/adjusted-DLEP/build/
