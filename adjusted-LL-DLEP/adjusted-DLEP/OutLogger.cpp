@@ -1,4 +1,5 @@
 #include "OutLogger.h"
+#include "OutLoggerEnviromentVariables.h"
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
@@ -23,8 +24,8 @@ OutLogger::connect()
         //tcp::socket socket(io_service);
      
         // Creating a resolver's query.
-        boost::asio::ip::tcp::resolver::query resolver_query(OutLogger::host,
-                                                             OutLogger::port,
+        boost::asio::ip::tcp::resolver::query resolver_query(OutLogger::env_vars.get_host(),
+                                                             OutLogger::env_vars.get_port(),
                                                              boost::asio::ip::tcp::resolver::query::numeric_service);
 
         std::cout << "after resolver's query..." << endl;
@@ -103,8 +104,7 @@ OutLogger::OutLogger()
 }
 
 bool OutLogger::is_connected = false;
-std::string OutLogger::host = getenv("UI_HOST");
-std::string OutLogger::port = getenv("UI_PORT");
+LLDLEP::OutLoggerEnviromentVariables OutLogger::env_vars();
 boost::asio::ip::tcp::socket* OutLogger::sock = NULL;
 
 } // namespace internal

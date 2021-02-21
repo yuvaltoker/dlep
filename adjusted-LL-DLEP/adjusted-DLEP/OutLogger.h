@@ -4,8 +4,6 @@
 #include <iostream>
 #include <boost/asio.hpp>
 
-#include <cstdlib>
-
 namespace LLDLEP
 {
 namespace internal
@@ -24,8 +22,7 @@ public:
 private:
     OutLogger();
     static boost::asio::ip::tcp::socket* sock;
-    static std::string host;
-    static std::string port;
+    static LLDLEP::OutLoggerEnviromentVariables env_vars;
     static bool is_connected;
 };
 
