@@ -16,8 +16,8 @@ public:
 
     ~OutLoggerEnviromentVariables();
 
-    std::string get_host();
-    std::string get_port();
+    std::string get_host() const;
+    std::string get_port() const;
 
 
 private:

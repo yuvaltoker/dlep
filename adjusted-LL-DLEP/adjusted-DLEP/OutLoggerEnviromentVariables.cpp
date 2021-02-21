@@ -14,12 +14,12 @@ OutLoggerEnviromentVariables::OutLoggerEnviromentVariables()
     set_vars();
 }
 
-std::string OutLoggerEnviromentVariables::get_host()
+std::string OutLoggerEnviromentVariables::get_host() const
 {
     return host;
 }
 
-std::string OutLoggerEnviromentVariables::get_port()
+std::string OutLoggerEnviromentVariables::get_port() const
 {
     return port;
 }

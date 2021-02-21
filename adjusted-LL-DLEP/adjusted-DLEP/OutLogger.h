@@ -1,6 +1,8 @@
 #ifndef OUTLOGGER_H
 #define OUTLOGGER_H
 
+#include "OutLoggerEnviromentVariables.h"
+
 #include <iostream>
 #include <boost/asio.hpp>
 

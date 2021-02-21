@@ -1,5 +1,6 @@
-#include "OutLogger.h"
 #include "OutLoggerEnviromentVariables.h"
+#include "OutLogger.h"
+
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
