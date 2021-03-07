@@ -47,6 +47,8 @@ void
 ProgressionOutLoggerMsg::build_message()
 {
     message += "{\n    ";
+    add_timeStamp_to_message(message);
+    message += "\n    ";
     add_protocol_to_message(message);
     message += "\n    ";
     add_stage_to_message(message);

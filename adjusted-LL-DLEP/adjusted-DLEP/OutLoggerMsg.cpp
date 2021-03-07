@@ -35,6 +35,22 @@ OutLoggerMsg::add_stage_to_message(std::string & message)
     message += "\"Stage\":\"" + stage + "\"," ;
 }
 
+void
+OutLoggerMsg::add_timeStamp_to_message(std::string & message)
+{
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
+    std::string timeStamp(buffer);
+
+    message += "\"Time\":\"" + timeStamp + "\"," ;
+}
+
 } // namespace internal
 } // namespace LL-DLEP
 
