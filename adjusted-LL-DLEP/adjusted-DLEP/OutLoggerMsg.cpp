@@ -45,10 +45,16 @@ OutLoggerMsg::add_timeStamp_to_message(std::string & message)
     time (&rawtime);
     timeinfo = localtime(&rawtime);
 
+    
+
+    auto now = std::chrono::system_clock::now(); 
+    std::chrono::time_point<std::chrono::system_clock> epoch; 
+    int ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - epoch).count() % 1000;
+
     strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
     std::string timeStamp(buffer);
 
-    message += "\"Time\":\"" + timeStamp + "\"," ;
+    message += "\"Time\":\"" + timeStamp + "." + std::to_string(ms) + "\"," ;
 }
 
 } // namespace internal
