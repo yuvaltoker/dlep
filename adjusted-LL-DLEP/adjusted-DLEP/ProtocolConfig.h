@@ -421,7 +421,7 @@ extern const std::string Queue_Parameters;
 extern const std::string Queue_Parameter;
 extern const std::string Pause;
 extern const std::string Restart;
-extern const std::string Link_Identifier_length;
+extern const std::string Link_Identifier_Length;
 extern const std::string Link_Identifier;
 
 // required metrics strings

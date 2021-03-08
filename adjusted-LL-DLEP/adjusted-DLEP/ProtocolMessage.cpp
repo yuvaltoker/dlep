@@ -451,6 +451,21 @@ ProtocolMessage::add_queue_parameters(DlepClient & dlep_client)
 }
 
 void
+ProtocolMessage::add_link_identifier_length(DlepClient & dlep_client)
+{
+    std::uint16_t div;
+    div = std::uint16_t(22);
+
+    /*create the data item*/
+    DataItem di_link_identifier_length {ProtocolStrings::Link_Identifier_Length,
+                                  div, 
+                                  protocfg};
+
+    /*add the data item to message*/
+    add_data_item(di_link_identifier_length);
+}
+
+void
 ProtocolMessage::clear_data_items()
 {
     assert(header_length > 0);

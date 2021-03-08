@@ -40,7 +40,7 @@
     <!-- New data items defined by this extension. -->
 
     <data_item>
-        <name>Link_Identifier_length</name>
+        <name>Link_Identifier_Length</name>
         <type>u16</type>
         <id>26</id>
         <metric>false</metric>
