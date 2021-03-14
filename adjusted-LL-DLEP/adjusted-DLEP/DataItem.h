@@ -614,6 +614,16 @@ public:
     /// @return string representation of this data item's value.
     std::string value_to_string(const DataItemInfo * parent_di_info = nullptr) const;
 
+    /// Convert the data item to a jason string.
+    ///
+    /// @param[in] parent_di_info
+    ///            if the data item is a sub data item, this is
+    ///            a pointer to the parent data item's DataItemInfo.
+    ///            Otherwise, it must be a nullptr.
+    /// @return string representation of this data item as a jason.
+    /// The string will contain both the name and the value.
+    std::string to_jason(const DataItemInfo * parent_di_info = nullptr) const;
+
     /// Convert from string representation of the data item's name and
     /// value, and store the result in the data item.  This is the
     /// inverse function of to_string().

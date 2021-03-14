@@ -104,10 +104,14 @@ void
 ProgressionOutLoggerMsg::add_data_item_to_message(const DataItem & di)
 {
     const LLDLEP::DataItemInfo di_info = protocfg->get_data_item_info(di.name());
-    if (di_info.sub_data_items.size() > 0)
+    /*if (di_info.sub_data_items.size() > 0)
         message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string(&di_info) + "\"";
     else
-        message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string() + "\"";
+        message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string() + "\"";*/
+    if (di_info.sub_data_items.size() > 0)
+        message += di.to_jason(&di_info);
+    else
+        message += di.to_jason();
 }
 
 void 
