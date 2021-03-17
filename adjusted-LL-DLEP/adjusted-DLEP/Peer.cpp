@@ -1993,6 +1993,19 @@ Peer::handle_peer_signal(uint8_t * buf, std::size_t buflen)
     if (msgname == ProtocolStrings::Heartbeat)
     {
         handle_heartbeat(pm);
+        if(!dlep->is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                        "S",
+                                        ProtocolStrings::Heartbeat,
+                                        "MtR",
+                                        get_peer_endpoint_tcp_ip_address(),
+                                        "",
+                                        pm.get_data_items(),
+                                        dlep->protocfg);
+            OutLogger::send_out(out_msg.get_message());
+        }
+        
     }
     else if (msgname == ProtocolStrings::Destination_Update)
     {
