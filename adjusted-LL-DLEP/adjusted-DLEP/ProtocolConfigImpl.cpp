@@ -69,6 +69,9 @@ const std::string Queue_Parameters = "Queue_Parameters";
 const std::string Queue_Parameter = "Queue_Parameter";
 const std::string Pause = "Pause";
 const std::string Restart = "Restart";
+const std::string Link_Identifier_Length = "Link_Identifier_Length";
+const std::string Link_Identifier = "Link_Identifier";
+
 
 // required metrics strings
 
