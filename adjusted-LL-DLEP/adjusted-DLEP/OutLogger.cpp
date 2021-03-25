@@ -23,7 +23,7 @@ OutLogger::connect()
     {
         boost::asio::io_service io_service;
         //tcp::socket socket(io_service);
-     
+        
         // Creating a resolver's query.
         boost::asio::ip::tcp::resolver::query resolver_query(OutLogger::env_vars.get_host(),
                                                              OutLogger::env_vars.get_port(),
@@ -105,7 +105,7 @@ OutLogger::OutLogger()
 }
 
 bool OutLogger::is_connected = false;
-LLDLEP::OutLoggerEnviromentVariables OutLogger::env_vars();
+LLDLEP::internal::OutLoggerEnviromentVariables env_vars();
 boost::asio::ip::tcp::socket* OutLogger::sock = NULL;
 
 } // namespace internal

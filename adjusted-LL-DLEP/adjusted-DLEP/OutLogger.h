@@ -23,8 +23,9 @@ public:
 
 private:
     OutLogger();
+    
     static boost::asio::ip::tcp::socket* sock;
-    static LLDLEP::OutLoggerEnviromentVariables env_vars;
+    static LLDLEP::internal::OutLoggerEnviromentVariables env_vars;
     static bool is_connected;
 };
 
