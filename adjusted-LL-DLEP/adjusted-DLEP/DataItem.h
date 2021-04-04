@@ -1,8 +1,8 @@
-/*
- * Dynamic Link Exchange Protocol (DLEP)
- *
- * Copyright (C) 2015, 2016, 2018, 2019 Massachusetts Institute of Technology
- */
+
+ // Dynamic Link Exchange Protocol (DLEP)
+ // Copyright (C) 2015, 2016, 2018, 2019 Massachusetts Institute of Technology
+
+
 
 /// @file
 /// DLEP Data Item class and supporting declarations
