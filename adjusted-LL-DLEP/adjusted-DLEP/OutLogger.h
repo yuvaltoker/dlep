@@ -15,18 +15,18 @@ class OutLogger
 {
 public:
 
-    static bool connect();
+    bool connect();
 
-    static void close();
+    void close();
 
-    static bool send_out(const std::string & mesage);
+    bool send_out(const std::string & mesage);
 
 private:
     OutLogger();
     
-    static boost::asio::ip::tcp::socket* sock;
-    static LLDLEP::internal::OutLoggerEnviromentVariables env_vars;
-    static bool is_connected;
+    boost::asio::ip::tcp::socket* sock;
+    LLDLEP::internal::OutLoggerEnviromentVariables env_vars;
+    bool is_connected;
 };
 
 } // namespace internal

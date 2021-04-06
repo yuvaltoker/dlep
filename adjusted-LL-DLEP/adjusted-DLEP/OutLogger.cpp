@@ -15,6 +15,18 @@ namespace LLDLEP
 namespace internal
 {
 
+OutLogger::OutLogger() :
+    sock(NULL,
+    is_connected(false),
+    env_vars(new LLDLEP::internal::OutLoggerEnviromentVariables())
+{
+}
+OutLogger::~OutLogger()
+{
+    delete env_vars;
+}
+
+
 bool 
 OutLogger::connect()
 {
@@ -25,8 +37,8 @@ OutLogger::connect()
         //tcp::socket socket(io_service);
         
         // Creating a resolver's query.
-        boost::asio::ip::tcp::resolver::query resolver_query(OutLogger::env_vars.get_host(),
-                                                             OutLogger::env_vars.get_port(),
+        boost::asio::ip::tcp::resolver::query resolver_query(env_vars.get_host(),
+                                                             env_vars.get_port(),
                                                              boost::asio::ip::tcp::resolver::query::numeric_service);
 
         std::cout << "after resolver's query..." << endl;
