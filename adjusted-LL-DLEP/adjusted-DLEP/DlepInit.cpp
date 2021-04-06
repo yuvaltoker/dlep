@@ -15,11 +15,15 @@
 #include "DlepInit.h"
 #include "DlepServiceImpl.h"
 #include "DlepClient.h"
+#include "OutLogger.h"
 
 using namespace std;
+using namespace LLDLEP::internal;
 
 namespace LLDLEP
 {
+
+LLDLEP::internal::OutLogger out_logger(); // yuval added
 
 DlepService *
 DlepInit(DlepClient & dlep_client)
@@ -62,7 +66,6 @@ DlepInit(DlepClient & dlep_client)
         return nullptr;
     }
 
-    LLDLEP::OutLogger out_logger(); // yuval added
 
     // Now that logging is set up, fetch some more parameters we need
     // to get started.  If they're missing, the error will go to the

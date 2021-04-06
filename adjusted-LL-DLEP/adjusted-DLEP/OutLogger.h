@@ -14,6 +14,9 @@ namespace internal
 class OutLogger
 {
 public:
+    OutLogger();
+
+    ~OutLogger();
 
     bool connect();
 
@@ -22,10 +25,9 @@ public:
     bool send_out(const std::string & mesage);
 
 private:
-    OutLogger();
     
     boost::asio::ip::tcp::socket* sock;
-    LLDLEP::internal::OutLoggerEnviromentVariables env_vars;
+    LLDLEP::internal::OutLoggerEnviromentVariables* env_vars;
     bool is_connected;
 };
 
