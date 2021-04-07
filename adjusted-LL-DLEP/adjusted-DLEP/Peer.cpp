@@ -1173,6 +1173,14 @@ Peer::send_peer_initialization_response()
         pm.add_queue_parameters(dlep->dlep_client);
     }
 
+    // Add Link Identifier Length in case of mutual lid extension supported (lid Extension id is 3)
+
+    if (std::count(mutual_extensions.begin(), mutual_extensions.end(), 3))
+    {
+        // an example of link identifier length data item
+        pm.add_link_identifier_length(dlep->dlep_client);
+    }
+
     // A freshly built message should be parsable.  However, this
     // message contains data items that originated from the client, and
     // they could be invalid.  So we parse and validate the message before
@@ -2130,6 +2138,19 @@ Peer::handle_peer_signal(uint8_t * buf, std::size_t buflen)
     if (msgname == ProtocolStrings::Heartbeat)
     {
         handle_heartbeat(pm);
+        if(!dlep->is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                        "S",
+                                        ProtocolStrings::Heartbeat,
+                                        "MtR",
+                                        get_peer_endpoint_tcp_ip_address(),
+                                        "",
+                                        pm.get_data_items(),
+                                        dlep->protocfg);
+            OutLogger::send_out(out_msg.get_message());
+        }
+        
     }
     else if (msgname == ProtocolStrings::Destination_Update)
     {

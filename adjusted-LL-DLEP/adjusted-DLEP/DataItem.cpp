@@ -1220,7 +1220,318 @@ DataItem::value_to_string(const DataItemInfo * parent_di_info) const
 {
     return boost::apply_visitor(DataItemToStringVisitor(parent_di_info), value);
 }
+//-----------------------------------------------------------------------------
+//
+// to_jason support
 
+class DataItemToJasonVisitor :
+    public boost::static_visitor< std::string >
+{
+public:
+
+    explicit DataItemToJasonVisitor(const DataItemInfo * parent_di_info, const std::string di_name) :
+        parent_di_info(parent_di_info),
+        di_name(di_name) {}
+
+    // to_jason blank
+    std::string operator()(const boost::blank &  /*operand*/) const
+    {
+        return "";
+    }
+
+    // In many places below, we cast an integer argument to uint64_t
+    // before passing it to to_jason().  The reason is that uint8_t
+    // will print as a character instead of an integer without a cast
+    // to an integer type, and we don't want that.  Some of these are
+    // template functions, so we cast to uint64_t to accommodate the
+    // largest integer type that the template might be used for.
+
+    // to_jason uintX_t
+    template <typename T>
+    std::string operator()(const T & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\""
+           << std::to_string(std::uint64_t(operand)) << "\"";
+        return ss.str();
+    }
+
+    // to_jason std::vector<uintX_t>
+    template <typename T>
+    std::string operator()(const std::vector<T> & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        std::string comma = "";
+        for (auto & x : operand)
+        {
+            ss << comma << std::to_string(std::uint64_t(x));
+            comma = ",";
+        }
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason std::array<uintX_t>
+    template <typename T, std::size_t N>
+    std::string operator()(const std::array<T, N> & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        std::string comma = "";
+        for (auto & x : operand)
+        {
+            ss << comma << std::to_string(std::uint64_t(x));
+            comma = ",";
+        }
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_v_extid
+    std::string operator()(const Div_v_extid_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        std::string comma = "";
+        for (auto & x : operand.field1)
+        {
+            ss << comma << std::to_string(std::uint64_t(x));
+            comma = ",";
+        }
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason std::string
+    std::string operator()(const std::string & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"" << operand << "\"";
+        return ss.str();
+    }
+
+    // to_jason DlepMac
+    std::string operator()(const LLDLEP::DlepMac & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"" << operand.to_string() << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u8_string_t
+    std::string operator()(const Div_u8_string_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << std::uint64_t(operand.field1) << ";" << operand.field2;
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u8_ipv4_t
+    std::string operator()(const Div_u8_ipv4_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << std::uint64_t(operand.field1) << ";"
+           << operand.field2.to_string();
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u8_ipv6_t
+    std::string operator()(const Div_u8_ipv6_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << std::uint64_t(operand.field1) << ";"
+           << operand.field2.to_string();
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u16_vu8_t
+    std::string operator()(const Div_u16_vu8_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << operand.field1 << ";";
+        std::string comma = "";
+        for (auto & x : operand.field2)
+        {
+            ss << comma << std::to_string(std::uint64_t(x));
+            comma = ",";
+        }
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u8_ipv4_u16_t
+    std::string operator()(const Div_u8_ipv4_u16_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << std::uint64_t(operand.field1) << ";"
+           << operand.field2.to_string()  << ";"
+           << operand.field3;
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u8_ipv6_u16_t
+    std::string operator()(const Div_u8_ipv6_u16_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << std::uint64_t(operand.field1) << ";"
+           << operand.field2.to_string()  << ";"
+           << operand.field3;
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u8_ipv4_u8_t
+    std::string operator()(const Div_u8_ipv4_u8_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << std::uint64_t(operand.field1) << ";"
+           << operand.field2.to_string()  << ";"
+           << std::uint64_t(operand.field3);
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u8_ipv6_u8_t
+    std::string operator()(const Div_u8_ipv6_u8_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << std::uint64_t(operand.field1) << ";"
+           << operand.field2.to_string()  << ";"
+           << std::uint64_t(operand.field3);
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u8_u8_t
+    std::string operator()(const Div_u8_u8_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << std::uint64_t(operand.field1) << ";"
+           << std::uint64_t(operand.field2);
+        ss << "\"";
+        return ss.str();
+    }
+
+    // to_jason Div_u64_u64_t
+    std::string operator()(const Div_u64_u64_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << operand.field1 << ";" << operand.field2;
+        ss << "\"";
+        return ss.str();
+    }
+
+    void sub_data_items_to_jason(const std::vector<DataItem> & sub_data_items,
+                                  std::ostringstream & ss) const
+    {
+        int i = 0;
+        ss << "[";
+        for (const DataItem & sdi : sub_data_items)
+        {
+            if(i != 0)
+                ss << ",";
+            ss << "\n                ";
+            ss << sdi.to_jason(parent_di_info) << "}";
+            i++;
+        }
+        ss << "\n        ]";
+    }
+
+    
+    // to_jason Div_sub_data_items_t
+    std::string operator()(const Div_sub_data_items_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\n        \"SubDataItems\":";
+        sub_data_items_to_jason(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
+    // to_jason Div_u16_sub_data_items_t
+    std::string operator()(const Div_u16_sub_data_items_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        ss << operand.field1;
+        ss << "\",\n        \"SubDataItems\":";
+        sub_data_items_to_jason(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
+    //yuval added:
+    // to_jason Div_u8_u8_u16_sub_data_items_t
+    std::string operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
+        std::uint8_t scale = std::uint8_t(operand.field2); // copy the value of field 2
+        scale >>= 4; // creating the pure value of scale b pushing it toward the low octet
+        ss << unsigned(std::uint8_t(operand.field1)) << ";";
+        ss << unsigned(std::uint8_t(scale)) << ";";
+        ss << unsigned(std::uint16_t(operand.field3));
+        ss << "\",\"SubDataItems\":";
+        sub_data_items_to_jason(operand.sub_data_items, ss);
+        return ss.str();
+    }
+
+    // to_jason Div_u8_u8_u16_u8_vu8_t
+    std::string operator()(const Div_u8_u8_u16_u8_vu8_t & operand) const
+    {
+        std::ostringstream ss;
+        ss << "{\"Name\":\"" << di_name << "\",\"Value\":\"";
+        std::uint32_t queue_size = std::uint32_t(operand.field2);
+        queue_size <<= 16; // moving the high part of queue size (field2)
+        queue_size += std::uint32_t(operand.field3); // add the low part of queue size (field 3)
+
+        ss << std::uint64_t(operand.field1) << ";";
+        ss << std::uint64_t(queue_size) << ";";
+        ss << std::uint64_t(operand.field4) << ";";
+        std::string comma = "";
+        for (auto & x : operand.field5)
+        {
+            ss << comma << std::to_string(std::uint64_t(x));
+            comma = ",";
+        }
+        ss << "\"";
+        return ss.str();
+    }
+
+private:
+    const DataItemInfo * parent_di_info;
+    const std::string di_name;
+}; // class DataItemToJasonVisitor
+
+std::string
+DataItem::to_jason(const DataItemInfo * parent_di_info) const
+{
+    std::ostringstream ss;
+    std::string di_name = protocfg->get_data_item_name(id, parent_di_info);
+    DataItemInfo di_info = protocfg->get_data_item_info(di_name);
+
+    if (di_info.sub_data_items.size() > 0)
+    {
+        parent_di_info = &di_info;
+    }
+
+    ss << boost::apply_visitor(DataItemToJasonVisitor(parent_di_info, di_name), value);
+    return ss.str();
+}
+//DONT FORGET TO ADD TOP LINES OF EACH METHOD TO DATAITEM_H
 //-----------------------------------------------------------------------------
 //
 // from_string support
