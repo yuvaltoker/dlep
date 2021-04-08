@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+
+    router:
+        image: test-dlep:latest
+        tty: true
+        stdin_open: true
+        depends_on: 
+            - "server"
+        networks:
+            - net1
+        environment:
+            - UI_PORT=3090
+            - UI_HOST=sam-server     
+        container_name: test-router
+            
+    modem:
+        image: test-dlep:latest
+        tty: true
+        stdin_open: true
+        depends_on: 
+            - "server"
+        networks:
+            - net1
+        container_name: test-modem
+
+    server:
+        image: samyon196/tcpsvr
+        tty: true
+        stdin_open: true
+        networks:
+            - net1
+        environment:
+            - PORT=3090
+        container_name: sam-server
+
+
+networks:
+    net1:
+        name: net1
+        driver: bridge

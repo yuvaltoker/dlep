@@ -15,7 +15,7 @@
 #include "DlepInit.h"
 #include "DlepServiceImpl.h"
 #include "DlepClient.h"
-#include "OutLogger.h"
+//#include "OutLogger.h"
 
 using namespace std;
 using namespace LLDLEP::internal;
@@ -23,7 +23,7 @@ using namespace LLDLEP::internal;
 namespace LLDLEP
 {
 
-LLDLEP::internal::OutLogger out_logger(); // yuval added
+//LLDLEP::internal::OutLogger out_logger(); // yuval added
 
 DlepService *
 DlepInit(DlepClient & dlep_client)
