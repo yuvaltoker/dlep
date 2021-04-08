@@ -10,8 +10,12 @@ services:
         networks:
             - net1
         environment:
+            - IMPLEMENTATION=router
             - UI_PORT=3090
-            - UI_HOST=sam-server     
+            - UI_HOST=sam-server
+            - DISCOVERY_IFACE=eth0
+            - DISCOVERY_INTERVAL=15
+            - HEARTBEAT_INTERVAL=10
         container_name: test-router
             
     modem:
@@ -22,6 +26,10 @@ services:
             - "server"
         networks:
             - net1
+        environment:
+            - IMPLEMENTATION=modem
+            - DISCOVERY_IFACE=eth0
+            - HEARTBEAT_INTERVAL=10
         container_name: test-modem
 
     server:
