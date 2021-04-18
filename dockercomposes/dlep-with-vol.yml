@@ -2,7 +2,7 @@ version: "3.8"
 services:
 
     router:
-        image: test-dlep-2:latest
+        image: dlep:latest
         tty: true
         stdin_open: true
         networks:
@@ -15,7 +15,7 @@ services:
         container_name: router1
             
     modem:
-        image: test-dlep-2:latest
+        image: dlep:latest
         tty: true
         stdin_open: true
         networks:

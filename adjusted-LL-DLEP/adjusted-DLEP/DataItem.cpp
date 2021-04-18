@@ -1439,11 +1439,15 @@ public:
     void sub_data_items_to_jason(const std::vector<DataItem> & sub_data_items,
                                   std::ostringstream & ss) const
     {
+        int i = 0;
         ss << "[";
         for (const DataItem & sdi : sub_data_items)
         {
+            if(i != 0)
+                ss << ",";
             ss << "\n                ";
-            ss << sdi.to_jason(parent_di_info) << "},";
+            ss << sdi.to_jason(parent_di_info) << "}";
+            i++;
         }
         ss << "\n        ]";
     }
