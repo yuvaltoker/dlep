@@ -1844,7 +1844,6 @@ Peer::handle_destination_down(ProtocolMessage & pm)
     msg << "from peer=" << peer_id << " destination=" << destination_mac;
     LOG(DLEP_LOG_INFO, msg);
 
-<<<<<<< HEAD
     // Copy the received protocol message into an OutLoggerMsg, then send it out
 
     ProgressionOutLoggerMsg out_msg("DLEP",
@@ -1858,8 +1857,6 @@ Peer::handle_destination_down(ProtocolMessage & pm)
     LLDLEP::internal::OutLogger out_logger;
     out_logger.send_out(out_msg.get_message());
 
-=======
->>>>>>> main
     bool ok = peer_pdp->removeDestination(destination_mac, false);
     if (! ok)
     {
