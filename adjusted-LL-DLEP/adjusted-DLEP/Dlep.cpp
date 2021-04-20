@@ -279,7 +279,7 @@ Dlep::initialize()
         }
         if(!modem)
         {
-            LLDLEP::internal::OutLogger out_logger;
+            //LLDLEP::internal::OutLogger out_logger;
             ConfigOutLoggerMsg out_msg("DLEP",
                                         config_parameters);
             out_logger.send_out(out_msg.get_message());

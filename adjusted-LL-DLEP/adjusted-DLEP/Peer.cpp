@@ -339,7 +339,7 @@ Peer::handle_response(const ProtocolMessage & pm)
                                         msg_log.str(),
                                         pm.get_data_items(),
                                         dlep->protocfg);
-                OutLogger::send_out(out_msg.get_message());
+                out_logger.send_out(out_msg.get_message());
             }
         }
     }
@@ -366,7 +366,7 @@ Peer::handle_response(const ProtocolMessage & pm)
                                     msg.str(),
                                     pm.get_data_items(),
                                     dlep->protocfg);
-            OutLogger::send_out(out_msg.get_message());
+            out_logger.send_out(out_msg.get_message());
         }
 
         terminate(ProtocolStrings::Unexpected_Message,
@@ -429,7 +429,7 @@ Peer::check_for_activity(std::time_t current_time)
                                     "MtR",
                                     get_peer_endpoint_tcp_ip_address(),
                                     msg_log.str());
-            OutLogger::send_out(out_msg.get_message());
+            out_logger.send_out(out_msg.get_message());
         }
 
         terminate(ProtocolStrings::Timed_Out, msg.str());
@@ -501,7 +501,7 @@ Peer::check_for_retransmits(std::time_t current_time)
                                                 "MtR",
                                                 get_peer_endpoint_tcp_ip_address(),
                                                 msg_log.str());
-                        OutLogger::send_out(out_msg.get_message());
+                        out_logger.send_out(out_msg.get_message());
                     }
 
                     terminate(ProtocolStrings::Timed_Out, msg.str());
@@ -876,7 +876,7 @@ Peer::start_peer()
                                         "",
                                         pm.get_data_items(),
                                         dlep->protocfg);
-        LLDLEP::internal::OutLogger out_logger;
+        //LLDLEP::internal::OutLogger out_logger;
         out_logger.send_out(out_msg.get_message());
 
         send_message_expecting_response(rp);
@@ -1004,7 +1004,7 @@ Peer::handle_heartbeat_timeout(const boost::system::error_code & error)
                                             "",
                                             heartbeat_msg->get_data_items(),
                                             dlep->protocfg);
-            LLDLEP::internal::OutLogger out_logger;
+            //LLDLEP::internal::OutLogger out_logger;
             out_logger.send_out(out_msg.get_message());
         }
         
@@ -1383,7 +1383,7 @@ Peer::handle_peer_initialization_response(ProtocolMessage & pm)
                                     "",
                                     pm.get_data_items(),
                                     dlep->protocfg);
-    LLDLEP::internal::OutLogger out_logger;
+    //LLDLEP::internal::OutLogger out_logger;
     out_logger.send_out(out_msg.get_message());
 
     // get optional peer type from the message
@@ -1464,7 +1464,7 @@ Peer::handle_peer_update(ProtocolMessage & pm)
                                     "",
                                     pm.get_data_items(),
                                     dlep->protocfg);
-    LLDLEP::internal::OutLogger out_logger;
+    //LLDLEP::internal::OutLogger out_logger;
     out_logger.send_out(out_msg.get_message());
     
     if (status_message != "")
@@ -1549,7 +1549,7 @@ Peer::handle_destination_up(ProtocolMessage & pm)
                                             "",
                                             pm.get_data_items(),
                                             dlep->protocfg);
-            LLDLEP::internal::OutLogger out_logger;
+            //LLDLEP::internal::OutLogger out_logger;
             out_logger.send_out(out_msg.get_message());
         }
 
@@ -1827,7 +1827,7 @@ Peer::handle_destination_update(ProtocolMessage & pm)
                                     msg_log.str(),
                                     pm.get_data_items(),
                                     dlep->protocfg);
-            OutLogger::send_out(out_msg.get_message());
+            out_logger.send_out(out_msg.get_message());
         }
 
         terminate(ProtocolStrings::Invalid_Message);
@@ -1854,7 +1854,7 @@ Peer::handle_destination_down(ProtocolMessage & pm)
                                     "",
                                     pm.get_data_items(),
                                     dlep->protocfg);
-    LLDLEP::internal::OutLogger out_logger;
+    //LLDLEP::internal::OutLogger out_logger;
     out_logger.send_out(out_msg.get_message());
 
     bool ok = peer_pdp->removeDestination(destination_mac, false);
@@ -1891,7 +1891,7 @@ Peer::handle_destination_down(ProtocolMessage & pm)
                                             msg_log.str(),
                                             pm.get_data_items(),
                                             dlep->protocfg);
-            OutLogger::send_out(out_msg.get_message());
+            out_logger.send_out(out_msg.get_message());
 
             terminate(ProtocolStrings::Invalid_Destination, msg.str());
             return;
@@ -1909,7 +1909,7 @@ Peer::handle_destination_down(ProtocolMessage & pm)
                                         "",
                                         pm.get_data_items(),
                                         dlep->protocfg);
-        OutLogger::send_out(out_msg.get_message());
+        out_logger.send_out(out_msg.get_message());
     }
 
     DataItems data_items = pm.get_data_items_no_mac();
@@ -1963,7 +1963,7 @@ Peer::handle_link_characteristics_request(ProtocolMessage & pm)
                                     msg_log.str(),
                                     pm.get_data_items(),
                                     dlep->protocfg);
-            OutLogger::send_out(out_msg.get_message());
+            out_logger.send_out(out_msg.get_message());
         }
 
         terminate(ProtocolStrings::Invalid_Destination, msg.str());
@@ -2036,7 +2036,7 @@ Peer::handle_link_characteristics_response(ProtocolMessage & pm)
                                     msg_log.str(),
                                     pm.get_data_items(),
                                     dlep->protocfg);
-            OutLogger::send_out(out_msg.get_message());
+            out_logger.send_out(out_msg.get_message());
         }
 
         terminate(ProtocolStrings::Invalid_Destination, msg.str());
@@ -2091,7 +2091,7 @@ Peer::check_status_code_failure(ProtocolMessage & pm)
                                             msg_log.str(),
                                             pm.get_data_items(),
                                             dlep->protocfg);
-                    OutLogger::send_out(out_msg.get_message());
+                    out_logger.send_out(out_msg.get_message());
                 }
 
                 // the same status code gets echoed back to the peer
@@ -2135,7 +2135,7 @@ Peer::handle_peer_signal(uint8_t * buf, std::size_t buflen)
                                     msg_log.str(),
                                     pm.get_data_items(),
                                     dlep->protocfg);
-            OutLogger::send_out(out_msg.get_message());
+            out_logger.send_out(out_msg.get_message());
         }
 
         terminate(ProtocolStrings::Invalid_Message, err);
@@ -2166,7 +2166,7 @@ Peer::handle_peer_signal(uint8_t * buf, std::size_t buflen)
                                         "",
                                         pm.get_data_items(),
                                         dlep->protocfg);
-            LLDLEP::internal::OutLogger out_logger;
+            //LLDLEP::internal::OutLogger out_logger;
             out_logger.send_out(out_msg.get_message());
         }
         
