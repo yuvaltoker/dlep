@@ -22,6 +22,8 @@ using namespace LLDLEP::internal;
 namespace LLDLEP
 {
 
+LLDLEP::internal::OutLogger out_logger;
+
 DlepService *
 DlepInit(DlepClient & dlep_client)
 {
