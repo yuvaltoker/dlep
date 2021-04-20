@@ -1,10 +1,10 @@
 #ifndef OUTLOGGER_H
 #define OUTLOGGER_H
 
-#include "OutLoggerEnviromentVariables.h"
-
 #include <iostream>
 #include <boost/asio.hpp>
+
+#include <cstdlib>
 
 namespace LLDLEP
 {
@@ -14,21 +14,19 @@ namespace internal
 class OutLogger
 {
 public:
-    OutLogger();
 
-    ~OutLogger();
+    static bool connect();
 
-    bool connect();
+    static void close();
 
-    void close();
-
-    bool send_out(const std::string & mesage);
+    static bool send_out(const std::string & mesage);
 
 private:
-    
-    boost::asio::ip::tcp::socket* sock;
-    LLDLEP::internal::OutLoggerEnviromentVariables* env_vars;
-    bool is_connected;
+    OutLogger();
+    static boost::asio::ip::tcp::socket* sock;
+    static std::string host;
+    static std::string port;
+    static bool is_connected;
 };
 
 } // namespace internal

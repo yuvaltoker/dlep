@@ -1,6 +1,4 @@
-#include "OutLoggerEnviromentVariables.h"
 #include "OutLogger.h"
-
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
@@ -15,19 +13,6 @@ namespace LLDLEP
 namespace internal
 {
 
-OutLogger::OutLogger() :
-    sock(NULL),
-    env_vars(new LLDLEP::internal::OutLoggerEnviromentVariables()),
-    is_connected(false)
-{
-}
-
-OutLogger::~OutLogger()
-{
-    delete env_vars;
-}
-
-
 bool 
 OutLogger::connect()
 {
@@ -36,10 +21,10 @@ OutLogger::connect()
     {
         boost::asio::io_service io_service;
         //tcp::socket socket(io_service);
-        
+     
         // Creating a resolver's query.
-        boost::asio::ip::tcp::resolver::query resolver_query(env_vars -> get_host(),
-                                                             env_vars -> get_port(),
+        boost::asio::ip::tcp::resolver::query resolver_query(OutLogger::host,
+                                                             OutLogger::port,
                                                              boost::asio::ip::tcp::resolver::query::numeric_service);
 
         std::cout << "after resolver's query..." << endl;
@@ -113,9 +98,14 @@ OutLogger::send_out(const std::string & message)
     return true;
 }
 
-/*bool OutLogger::is_connected = false;
-LLDLEP::internal::OutLoggerEnviromentVariables env_vars();
-boost::asio::ip::tcp::socket* OutLogger::sock = NULL;*/
+OutLogger::OutLogger()
+{
+}
+
+bool OutLogger::is_connected = false;
+std::string OutLogger::host = getenv("UI_HOST");
+std::string OutLogger::port = getenv("UI_PORT");
+boost::asio::ip::tcp::socket* OutLogger::sock = NULL;
 
 } // namespace internal
 } // namespace LL-DLEP

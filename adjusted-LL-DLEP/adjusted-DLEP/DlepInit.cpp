@@ -17,7 +17,6 @@
 #include "DlepClient.h"
 
 using namespace std;
-using namespace LLDLEP::internal;
 
 namespace LLDLEP
 {
@@ -64,7 +63,6 @@ DlepInit(DlepClient & dlep_client)
         std::cerr << iae.what() << std::endl;
         return nullptr;
     }
-
 
     // Now that logging is set up, fetch some more parameters we need
     // to get started.  If they're missing, the error will go to the

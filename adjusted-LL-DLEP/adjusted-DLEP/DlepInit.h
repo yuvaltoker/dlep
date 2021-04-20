@@ -12,10 +12,6 @@
 
 #include "DlepClient.h"
 #include "DlepService.h"
-#include "OutLogger.h"
-
-using namespace LLDLEP;
-using namespace LLDLEP::internal;
 
 /// All client-visible identifiers necessary to use the DLEP Service Library
 /// are in this namespace.
