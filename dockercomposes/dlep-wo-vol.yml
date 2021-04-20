@@ -2,7 +2,7 @@ version: "3.8"
 services:
 
     router:
-        image: yuvaltoker/adjusted-dlep:1.1.10
+        image: yuvaltoker/adjusted-dlep:1.1.9
         #build:
         #    context: ..
         #    dockerfile: ../dockerfiles/build-dlep-enviroment-dockerfile
