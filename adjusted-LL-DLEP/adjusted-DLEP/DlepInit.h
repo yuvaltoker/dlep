@@ -23,8 +23,6 @@ using namespace LLDLEP::internal;
 /// not in this namespace, you are most likely doing something wrong.
 namespace LLDLEP
 {
-    //LLDLEP::internal::OutLogger out_logger_object;
-    //LLDLEP::internal::OutLogger* out_logger = &out_logger_object;
     extern LLDLEP::internal::OutLogger out_logger;
 
 /// Main entry point into the DLEP Service library.
