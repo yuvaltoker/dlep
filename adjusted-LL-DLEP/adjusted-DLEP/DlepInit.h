@@ -12,10 +12,6 @@
 
 #include "DlepClient.h"
 #include "DlepService.h"
-#include "OutLogger.h"
-
-using namespace LLDLEP;
-using namespace LLDLEP::internal;
 
 /// All client-visible identifiers necessary to use the DLEP Service Library
 /// are in this namespace.
@@ -23,8 +19,6 @@ using namespace LLDLEP::internal;
 /// not in this namespace, you are most likely doing something wrong.
 namespace LLDLEP
 {
-
-    extern LLDLEP::internal::OutLogger out_logger();
 /// Main entry point into the DLEP Service library.
 ///
 /// DLEP service library users call this function first to start the

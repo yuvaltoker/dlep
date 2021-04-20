@@ -876,8 +876,7 @@ Peer::start_peer()
                                         "",
                                         pm.get_data_items(),
                                         dlep->protocfg);
-        LLDLEP::internal::OutLogger out_logger;
-        out_logger.send_out(out_msg.get_message());
+        OutLogger::send_out(out_msg.get_message());
 
         send_message_expecting_response(rp);
     }
@@ -1004,8 +1003,7 @@ Peer::handle_heartbeat_timeout(const boost::system::error_code & error)
                                             "",
                                             heartbeat_msg->get_data_items(),
                                             dlep->protocfg);
-            LLDLEP::internal::OutLogger out_logger;
-            out_logger.send_out(out_msg.get_message());
+            OutLogger::send_out(out_msg.get_message());
         }
         
     }
@@ -1383,8 +1381,7 @@ Peer::handle_peer_initialization_response(ProtocolMessage & pm)
                                     "",
                                     pm.get_data_items(),
                                     dlep->protocfg);
-    LLDLEP::internal::OutLogger out_logger;
-    out_logger.send_out(out_msg.get_message());
+    OutLogger::send_out(out_msg.get_message());
 
     // get optional peer type from the message
 
@@ -1464,8 +1461,7 @@ Peer::handle_peer_update(ProtocolMessage & pm)
                                     "",
                                     pm.get_data_items(),
                                     dlep->protocfg);
-    LLDLEP::internal::OutLogger out_logger;
-    out_logger.send_out(out_msg.get_message());
+    OutLogger::send_out(out_msg.get_message());
     
     if (status_message != "")
     {
@@ -1549,8 +1545,7 @@ Peer::handle_destination_up(ProtocolMessage & pm)
                                             "",
                                             pm.get_data_items(),
                                             dlep->protocfg);
-            LLDLEP::internal::OutLogger out_logger;
-            out_logger.send_out(out_msg.get_message());
+            OutLogger::send_out(out_msg.get_message());
         }
 
         DataItems data_items = pm.get_data_items();
@@ -1843,19 +1838,6 @@ Peer::handle_destination_down(ProtocolMessage & pm)
 
     msg << "from peer=" << peer_id << " destination=" << destination_mac;
     LOG(DLEP_LOG_INFO, msg);
-
-    // Copy the received protocol message into an OutLoggerMsg, then send it out
-
-    ProgressionOutLoggerMsg out_msg("DLEP",
-                                    "S",
-                                    LLDLEP::ProtocolStrings::Destination_Down,
-                                    "MtR",
-                                    get_peer_endpoint_tcp_ip_address(),
-                                    "",
-                                    pm.get_data_items(),
-                                    dlep->protocfg);
-    LLDLEP::internal::OutLogger out_logger;
-    out_logger.send_out(out_msg.get_message());
 
     bool ok = peer_pdp->removeDestination(destination_mac, false);
     if (! ok)
@@ -2166,8 +2148,7 @@ Peer::handle_peer_signal(uint8_t * buf, std::size_t buflen)
                                         "",
                                         pm.get_data_items(),
                                         dlep->protocfg);
-            LLDLEP::internal::OutLogger out_logger;
-            out_logger.send_out(out_msg.get_message());
+            OutLogger::send_out(out_msg.get_message());
         }
         
     }
