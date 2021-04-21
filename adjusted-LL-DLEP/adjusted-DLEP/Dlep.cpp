@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <boost/lexical_cast.hpp>
 #include "Dlep.h"
+#include "DlepInit.h"
 #include "PeerDiscovery.h"
 #include "DestAdvert.h"
 #include "ProtocolConfigImpl.h"
@@ -280,7 +281,7 @@ Dlep::initialize()
         {
             ConfigOutLoggerMsg out_msg("DLEP",
                                         config_parameters);
-            OutLogger::send_out(out_msg.get_message());
+            out_logger.send_out(out_msg.get_message());
         }
         
         if (start_dlep())
