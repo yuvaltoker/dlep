@@ -21,7 +21,6 @@
 #include <iomanip> // for std::setw
 #include <libxml/parser.h> // for xmlDocPtr, xmlNodePtr
 
-
 DlepClientImpl::DlepClientImpl() :
     info_color("\x1b[32m"),  // green
     error_color("\x1b[31m"), // red
@@ -700,7 +699,6 @@ void
 DlepClientImpl::peer_up(const LLDLEP::PeerInfo & peer_info)
 {
     std::cout << lib_color << "\nPeer up, ";
-
     print_peer_info(peer_info);
 }
 
