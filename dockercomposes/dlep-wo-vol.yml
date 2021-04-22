@@ -2,7 +2,8 @@ version: "3.8"
 services:
 
     router:
-        image: yuvaltoker/adjusted-dlep:1.1.11
+        #image: yuvaltoker/adjusted-dlep:1.1.11
+        image: test-changes-dlep
         #build:
         #    context: ..
         #    dockerfile: ../dockerfiles/build-dlep-enviroment-dockerfile
@@ -19,10 +20,12 @@ services:
             - DISCOVERY_IFACE=eth0
             - DISCOVERY_INTERVAL=15
             - HEARTBEAT_INTERVAL=10
+            - EXT_PAUSE=true
         container_name: test-router
             
     modem:
-        image: yuvaltoker/adjusted-dlep:1.1.11
+        #image: yuvaltoker/adjusted-dlep:1.1.11
+        image: test-changes-dlep
         tty: true
         stdin_open: true
         depends_on: 
@@ -33,6 +36,7 @@ services:
             - IMPLEMENTATION=modem
             - DISCOVERY_IFACE=eth0
             - HEARTBEAT_INTERVAL=10
+            - EXT_PAUSE=true
         container_name: test-modem
 
     server:
