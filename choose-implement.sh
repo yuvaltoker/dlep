@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# adjusting dlep-draft-8175.xml by the extensions from enviroment variables:
+sed -i "/^modem_name=/c\modem_name='$container_name'" ./modem/dock_modem/modem.py
+
+sed -i "/^<!-- <xi:include href=\"pause-extension-8651.xml\"/> -->/c\<xi:include href=\"pause-extension-8651.xml\"/>" 
+
 command_string="/adjusted-dlep/build/Dlep config-file /adjusted-dlep/config/"
 
 # checks whether the implementation is for modem of for router 
