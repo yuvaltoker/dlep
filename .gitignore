@@ -4,5 +4,3 @@
 adjusted-LL-DLEP/adjusted-DLEP/build
 # ignoring commit's hash
 sourceHash.txt
-# ignoring docker-comoposes
-dockercomposes
