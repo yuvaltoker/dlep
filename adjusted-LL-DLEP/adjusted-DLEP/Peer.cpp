@@ -1326,6 +1326,17 @@ Peer::handle_peer_initialization(ProtocolMessage & pm)
     get_info(peer_info);
     dlep->dlep_client.peer_up(peer_info);
 
+    if(! dlep->is_modem())
+    {
+        ProgressionOutLoggerMsg out_msg("DLEP",
+                                        "S",
+                                        "Peer_Up",
+                                        "MtR",
+                                        peer_id,
+                                        "");
+        out_logger.send_out(out_msg.get_message());
+    }
+
     // Send the peer all of our destinations
     dlep->local_pdp->sendAllDestinations(shared_from_this());
 
@@ -1436,7 +1447,18 @@ Peer::handle_peer_initialization_response(ProtocolMessage & pm)
     LLDLEP::PeerInfo peer_info;
     get_info(peer_info);
     peer_info.data_items = data_items;
+
     dlep->dlep_client.peer_up(peer_info);
+    if(! dlep->is_modem())
+    {
+        ProgressionOutLoggerMsg out_msg("DLEP",
+                                        "S",
+                                        "Peer_Up",
+                                        "MtR",
+                                        peer_id,
+                                        "");
+        out_logger.send_out(out_msg.get_message());
+    }
 
     // Send the peer all of our destinations
     dlep->local_pdp->sendAllDestinations(shared_from_this());
@@ -2279,6 +2301,17 @@ Peer::set_state_terminating()
         set_state(PeerState::terminating);
 
         dlep->dlep_client.peer_down(peer_id);
+
+        if(! dlep->is_modem())
+        {
+            ProgressionOutLoggerMsg out_msg("DLEP",
+                                            "S",
+                                            "Peer_Down",
+                                            "MtR",
+                                            peer_id,
+                                            "");
+            out_logger.send_out(out_msg.get_message());
+        }
 
         if (dlep->dest_advert_enabled)
         {

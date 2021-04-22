@@ -10,8 +10,6 @@
 /// The methods in this class are called by the Dlep library to get configuration
 /// information and to inform the client (library user) of DLEP-related events.
 
-#include "ProgressionOutLoggerMsg.h"
-#include "OutLogger.h"
 #include "DlepInit.h"
 #include "ExampleDlepClientImpl.h"
 #include "Table.h"
@@ -22,7 +20,6 @@
 #include <iostream>
 #include <iomanip> // for std::setw
 #include <libxml/parser.h> // for xmlDocPtr, xmlNodePtr
-
 
 DlepClientImpl::DlepClientImpl() :
     info_color("\x1b[32m"),  // green
@@ -702,22 +699,6 @@ void
 DlepClientImpl::peer_up(const LLDLEP::PeerInfo & peer_info)
 {
     std::cout << lib_color << "\nPeer up, ";
-
-    if(! dlep -> is_modem())
-    {
-        ostringstream msg;
-        msg << "Peer up, peer id = " << peer_info.peer_id;
-        ProgressionOutLoggerMsg out_msg("DLEP",
-                                        "S",
-                                        "PEER_UP",
-                                        "MtR",
-                                        peer_info.peer_id,
-                                        msg.str(),
-                                        NULL,
-                                        nullptr);
-        out_logger.send_out(out_msg.get_message());
-    }
-
     print_peer_info(peer_info);
 }
 
@@ -733,21 +714,6 @@ void DlepClientImpl::peer_down(const std::string & peer_id)
 {
     std::cout << lib_color << "\nPeer down, peer id = " << peer_id
               << reset_color << std::endl;
-
-    if(! dlep -> is_modem())
-    {
-        ostringstream msg;
-        msg << "Peer up, peer id = " << peer_info.peer_id;
-        ProgressionOutLoggerMsg out_msg("DLEP",
-                                        "S",
-                                        "PEER_UP",
-                                        "MtR",
-                                        peer_info.peer_id,
-                                        msg.str(),
-                                        NULL,
-                                        nullptr);
-        out_logger.send_out(out_msg.get_message());
-    }
 }
 
 std::string
