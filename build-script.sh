@@ -53,3 +53,7 @@ fi
 
 echo $(git rev-parse HEAD) >> sourceHash.txt
 docker build --tag $IMAGE_NAME --file dockerfiles/build-dlep-enviroment-dockerfile .
+
+git tag -a $TAG $(git rev-parse HEAD)
+git push origin $TAG
+
