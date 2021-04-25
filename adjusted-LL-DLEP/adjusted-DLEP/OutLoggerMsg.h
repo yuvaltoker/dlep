@@ -2,6 +2,8 @@
 #define OUTLOGGERMSG_H
 
 #include <iostream>
+#include <ctime>
+#include <chrono>
 #include "DataItem.h"
 
 namespace LLDLEP
@@ -28,6 +30,7 @@ protected:
     virtual void build_message() = 0;
     void add_protocol_to_message(std::string & message);
     void add_stage_to_message(std::string & message);
+    void add_timeStamp_to_message(std::string & message);
     
 };
 

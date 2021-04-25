@@ -22,6 +22,9 @@ RUN apt-get install -y cmake
 RUN python3 -m pip install redis
 RUN apt install -y libboost-all-dev
 
+RUN apt-get install -y vim
+
+ADD ./sourceHash.txt .
 RUN mkdir /adjusted-dlep
 ADD ./adjusted-LL-DLEP/adjusted-DLEP/ /adjusted-dlep/
 

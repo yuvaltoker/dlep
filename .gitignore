@@ -1,4 +1,6 @@
 # ignoring object files
 *.o
 # ignoring build
-**/adjusted-LL-DLEP/adjusted-DLEP/build
+adjusted-LL-DLEP/adjusted-DLEP/build
+# ignoring commit's hash
+sourceHash.txt
