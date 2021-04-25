@@ -36,7 +36,7 @@ done
 if [ "$IMAGE_NAME" = '' ]; then 
     echo "Warning - No image name was given"
     echo "# image name: Will be randomized"
-else; then
+else
     echo "# image name: $IMAGE_NAME"
 fi
 
@@ -56,8 +56,6 @@ docker build --tag $IMAGE_NAME --file dockerfiles/build-dlep-enviroment-dockerfi
 
 if [ ! "$TAG" = '' ]; then 
     docker push $IMAGE_NAME
-
-    yuvaltoker/adjusted-dlep:1.1.14
 
     git tag -a $TAG $(git rev-parse HEAD)
     git push origin $TAG
