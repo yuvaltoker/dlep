@@ -54,6 +54,14 @@ fi
 echo $(git rev-parse HEAD) >> sourceHash.txt
 docker build --tag $IMAGE_NAME --file dockerfiles/build-dlep-enviroment-dockerfile .
 
-git tag -a $TAG $(git rev-parse HEAD)
-git push origin $TAG
+if [ ! "$TAG" = '' ]; then 
+    docker push $IMAGE_NAME
+
+    yuvaltoker/adjusted-dlep:1.1.14
+
+    git tag -a $TAG $(git rev-parse HEAD)
+    git push origin $TAG
+fi
+
+
 
