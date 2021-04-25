@@ -57,7 +57,7 @@ docker build --tag $IMAGE_NAME --file dockerfiles/build-dlep-enviroment-dockerfi
 if [ ! "$TAG" = '' ]; then 
     docker push $IMAGE_NAME
 
-    git tag -a $TAG $(git rev-parse HEAD)
+    git tag -a $TAG $(git rev-parse HEAD) -m "$TAG"
     git push origin $TAG
 fi
 
