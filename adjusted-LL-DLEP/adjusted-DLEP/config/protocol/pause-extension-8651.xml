@@ -79,4 +79,16 @@
             <occurs>0-1</occurs>
         </data_item>
     </signal>
+
+    <signal>
+        <name>Session_Update</name>
+        <data_item>
+            <name>Pause</name>
+            <occurs>0-1</occurs>
+        </data_item>
+        <data_item>
+            <name>Restart</name>
+            <occurs>0-1</occurs>
+        </data_item>
+    </signal>
 </module>
