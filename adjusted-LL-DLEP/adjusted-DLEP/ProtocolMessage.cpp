@@ -412,7 +412,7 @@ ProtocolMessage::add_queue_parameters(DlepClient & dlep_client)
     std::vector<std::uint8_t> vec4{std::uint8_t(10), std::uint8_t(11), std::uint8_t(12), std::uint8_t(16),std::uint8_t(10), std::uint8_t(11), std::uint8_t(12), std::uint8_t(16)};
     std::vector<std::uint8_t> vec5{std::uint8_t(14), std::uint8_t(15)};
     std::vector<std::uint8_t> vec6{std::uint8_t(4), std::uint8_t(5), std::uint8_t(6)};
-    std::vector<std::uint8_t> vec7{std::uint8_t(4), std::uint8_t(5), std::uint8_t(6)};
+    std::vector<std::uint8_t> vec7{std::uint8_t(3), std::uint8_t(5), std::uint8_t(1)};
 
     Div_u8_u8_u16_u8_vu8_t div1 = {std::uint8_t(0), // index
                                    std::uint8_t(0), // size part 1
@@ -430,31 +430,31 @@ ProtocolMessage::add_queue_parameters(DlepClient & dlep_client)
                                    std::uint8_t(0), // size part 1
                                    std::uint16_t(2),// size part 2
                                    std::uint8_t(2), // num of DSCPs
-                                   vec2};
+                                   vec3};
     
     Div_u8_u8_u16_u8_vu8_t div4 = {std::uint8_t(3), // index
                                    std::uint8_t(0), // size part 1
                                    std::uint16_t(24),// size part 2
                                    std::uint8_t(8), // num of DSCPs
-                                   vec2};
+                                   vec4};
     
     Div_u8_u8_u16_u8_vu8_t div5 = {std::uint8_t(4), // index
                                    std::uint8_t(0), // size part 1
                                    std::uint16_t(13),// size part 2
                                    std::uint8_t(2), // num of DSCPs
-                                   vec2};
+                                   vec5};
         
     Div_u8_u8_u16_u8_vu8_t div6 = {std::uint8_t(5), // index
                                    std::uint8_t(0), // size part 1
                                    std::uint16_t(5),// size part 2
                                    std::uint8_t(3), // num of DSCPs
-                                   vec2};
+                                   vec6};
     
     Div_u8_u8_u16_u8_vu8_t div7 = {std::uint8_t(6), // index
                                    std::uint8_t(0), // size part 1
                                    std::uint16_t(7),// size part 2
                                    std::uint8_t(3), // num of DSCPs
-                                   vec2};
+                                   vec7};
 
     
     DataItem sub_data1 {ProtocolStrings::Queue_Parameter,
