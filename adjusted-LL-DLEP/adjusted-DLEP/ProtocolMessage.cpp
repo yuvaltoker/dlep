@@ -515,6 +515,34 @@ ProtocolMessage::add_queue_parameters(DlepClient & dlep_client)
     add_data_item(di_queue_parameters);
 }
 
+// yuval added
+void 
+ProtocolMessage::add_pause(LLDLEP::DlepClient & dlep_client)
+{
+    std::vector<std::uint8_t> div{std::uint8_t(4), std::uint8_t(5), std::uint8_t(6)};
+    /*create the data item*/
+    DataItem di_pause {ProtocolStrings::Pause,
+                                  div, 
+                                  protocfg};
+
+    /*add the data item to message*/
+    add_data_item(di_pause);
+}
+
+// yuval added
+void 
+ProtocolMessage::add_restart(LLDLEP::DlepClient & dlep_client)
+{
+    std::vector<std::uint8_t> div{std::uint8_t(4), std::uint8_t(5), std::uint8_t(6)};
+    /*create the data item*/
+    DataItem di_restart {ProtocolStrings::Restart,
+                                  div, 
+                                  protocfg};
+
+    /*add the data item to message*/
+    add_data_item(di_restart);
+}
+
 void
 ProtocolMessage::add_link_identifier_length(DlepClient & dlep_client)
 {

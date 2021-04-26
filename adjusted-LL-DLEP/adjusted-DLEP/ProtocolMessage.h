@@ -44,6 +44,12 @@ public:
     void add_queue_parameters(LLDLEP::DlepClient & dlep_client);
 
     // yuval added
+    void add_pause(LLDLEP::DlepClient & dlep_client);
+
+    // yuval added
+    void add_restart(LLDLEP::DlepClient & dlep_client);
+
+    // yuval added
     void add_link_identifier_length(LLDLEP::DlepClient & dlep_client);
 
     // clear all data items from the message, leaving just the header
