@@ -31,7 +31,7 @@ OutLogger::~OutLogger()
 bool 
 OutLogger::connect()
 {
-    cout << "Connecting ... " << endl;
+    cout << "Connecting to out server... " << endl;
     try
     {
         boost::asio::io_service io_service;
@@ -42,22 +42,14 @@ OutLogger::connect()
                                                              env_vars -> get_port(),
                                                              boost::asio::ip::tcp::resolver::query::numeric_service);
 
-        std::cout << "after resolver's query..." << endl;
-
         // Creating a resolver.
         boost::asio::ip::tcp::resolver resolver(io_service);
      
-        std::cout << "after creating a resolver..." << endl;
-
         // Resolving a DNS name.
         boost::asio::ip::tcp::resolver::iterator it = resolver.resolve(resolver_query);
-   
-        std::cout << "after resolving a DNS name..." << endl;
         
         // Creating a socket.
         OutLogger::sock = new boost::asio::ip::tcp::socket(io_service);
-     
-        std::cout << "after creating a socket..." << endl;
 
         // asio::connect() method iterates over
         // each endpoint until successfully connects to one
@@ -66,7 +58,6 @@ OutLogger::connect()
         // error occurs.
         boost::asio::connect(*OutLogger::sock, it);
 
-        std::cout << "after connecting..." << endl;
     }
     catch (boost::system::system_error &e) {
         std::cout << "Error occured! Error code = " << e.code()
@@ -76,7 +67,6 @@ OutLogger::connect()
         return false;
     }
     OutLogger::is_connected = true;
-    std::cout << "after connecting..." << endl;
     return true;
 }
 
