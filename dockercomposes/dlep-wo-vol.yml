@@ -3,7 +3,7 @@ services:
 
     router:
         #image: yuvaltoker/adjusted-dlep:1.1.12
-        image: test-changes-dlep:1.5
+        image: test-changes-dlep:1.6
         #build:
         #    context: ..
         #    dockerfile: ../dockerfiles/build-dlep-enviroment-dockerfile
@@ -22,11 +22,12 @@ services:
             - HEARTBEAT_INTERVAL=10
             - EXT_PAUSE=true
             - EXT_LID=true
+            - PEER_TYPE=im_router
         container_name: test-router
             
     modem:
         #image: yuvaltoker/adjusted-dlep:1.1.12
-        image: test-changes-dlep:1.5
+        image: test-changes-dlep:1.6
         tty: true
         stdin_open: true
         depends_on: 
@@ -39,6 +40,7 @@ services:
             - HEARTBEAT_INTERVAL=10
             - EXT_PAUSE=true
             - EXT_LID=true
+            - PEER_TYPE=im_modem
         container_name: test-modem
 
     server:
