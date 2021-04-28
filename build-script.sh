@@ -37,11 +37,12 @@ if [ "$IMAGE_NAME" = '' ]; then
     echo "Warning - No image name was given"
     echo "# image name: Will be randomized"
 else
-    echo "# image name: $IMAGE_NAME"
+    echo "# image name:  $IMAGE_NAME"
 fi
 
 if [ ! "$TAG" = '' ]; then 
-    echo "# tag: $TAG"
+    echo "# tag:         $TAG"
+    echo "# commit hash: $(git rev-parse HEAD)"
 fi
 
 echo "Do you want to continue? y/n"
