@@ -8,9 +8,9 @@
 HELP='Usage: ./build-script.h [OPTIONS]\n\n'
 HELP+='A script for building image from dockerfiles\n\n'
 HELP+='Options:\n\n'
-HELP+='    -n, --name    Image name'
-HELP+='    -t, --tag     In case of production, tag the commit the image is built on'
-HELP+='\n\n'
+HELP+='    -n, --name    Image name\n'
+HELP+='    -t, --tag     In case of production, tag the commit the image is built on\n'
+HELP+='\n'
 
 # Default values of arguments
 IMAGE_NAME=''
@@ -30,6 +30,9 @@ do
         shift # Remove argument name from processing
         shift # Remove argument value from processing
         ;;
+        -h|--help)
+        echo -e "$HELP"
+        exit 1
     esac
 done
 
