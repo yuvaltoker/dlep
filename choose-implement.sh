@@ -37,5 +37,10 @@ if [ ! -z "$HEARTBEAT_INTERVAL" ]; then
 	command_string+=" heartbeat-interval $HEARTBEAT_INTERVAL"
 fi
 
+# do we have peer type env variable?:
+if [ ! -z "$PEER_TYPE" ]; then
+	command_string+=" peer-type $PEER_TYPE"
+fi
+
 echo "$command_string"
 eval "$command_string"
