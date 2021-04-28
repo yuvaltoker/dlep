@@ -1332,7 +1332,7 @@ Peer::handle_peer_initialization(ProtocolMessage & pm)
                                         "S",
                                         "Peer_Up",
                                         "MtR",
-                                        peer_id,
+                                        get_peer_endpoint_tcp_ip_address(),
                                         "");
         out_logger.send_out(out_msg.get_message());
     }
@@ -1455,7 +1455,7 @@ Peer::handle_peer_initialization_response(ProtocolMessage & pm)
                                         "S",
                                         "Peer_Up",
                                         "MtR",
-                                        peer_id,
+                                        get_peer_endpoint_tcp_ip_address(),
                                         "");
         out_logger.send_out(out_msg.get_message());
     }
@@ -2308,7 +2308,7 @@ Peer::set_state_terminating()
                                             "S",
                                             "Peer_Down",
                                             "MtR",
-                                            peer_id,
+                                            get_peer_endpoint_tcp_ip_address(),
                                             "");
             out_logger.send_out(out_msg.get_message());
         }
