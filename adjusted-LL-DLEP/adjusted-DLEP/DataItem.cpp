@@ -2055,6 +2055,11 @@ DataItem::from_istringstream(std::istringstream & ss,
         div.sub_data_items = sub_data_items_from_istringstream(ss, di_info);
         value = div;
     }
+    else // value does not contain sub data items
+    {
+        set_default_value(di_info.value_type);
+        value_from_istringstream(ss);
+    }
 }
 
 void
