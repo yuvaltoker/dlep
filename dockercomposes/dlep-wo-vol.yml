@@ -3,7 +3,7 @@ services:
 
     router:
         #image: yuvaltoker/adjusted-dlep:1.1.12
-        image: test-changes-dlep:1.6
+        image: test-changes-dlep:1.7
         #build:
         #    context: ..
         #    dockerfile: ../dockerfiles/build-dlep-enviroment-dockerfile
@@ -27,7 +27,7 @@ services:
             
     modem:
         #image: yuvaltoker/adjusted-dlep:1.1.12
-        image: test-changes-dlep:1.6
+        image: test-changes-dlep:1.7
         tty: true
         stdin_open: true
         depends_on: 
