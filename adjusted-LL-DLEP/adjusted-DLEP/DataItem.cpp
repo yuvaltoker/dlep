@@ -470,8 +470,6 @@ public:
         LLDLEP::serialize(operand.field2, buf);
         LLDLEP::serialize(operand.field3, buf);
         LLDLEP::serialize(operand.field4, buf);
-        //buf.push_back(std::uint8_t(num_sdis)); // num of DSCPs Qn
-        //LLDLEP::serialize(num_sdis, 1, buf);
         buf.insert(buf.end(), operand.field5.begin(), operand.field5.end());
 
         return buf;
@@ -857,15 +855,9 @@ DataItem::deserialize(std::vector<std::uint8_t>::const_iterator & it,
             LLDLEP::deserialize(val.field1, it, di_end);
             LLDLEP::deserialize(val.field2, it, di_end);
             LLDLEP::deserialize(val.field3, it, di_end);
-            /*if (reserved != 0) // an idea to check for 0 in reserved, or any checking that need to be done in this data item
-            {
-                throw std::out_of_range(
-                    "reserved byte is " + std::to_string(reserved) +
-                    ", must be 0");
-            }*/
             val.sub_data_items =
                 deserialize_sub_data_items(it, di_end, &di_info, protocfg);
-            if(val.sub_data_items.size() != val.field1) // check of the sub data items, need to be done?
+            if(val.sub_data_items.size() != val.field1)
             {
                 throw std::length_error(
                     "number of sub data items is " +
@@ -1222,7 +1214,7 @@ DataItem::value_to_string(const DataItemInfo * parent_di_info) const
 }
 //-----------------------------------------------------------------------------
 //
-// to_jason support
+// to_jason support (Yuval Added)
 
 class DataItemToJasonVisitor :
     public boost::static_visitor< std::string >
@@ -1473,7 +1465,6 @@ public:
         return ss.str();
     }
 
-    //yuval added:
     // to_jason Div_u8_u8_u16_sub_data_items_t
     std::string operator()(const Div_u8_u8_u16_sub_data_items_t & operand) const
     {
@@ -1514,7 +1505,7 @@ public:
 private:
     const DataItemInfo * parent_di_info;
     const std::string di_name;
-}; // class DataItemToJasonVisitor
+}; // class DataItemToJasonVisitor (Yuval Added)
 
 std::string
 DataItem::to_jason(const DataItemInfo * parent_di_info) const
@@ -1531,7 +1522,6 @@ DataItem::to_jason(const DataItemInfo * parent_di_info) const
     ss << boost::apply_visitor(DataItemToJasonVisitor(parent_di_info, di_name), value);
     return ss.str();
 }
-//DONT FORGET TO ADD TOP LINES OF EACH METHOD TO DATAITEM_H
 //-----------------------------------------------------------------------------
 //
 // from_string support
