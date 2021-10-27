@@ -285,12 +285,12 @@ struct Div_u8_u8_u16_u8_vu8_t
 /// new type to this boost::variant.  If the value is not a simple type,
 /// you should add a struct Div_xyz_t to hold the value; see examples above.
 /// Then you must update:
-/// - enum DataItemValueType below to add the new type // V
-/// - to/from_string support for the new DataItemValueType enum value // V
-/// - any switch statements that use DataItemValueType as the control variable // V
-/// - boost::variant visitor classes that use this variant (DataItem.cpp) // V
+/// - enum DataItemValueType below to add the new type
+/// - to/from_string support for the new DataItemValueType enum value
+/// - any switch statements that use DataItemValueType as the control variable
+/// - boost::variant visitor classes that use this variant (DataItem.cpp)
 /// - DataItemValueType in config/protocol/protocol-config.xsd
-/// - DataItemValueMap in DataItem.cpp // V
+/// - DataItemValueMap in DataItem.cpp
 /// - if the data item contains an IP address field,
 ///   ProtocolConfigImpl::is_ipaddr()
 /// - add a test case to tests/dataitems.cpp
