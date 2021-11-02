@@ -13,13 +13,13 @@ namespace LLDLEP
 namespace internal
 {
 
-OutLogger::OutLogger() :
+OutLogger::OutWriter() :
     env_vars(new LLDLEP::internal::OutLoggerEnviromentVariables()),
     is_connected(false)
 {
 }
 
-OutLogger::~OutLogger()
+OutLogger::~OutWriter()
 {
     delete env_vars;
 }
