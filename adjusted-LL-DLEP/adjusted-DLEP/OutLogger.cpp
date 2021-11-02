@@ -16,7 +16,7 @@ namespace internal
 {
 
 OutLogger::OutLogger() :
-    OutWriter(new LLDLEP::internal::OutLoggerEnviromentVariables(), false)
+    OutWriter(new LLDLEP::internal::OutLoggerEnviromentVariables(), false),
     sock(NULL)
 {
 
