@@ -2,6 +2,7 @@
 #define OUTLOGGER_H
 
 #include "OutLoggerEnviromentVariables.h"
+#include "OutWriter.h"
 
 #include <iostream>
 #include <boost/asio.hpp>
@@ -11,7 +12,7 @@ namespace LLDLEP
 namespace internal
 {
 
-class OutLogger
+class OutLogger : public OutWriter
 {
 public:
     OutLogger();
@@ -27,8 +28,6 @@ public:
 private:
     
     boost::asio::ip::tcp::socket* sock;
-    LLDLEP::internal::OutLoggerEnviromentVariables* env_vars;
-    bool is_connected;
 };
 
 } // namespace internal

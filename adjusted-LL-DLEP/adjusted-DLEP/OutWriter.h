@@ -18,13 +18,13 @@ public:
 
     ~OutWriter();
 
-    virtual bool send_out(const std::string & mesage);
+    virtual bool send_out(const std::string & mesage) = 0;
 
 protected:
 
-    virtual bool connect();
+    virtual bool connect() = 0;
 
-    virtual void close();
+    virtual void close() = 0;
 
     LLDLEP::internal::OutLoggerEnviromentVariables* env_vars;
     bool is_connected;

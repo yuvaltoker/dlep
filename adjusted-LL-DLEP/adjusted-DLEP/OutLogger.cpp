@@ -16,15 +16,14 @@ namespace internal
 {
 
 OutLogger::OutLogger() :
-    sock(NULL),
-    env_vars(new LLDLEP::internal::OutLoggerEnviromentVariables()),
-    is_connected(false)
+    OutWriter(new LLDLEP::internal::OutLoggerEnviromentVariables(), false)
+    sock(NULL)
 {
+
 }
 
 OutLogger::~OutLogger()
 {
-    delete env_vars;
 }
 
 
@@ -102,10 +101,6 @@ OutLogger::send_out(const std::string & message)
     }
     return true;
 }
-
-/*bool OutLogger::is_connected = false;
-LLDLEP::internal::OutLoggerEnviromentVariables env_vars();
-boost::asio::ip::tcp::socket* OutLogger::sock = NULL;*/
 
 } // namespace internal
 } // namespace LL-DLEP
