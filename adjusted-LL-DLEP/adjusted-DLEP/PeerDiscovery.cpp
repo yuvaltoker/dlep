@@ -313,195 +313,200 @@ PeerDiscovery::handle_peer_offer(ProtocolMessage & pm,
     LLDLEP::internal::OutLogger out_logger;
     out_logger.send_out(out_msg.get_message());
 
-    // By default, connect to the configured session port and the
-    // address from whence the Peer Offer came.
-
-    unsigned int session_port;
-    dlep->dlep_client.get_config_parameter("session-port", &session_port);
-    boost::asio::ip::address dest_ip = from_endpoint.address();
-
-    // Get the optional session port from the message.  If there isn't
-    // one, use the configured session-port from above.
-
-    try
+    // The next chunk of code proceeds to PeerInit
+    bool is_whole_operation = false;
+    if(is_whole_operation)
     {
-        session_port = pm.get_port();
-    }
-    catch (const ProtocolMessage::DataItemNotPresent &)
-    {
-        /* no-op */
-    }
-    catch (const ProtocolConfig::BadDataItemName &)
-    {
-        /* no-op */
-    }
+        // By default, connect to the configured session port and the
+        // address from whence the Peer Offer came.
 
-    // Try to get the session connection address (dest_ip) from data
-    // items in the Peer Offer.  Look for the following data items in
-    // this order: IPv4_Address, IPv4_Connection_Point, IPv6_Address,
-    // IPv6_Connection_Point.  The last one that is found wins.
-    // Fetching any of these data items may fail either because the
-    // data item doesn't exist in the Peer Offer (DataItemNotPresent),
-    // or the data item doesn't exist in the current protocol
-    // configuration (BadDataItemName).  These are recoverable errors;
-    // we just move on and try the next one.  If they all fail, we
-    // have address/port defaults established above.
-    //
-    // IPv4/6_Connection_Points also specify the port number to
-    // connect to (session_port).
+        unsigned int session_port;
+        dlep->dlep_client.get_config_parameter("session-port", &session_port);
+        boost::asio::ip::address dest_ip = from_endpoint.address();
 
-    // If a data item specifies an IPv6 address, it may need to be
-    // locally augmented with a scope id (interface index) if it is a
-    // link-local address.  may_need_scope_id will be set to true in
-    // this case.
+        // Get the optional session port from the message.  If there isn't
+        // one, use the configured session-port from above.
 
-    bool may_need_scope_id = false;
-
-    try // IPv4_Address data item
-    {
-        Div_u8_ipv4_t u8ipv4 = pm.get_ipv4_address();
-        if (u8ipv4.field1)
+        try
         {
-            dest_ip = u8ipv4.field2;
+            session_port = pm.get_port();
         }
-        else
+        catch (const ProtocolMessage::DataItemNotPresent &)
         {
-            msg << ProtocolStrings::IPv4_Address << " " << u8ipv4.field2
-                <<  " has add/drop=" << u8ipv4.field1 << ", ignoring";
-            LOG(DLEP_LOG_ERROR, msg);
+            /* no-op */
         }
-    }
-    catch (const ProtocolMessage::DataItemNotPresent &)
-    {
-        /* no-op */
-    }
-    catch (const ProtocolConfig::BadDataItemName &)
-    {
-        /* no-op */
-    }
-
-    try // IPv4_Connection_Point data item
-    {
-        Div_u8_ipv4_u16_t ipv4_connpt = pm.get_ipv4_conn_point();
-        session_port = ipv4_connpt.field3;
-        dest_ip = boost::asio::ip::address(ipv4_connpt.field2);
-    }
-    catch (const ProtocolMessage::DataItemNotPresent &)
-    {
-        /* no-op */
-    }
-    catch (const ProtocolConfig::BadDataItemName &)
-    {
-        /* no-op */
-    }
-
-    try // IPv6_Address data item
-    {
-        Div_u8_ipv6_t u8ipv6 = pm.get_ipv6_address();
-        if (u8ipv6.field1)
+        catch (const ProtocolConfig::BadDataItemName &)
         {
-            dest_ip = u8ipv6.field2;
+            /* no-op */
+        }
+
+        // Try to get the session connection address (dest_ip) from data
+        // items in the Peer Offer.  Look for the following data items in
+        // this order: IPv4_Address, IPv4_Connection_Point, IPv6_Address,
+        // IPv6_Connection_Point.  The last one that is found wins.
+        // Fetching any of these data items may fail either because the
+        // data item doesn't exist in the Peer Offer (DataItemNotPresent),
+        // or the data item doesn't exist in the current protocol
+        // configuration (BadDataItemName).  These are recoverable errors;
+        // we just move on and try the next one.  If they all fail, we
+        // have address/port defaults established above.
+        //
+        // IPv4/6_Connection_Points also specify the port number to
+        // connect to (session_port).
+
+        // If a data item specifies an IPv6 address, it may need to be
+        // locally augmented with a scope id (interface index) if it is a
+        // link-local address.  may_need_scope_id will be set to true in
+        // this case.
+
+        bool may_need_scope_id = false;
+
+        try // IPv4_Address data item
+        {
+            Div_u8_ipv4_t u8ipv4 = pm.get_ipv4_address();
+            if (u8ipv4.field1)
+            {
+                dest_ip = u8ipv4.field2;
+            }
+            else
+            {
+                msg << ProtocolStrings::IPv4_Address << " " << u8ipv4.field2
+                    <<  " has add/drop=" << u8ipv4.field1 << ", ignoring";
+                LOG(DLEP_LOG_ERROR, msg);
+            }
+        }
+        catch (const ProtocolMessage::DataItemNotPresent &)
+        {
+            /* no-op */
+        }
+        catch (const ProtocolConfig::BadDataItemName &)
+        {
+            /* no-op */
+        }
+
+        try // IPv4_Connection_Point data item
+        {
+            Div_u8_ipv4_u16_t ipv4_connpt = pm.get_ipv4_conn_point();
+            session_port = ipv4_connpt.field3;
+            dest_ip = boost::asio::ip::address(ipv4_connpt.field2);
+        }
+        catch (const ProtocolMessage::DataItemNotPresent &)
+        {
+            /* no-op */
+        }
+        catch (const ProtocolConfig::BadDataItemName &)
+        {
+            /* no-op */
+        }
+
+        try // IPv6_Address data item
+        {
+            Div_u8_ipv6_t u8ipv6 = pm.get_ipv6_address();
+            if (u8ipv6.field1)
+            {
+                dest_ip = u8ipv6.field2;
+                may_need_scope_id = true;
+            }
+            else
+            {
+                msg << ProtocolStrings::IPv6_Address << " " << u8ipv6.field2
+                    <<  " has add/drop=" << u8ipv6.field1 << ", ignoring";
+                LOG(DLEP_LOG_ERROR, msg);
+            }
+        }
+        catch (const ProtocolMessage::DataItemNotPresent &)
+        {
+            /* no-op */
+        }
+        catch (const ProtocolConfig::BadDataItemName &)
+        {
+            /* no-op */
+        }
+
+        try // IPv6_Connection_Point data item
+        {
+            // XXX check flags field?
+            Div_u8_ipv6_u16_t ipv6_connpt = pm.get_ipv6_conn_point();
+            session_port = ipv6_connpt.field3;
+            dest_ip = boost::asio::ip::address(ipv6_connpt.field2);
             may_need_scope_id = true;
         }
+        catch (const ProtocolMessage::DataItemNotPresent &)
+        {
+            /* no-op */
+        }
+        catch (const ProtocolConfig::BadDataItemName &)
+        {
+            /* no-op */
+        }
+
+        // If we may need a scope id, see if dest_ip is an IPv6 link-local
+        // address.  If it is, copy the scope id to dest_ip from the
+        // address in from_endpoint, which is the source of the Peer
+        // Offer.  It's not clear that this is always the right answer;
+        // dest_ip might actually only be reachable via some interface
+        // other than the one we received the Peer Offer on.  I don't know
+        // how to find the right interface in that case, though.
+
+        if (may_need_scope_id)
+        {
+            boost::asio::ip::address_v6 dest_ip_v6 = dest_ip.to_v6();
+            if (dest_ip_v6.is_link_local())
+            {
+                if (from_endpoint.address().is_v6())
+                {
+                    boost::asio::ip::address_v6 from_ip_v6 =
+                        from_endpoint.address().to_v6();
+                    unsigned long scope_id = from_ip_v6.scope_id();
+                    dest_ip_v6.scope_id(scope_id);
+                    dest_ip = dest_ip_v6;
+                    msg << "scope id " << scope_id
+                        << " copied from Peer Offer origin " << from_endpoint
+                        << " to session connect address= " << dest_ip;
+                    LOG(DLEP_LOG_INFO, msg);
+                }
+                else // from_endpoint is an IPv4 address
+                {
+                    msg << "cannot determine scope id for session connect address= "
+                        << dest_ip;
+                    LOG(DLEP_LOG_ERROR, msg);
+                    return;
+                }
+            }
+        } // may_need_scope_id
+
+        // Now that we have dest_ip in its final form, check to see if we
+        // don't have an existing session before proceeding.
+
+        std::string peer_id =
+            dest_ip.to_string() + ":" + std::to_string(session_port);
+        if (dlep->peer_state(peer_id) != PeerState::nonexistent)
+        {
+            msg << "peer=" << peer_id << " already in session";
+            LOG(DLEP_LOG_INFO, msg);
+            return;
+        }
         else
         {
-            msg << ProtocolStrings::IPv6_Address << " " << u8ipv6.field2
-                <<  " has add/drop=" << u8ipv6.field1 << ", ignoring";
+            msg << "peer=" << peer_id << " is in PeerState::nonexistent state";
+            LOG(DLEP_LOG_INFO, msg);
+        }
+
+        try
+        {
+            msg << "Creating and connecting to " << peer_id;
+            LOG(DLEP_LOG_INFO, msg);
+
+            // Initiate the TCP connection
+            dlep->start_async_connect(dest_ip, session_port);
+
+        }
+        catch (std::exception & e)
+        {
+            msg << "exception: " << e.what();
             LOG(DLEP_LOG_ERROR, msg);
         }
-    }
-    catch (const ProtocolMessage::DataItemNotPresent &)
-    {
-        /* no-op */
-    }
-    catch (const ProtocolConfig::BadDataItemName &)
-    {
-        /* no-op */
-    }
-
-    try // IPv6_Connection_Point data item
-    {
-        // XXX check flags field?
-        Div_u8_ipv6_u16_t ipv6_connpt = pm.get_ipv6_conn_point();
-        session_port = ipv6_connpt.field3;
-        dest_ip = boost::asio::ip::address(ipv6_connpt.field2);
-        may_need_scope_id = true;
-    }
-    catch (const ProtocolMessage::DataItemNotPresent &)
-    {
-        /* no-op */
-    }
-    catch (const ProtocolConfig::BadDataItemName &)
-    {
-        /* no-op */
-    }
-
-    // If we may need a scope id, see if dest_ip is an IPv6 link-local
-    // address.  If it is, copy the scope id to dest_ip from the
-    // address in from_endpoint, which is the source of the Peer
-    // Offer.  It's not clear that this is always the right answer;
-    // dest_ip might actually only be reachable via some interface
-    // other than the one we received the Peer Offer on.  I don't know
-    // how to find the right interface in that case, though.
-
-    if (may_need_scope_id)
-    {
-        boost::asio::ip::address_v6 dest_ip_v6 = dest_ip.to_v6();
-        if (dest_ip_v6.is_link_local())
-        {
-            if (from_endpoint.address().is_v6())
-            {
-                boost::asio::ip::address_v6 from_ip_v6 =
-                    from_endpoint.address().to_v6();
-                unsigned long scope_id = from_ip_v6.scope_id();
-                dest_ip_v6.scope_id(scope_id);
-                dest_ip = dest_ip_v6;
-                msg << "scope id " << scope_id
-                    << " copied from Peer Offer origin " << from_endpoint
-                    << " to session connect address= " << dest_ip;
-                LOG(DLEP_LOG_INFO, msg);
-            }
-            else // from_endpoint is an IPv4 address
-            {
-                msg << "cannot determine scope id for session connect address= "
-                    << dest_ip;
-                LOG(DLEP_LOG_ERROR, msg);
-                return;
-            }
-        }
-    } // may_need_scope_id
-
-    // Now that we have dest_ip in its final form, check to see if we
-    // don't have an existing session before proceeding.
-
-    std::string peer_id =
-        dest_ip.to_string() + ":" + std::to_string(session_port);
-    if (dlep->peer_state(peer_id) != PeerState::nonexistent)
-    {
-        msg << "peer=" << peer_id << " already in session";
-        LOG(DLEP_LOG_INFO, msg);
-        return;
-    }
-    else
-    {
-        msg << "peer=" << peer_id << " is in PeerState::nonexistent state";
-        LOG(DLEP_LOG_INFO, msg);
-    }
-
-    try
-    {
-        msg << "Creating and connecting to " << peer_id;
-        LOG(DLEP_LOG_INFO, msg);
-
-        // Initiate the TCP connection
-        dlep->start_async_connect(dest_ip, session_port);
-
-    }
-    catch (std::exception & e)
-    {
-        msg << "exception: " << e.what();
-        LOG(DLEP_LOG_ERROR, msg);
-    }
+    }// end of part 2 of whole operation 
 }
 
 void
