@@ -281,7 +281,7 @@ Dlep::initialize()
         {
             ConfigOutLoggerMsg out_msg("DLEP",
                                         config_parameters);
-            out_logger.send_out(out_msg.get_message());
+            out_writer->send_out(out_msg.get_message());
         }
         
         if (start_dlep())

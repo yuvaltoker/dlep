@@ -137,7 +137,7 @@ PeerDiscovery::get_message_to_send()
                                     pm.get_data_items(),
                                     dlep->protocfg);
     LLDLEP::internal::OutLogger out_logger;
-    out_logger.send_out(out_msg.get_message());
+    out_writer->send_out(out_msg.get_message());
 
     // Copy the protocol message into a DlepMessageBuffer
 
@@ -311,7 +311,7 @@ PeerDiscovery::handle_peer_offer(ProtocolMessage & pm,
 
     std::cout << "after" << endl;                     
     LLDLEP::internal::OutLogger out_logger;
-    out_logger.send_out(out_msg.get_message());
+    out_writer->send_out(out_msg.get_message());
 
     // By default, connect to the configured session port and the
     // address from whence the Peer Offer came.
