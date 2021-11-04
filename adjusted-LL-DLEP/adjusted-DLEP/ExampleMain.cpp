@@ -1193,7 +1193,7 @@ int main(int argc, char ** argv)
 
     // Set OutWriter by given environment variable:
     out_writer_type = "out_db"
-    env_out_writer_type = getenv("UI_HOST");
+    env_out_writer_type = getenv("OUT_WRITER");
     if(env_out_writer_type != NULL)
     {
         out_writer_type = env_out_writer_type;

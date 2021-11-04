@@ -9,7 +9,8 @@ services:
             - net1
         environment:
             - UI_PORT=3090
-            - UI_HOST=sam-server 
+            - UI_HOST=sam-server
+            - OUT_WRITER=out_logger
         volumes:
             - /home/user2/work/idf/dlep/adjusted-LL-DLEP/adjusted-DLEP:/adjusted-dlep    
         container_name: router1
@@ -23,6 +24,7 @@ services:
         environment:
             - UI_PORT=3090
             - UI_HOST=sam-server
+            - OUT_WRITER=out_logger
         volumes:
             - /home/user2/work/idf/dlep/adjusted-LL-DLEP/adjusted-DLEP:/adjusted-dlep 
         container_name: modem1
