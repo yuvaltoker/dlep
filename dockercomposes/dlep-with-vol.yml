@@ -2,29 +2,46 @@ version: "3.8"
 services:
 
     router:
-        image: test-changes-dlep:1.4
+        #image: test-changes-dlep:1.4
+        build:
+            context: ../.
+            dockerfile: ../dockerfiles/test-dockerfile
         tty: true
         stdin_open: true
         networks:
             - net1
         environment:
+            - OUT_WRITER=out_logger
+            - IMPLEMENTATION=router
             - UI_PORT=3090
             - UI_HOST=sam-server
-            - OUT_WRITER=out_logger
+            - DISCOVERY_IFACE=eth0
+            - DISCOVERY_INTERVAL=15
+            - HEARTBEAT_INTERVAL=10
+            - EXT_PAUSE=true
+            - EXT_LID=true
+            - PEER_TYPE=im_router
         volumes:
             - /home/user2/work/idf/dlep/adjusted-LL-DLEP/adjusted-DLEP:/adjusted-dlep    
         container_name: router1
             
     modem:
-        image: test-changes-dlep:1.4
+        #image: test-changes-dlep:1.4
+        build:
+            context: ../.
+            dockerfile: ../dockerfiles/test-dockerfile
         tty: true
         stdin_open: true
         networks:
             - net1
         environment:
-            - UI_PORT=3090
-            - UI_HOST=sam-server
             - OUT_WRITER=out_logger
+            - IMPLEMENTATION=modem
+            - DISCOVERY_IFACE=eth0
+            - HEARTBEAT_INTERVAL=10
+            - EXT_PAUSE=true
+            - EXT_LID=true
+            - PEER_TYPE=im_modem
         volumes:
             - /home/user2/work/idf/dlep/adjusted-LL-DLEP/adjusted-DLEP:/adjusted-dlep 
         container_name: modem1
