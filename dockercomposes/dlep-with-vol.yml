@@ -4,7 +4,7 @@ services:
     router:
         #image: test-changes-dlep:1.4
         build:
-            context: ../.
+            context: .
             dockerfile: ../dockerfiles/test-dockerfile
         tty: true
         stdin_open: true
@@ -28,7 +28,7 @@ services:
     modem:
         #image: test-changes-dlep:1.4
         build:
-            context: ../.
+            context: .
             dockerfile: ../dockerfiles/test-dockerfile
         tty: true
         stdin_open: true
