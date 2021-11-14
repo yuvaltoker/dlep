@@ -4,10 +4,13 @@ services:
     router:
         #image: test-changes-dlep:1.4
         build:
-            context: .
-            dockerfile: ../dockerfiles/test-dockerfile
+            context: ..
+            dockerfile: ./dockerfiles/test-dockerfile
         tty: true
         stdin_open: true
+        restart: on-failure
+        depends_on:
+            - mongodb
         networks:
             - net1
         environment:
@@ -28,10 +31,13 @@ services:
     modem:
         #image: test-changes-dlep:1.4
         build:
-            context: .
-            dockerfile: ../dockerfiles/test-dockerfile
+            context: ..
+            dockerfile: ./dockerfiles/test-dockerfile
         tty: true
         stdin_open: true
+        restart: on-failure
+        depends_on:
+            - mongodb
         networks:
             - net1
         environment:
@@ -55,6 +61,31 @@ services:
         environment:
             - PORT=3090
         container_name: sam-server
+
+    mongodb:
+        image: mongo
+        container_name: mongodb
+        networks:
+            - net1
+        ports: 
+            - "27017:27017"
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+
+    mongo-express:
+        image: mongo-express
+        container_name: mongo-express
+        networks:
+            - net1
+        ports: 
+            - "8081:8081"
+        restart: always
+        environment:
+            ME_CONFIG_MONGODB_ADMINUSERNAME: root
+            ME_CONFIG_MONGODB_ADMINPASSWORD: example
+            ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
 
 
 networks:
