@@ -18,11 +18,14 @@
 using bsoncxx::builder::stream::document;
 using bsoncxx::builder::stream::finalize;
 
-namespace learning {
+namespace LLDLEP
+{
+namespace internal
+{
+
 
 constexpr char MongoDbUri[] = "mongodb://root:example@mongodb:27017";
 constexpr char DatabaseName[] = "rri";
-constexpr char confCollection[] = "Configuration";
 constexpr char dlepMessageCollection[] = "DlepMessage";
 constexpr char deviceCollection[] = "Devices";
 
@@ -34,21 +37,7 @@ class MongoDbHandler {
         db(client[DatabaseName]) {
 
   }
-
-  // insert configuration (as the json) to database
-  bool AddConfigurationByJson(const json::JSON &configuration) {
-    mongocxx::collection collection = db[confCollection];
-    auto builder = bsoncxx::builder::stream::document{};
-
-    bsoncxx::document::value doc_to_add =
-        builder << "ConfigType" << configuration.at("ConfigType").ToString()
-                //<< "TestSuites" << dlep_message.at("TestSuites").ToString() // dataitems - find how to do it
-                << bsoncxx::builder::stream::finalize;
-    
-    collection.insert_one(doc_to_add.view());
-    return true;
-  }
-
+  
   // insert dlep-message (as the json) to database
   bool AddDLEPMessageByJson(const json::JSON &dlep_message) {
     mongocxx::collection collection = db[dlepMessageCollection];
@@ -136,4 +125,6 @@ class MongoDbHandler {
   mongocxx::client client;
   mongocxx::database db;
 };
-}  // namespace learning
+
+} // namespace internal
+} // namespace LLDLEP
