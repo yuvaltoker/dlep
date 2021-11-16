@@ -30,6 +30,9 @@ private:
     void insert_device_to_db(const json::JSON &dlep_msg_json);
 
     std::string make_device_json_string(const json::JSON &dlep_msg_json);
+
+    mongocxx::instance instance;
+    MongoDbHandler mHandler;
     
 };
 

@@ -1165,9 +1165,9 @@ void set_out_writer(const std::string & out_type)
     if(out_type == "out_logger")
     {
         out_writer = new LLDLEP::internal::OutLogger();
-    }else if(out_type == "out_DB")
+    }else if(out_type == "out_db")
     {
-        out_writer = new OutDB();
+        out_writer = new LLDLEP::internal::OutDB();
     }
 }
 
@@ -1177,6 +1177,8 @@ int main(int argc, char ** argv)
     DlepClientImpl client;
     char* env_out_writer_type;
     std::string out_writer_type;
+    char* who_am_i;
+    std::string who_am_i_string;
 
     if (! client.parse_args(argc, argv))
     {
@@ -1193,15 +1195,28 @@ int main(int argc, char ** argv)
     }
 
     client.print_config();
-
-    // Set OutWriter by given environment variable:
-    out_writer_type = "out_db";
-    env_out_writer_type = getenv("OUT_WRITER");
-    /*if(env_out_writer_type != NULL)
+    std::cout << "b4 implementation" << std::endl;
+    who_am_i = getenv("IMPLEMENTATION");
+    std::cout << "b4 checking implementation" << std::endl;
+    if(who_am_i != NULL)
     {
-        out_writer_type = env_out_writer_type;
-    }*/
-    set_out_writer(out_writer_type);
+        who_am_i_string = who_am_i;
+        if(who_am_i_string == "router")
+        {
+            // Set OutWriter by given environment variable:
+            std::cout << "b4 luanching OutWriter" << std::endl;
+            out_writer_type = "out_db";
+            env_out_writer_type = getenv("OUT_WRITER");
+            /*if(env_out_writer_type != NULL)
+            {
+                out_writer_type = env_out_writer_type;
+            }*/
+            set_out_writer(out_writer_type);
+
+            std::cout << "after luanching OutWriter" << std::endl;
+        }  
+    }
+    
 
     LLDLEP::DlepService * dlep_service = LLDLEP::DlepInit(client);
 

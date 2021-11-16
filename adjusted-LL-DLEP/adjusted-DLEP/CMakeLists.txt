@@ -9,13 +9,14 @@ SET(YUVAL_PUBLIC_HDRS_ADDED OutLoggerEnviromentVariables.h OutLogger.h Parameter
 #SET(YUVAL_LIBS_ADDED -lboost_system -pthread)
 SET(YUVAL_LIBS_FOR_MONGOCXX_DRIVER -lcrypto -lssl -lmongocxx -lbsoncxx)
 
+# for mongodb
 SET(YUVAL_INCLUDE_DIRECTORIES /usr/local/include/mongocxx/v_noabi /usr/local/include/bsoncxx/v_noabi /usr/local/lib)
 
 SET(DLEPLIB_SRCS ${YUVAL_DLEPLIB_SRC_ADDED} DestAdvert.cpp DlepInit.cpp DlepLogger.cpp Dlep.cpp Peer.cpp InfoBaseMgr.cpp PeerDiscovery.cpp DlepServiceImpl.cpp DlepMac.cpp PeriodicMcastSendRcv.cpp NetUtils.cpp ProtocolMessage.cpp DataItem.cpp ProtocolConfigImpl.cpp)
 SET(DLEP_PUBLIC_HDRS ${YUVAL_PUBLIC_HDRS_ADDED} DlepInit.h DlepClient.h DlepService.h DlepCommon.h DataItem.h ProtocolConfig.h IdTypes.h DlepMac.h Serialize.h LatencyRange.h MultiHop.h)
 
 # Enable "all" c++ warnings
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ggdb")
 
 # By default, treat all warnings as errors
 # Can be disalbed with -DWARNINGS_AS_ERRORS:OFF
