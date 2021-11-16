@@ -11,12 +11,14 @@
 #include "mongocxx/client.hpp"
 #include "mongocxx/database.hpp"
 #include "mongocxx/uri.hpp"
-#include "SimpleJSON/json.hpp"
-
-#include "character_size.h"
+#include "json.hpp"
 
 using bsoncxx::builder::stream::document;
 using bsoncxx::builder::stream::finalize;
+using bsoncxx::builder::basic::kvp;
+
+using namespace bsoncxx;
+
 
 namespace LLDLEP
 {
@@ -37,7 +39,14 @@ class MongoDbHandler {
         db(client[DatabaseName]) {
 
   }
-  
+
+  bool AddDLEPMessageByJsonString(const std::string &json_input)
+  {
+    mongocxx::collection collection = db[dlepMessageCollection];
+    bsoncxx::document::value doc = bsoncxx::from_json(json_input);
+    collection.insert_one(doc.view());
+  }
+
   // insert dlep-message (as the json) to database
   bool AddDLEPMessageByJson(const json::JSON &dlep_message) {
     mongocxx::collection collection = db[dlepMessageCollection];
@@ -56,6 +65,13 @@ class MongoDbHandler {
     
     collection.insert_one(doc_to_add.view());
     return true;
+  }
+
+  bool AddDeviceByJsonString(const std::string &json_input)
+  {
+    mongocxx::collection collection = db[deviceCollection];
+    bsoncxx::document::value doc = bsoncxx::from_json(json_input);
+    collection.insert_one(doc.view());
   }
 
   // insert device (as the json) to database

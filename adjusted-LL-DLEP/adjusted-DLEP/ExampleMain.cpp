@@ -14,6 +14,7 @@
 #include "DlepInit.h"
 #include "ExampleDlepClientImpl.h"
 #include "Table.h"
+#include "OutDB.h"
 #include "OutLogger.h" // for out_writer initialization
 
 // We use the readline library for interactive input and line editing
@@ -1166,7 +1167,7 @@ void set_out_writer(const std::string & out_type)
         out_writer = new LLDLEP::internal::OutLogger();
     }else if(out_type == "out_DB")
     {
-        //out_writer = new OutDB();
+        out_writer = new OutDB();
     }
 }
 
@@ -1196,10 +1197,10 @@ int main(int argc, char ** argv)
     // Set OutWriter by given environment variable:
     out_writer_type = "out_db";
     env_out_writer_type = getenv("OUT_WRITER");
-    if(env_out_writer_type != NULL)
+    /*if(env_out_writer_type != NULL)
     {
         out_writer_type = env_out_writer_type;
-    }
+    }*/
     set_out_writer(out_writer_type);
 
     LLDLEP::DlepService * dlep_service = LLDLEP::DlepInit(client);

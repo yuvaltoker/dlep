@@ -22,9 +22,9 @@ public:
 
 protected:
 
-    virtual bool connect() = 0;
+    /*virtual bool connect() = 0;
 
-    virtual void close() = 0;
+    virtual void close() = 0;*/
 
     LLDLEP::internal::OutLoggerEnviromentVariables* env_vars;
     bool is_connected;

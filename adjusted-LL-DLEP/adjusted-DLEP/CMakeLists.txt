@@ -4,9 +4,12 @@ project (dlep)
 SET(DLEP_VERSION 2.1) # Release version of the software
 SET(SOVERSION 2.1) # The library version (e.g. libdlep.so.1.0 would be SOVERSION 1.0)
 
-SET(YUVAL_DLEPLIB_SRC_ADDED OutLoggerEnviromentVariables.cpp OutLogger.cpp Parameter.cpp ConfigOutLoggerMsg.cpp ProgressionOutLoggerMsg.cpp  OutLoggerMsg.cpp OutWriter.cpp)
-SET(YUVAL_PUBLIC_HDRS_ADDED OutLoggerEnviromentVariables.h OutLogger.h Parameter.h ConfigOutLoggerMsg.h ProgressionOutLoggerMsg.h  OutLoggerMsg.h OutWriter.h)
-SET(YUVAL_LIBS_ADDED -lboost_system -pthread)
+SET(YUVAL_DLEPLIB_SRC_ADDED OutLoggerEnviromentVariables.cpp OutLogger.cpp Parameter.cpp ConfigOutLoggerMsg.cpp ProgressionOutLoggerMsg.cpp  OutLoggerMsg.cpp OutWriter.cpp OutDB.cpp)
+SET(YUVAL_PUBLIC_HDRS_ADDED OutLoggerEnviromentVariables.h OutLogger.h Parameter.h ConfigOutLoggerMsg.h ProgressionOutLoggerMsg.h  OutLoggerMsg.h OutWriter.h OutDB.h MongodbHandler.h json.hpp)
+#SET(YUVAL_LIBS_ADDED -lboost_system -pthread)
+SET(YUVAL_LIBS_FOR_MONGOCXX_DRIVER -lcrypto -lssl -lmongocxx -lbsoncxx)
+
+SET(YUVAL_INCLUDE_DIRECTORIES /usr/local/include/mongocxx/v_noabi /usr/local/include/bsoncxx/v_noabi /usr/local/lib)
 
 SET(DLEPLIB_SRCS ${YUVAL_DLEPLIB_SRC_ADDED} DestAdvert.cpp DlepInit.cpp DlepLogger.cpp Dlep.cpp Peer.cpp InfoBaseMgr.cpp PeerDiscovery.cpp DlepServiceImpl.cpp DlepMac.cpp PeriodicMcastSendRcv.cpp NetUtils.cpp ProtocolMessage.cpp DataItem.cpp ProtocolConfigImpl.cpp)
 SET(DLEP_PUBLIC_HDRS ${YUVAL_PUBLIC_HDRS_ADDED} DlepInit.h DlepClient.h DlepService.h DlepCommon.h DataItem.h ProtocolConfig.h IdTypes.h DlepMac.h Serialize.h LatencyRange.h MultiHop.h)
@@ -45,6 +48,8 @@ endif()
 find_package (LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
 
+include_directories(${YUVAL_INCLUDE_DIRECTORIES})
+
 INCLUDE(FindProtobuf)
 find_package(Protobuf ${PROTOBUF_MINVERSION} REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIRS})
@@ -62,7 +67,7 @@ add_library(dlepObj OBJECT ${DLEPLIB_SRCS} ${PROTO_SRCS} ${PROTO_HDRS})
 # shared libraries need PIC
 set_target_properties(dlepObj PROPERTIES POSITION_INDEPENDENT_CODE 1)
 add_library(dlepShared SHARED  $<TARGET_OBJECTS:dlepObj>)
-target_link_libraries(dlepShared ${LIBXML2_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(dlepShared ${LIBXML2_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES} ${YUVAL_LIBS_FOR_MONGOCXX_DRIVER})
 set_target_properties(dlepShared PROPERTIES VERSION ${DLEP_VERSION} SOVERSION ${SOVERSION} OUTPUT_NAME dlep MACOSX_RPATH ON)
 add_library(dlepStatic STATIC  $<TARGET_OBJECTS:dlepObj>)
 set_target_properties(dlepStatic PROPERTIES OUTPUT_NAME dlep)

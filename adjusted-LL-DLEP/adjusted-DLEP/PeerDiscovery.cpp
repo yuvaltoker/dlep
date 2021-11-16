@@ -114,7 +114,7 @@ PeerDiscovery::stop()
 DlepMessageBuffer
 PeerDiscovery::get_message_to_send()
 {
-//    std::ostringstream msg;
+    std::ostringstream msg;
     boost::recursive_mutex::scoped_lock lock(dlep->mutex);
 
     ProtocolMessage pm {dlep->protocfg, dlep->logger};
@@ -128,6 +128,9 @@ PeerDiscovery::get_message_to_send()
     assert(err == "");
 
     // Copy the protocol message into an OutLoggerMsg, then send it out
+    
+    msg << "b4 peer discovery";
+    LOG(DLEP_LOG_INFO, msg);
 
     ProgressionOutLoggerMsg out_msg("DLEP",
                                     "S",
@@ -138,6 +141,9 @@ PeerDiscovery::get_message_to_send()
                                     pm.get_data_items(),
                                     dlep->protocfg);
     out_writer->send_out(out_msg.get_message());
+
+    msg << "after peer discovery";
+    LOG(DLEP_LOG_INFO, msg);
 
     // Copy the protocol message into a DlepMessageBuffer
 
