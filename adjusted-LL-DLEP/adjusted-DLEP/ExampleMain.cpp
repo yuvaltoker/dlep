@@ -1195,16 +1195,13 @@ int main(int argc, char ** argv)
     }
 
     client.print_config();
-    std::cout << "b4 implementation" << std::endl;
     who_am_i = getenv("IMPLEMENTATION");
-    std::cout << "b4 checking implementation" << std::endl;
     if(who_am_i != NULL)
     {
         who_am_i_string = who_am_i;
         if(who_am_i_string == "router")
         {
             // Set OutWriter by given environment variable:
-            std::cout << "b4 luanching OutWriter" << std::endl;
             out_writer_type = "out_db";
             env_out_writer_type = getenv("OUT_WRITER");
             /*if(env_out_writer_type != NULL)
@@ -1212,8 +1209,6 @@ int main(int argc, char ** argv)
                 out_writer_type = env_out_writer_type;
             }*/
             set_out_writer(out_writer_type);
-
-            std::cout << "after luanching OutWriter" << std::endl;
         }  
     }
     

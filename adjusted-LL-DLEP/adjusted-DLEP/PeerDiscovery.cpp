@@ -314,8 +314,7 @@ PeerDiscovery::handle_peer_offer(ProtocolMessage & pm,
                                     "",
                                     pm.get_data_items(),
                                     dlep->protocfg);
-
-    std::cout << "after" << endl;                     
+                                                        
     out_writer->send_out(out_msg.get_message());
 
     // By default, connect to the configured session port and the

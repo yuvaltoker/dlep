@@ -51,7 +51,6 @@ OutDB::insert_dlep_message_to_db(const std::string & message)
 void
 OutDB::insert_device_to_db(const json::JSON &dlep_msg_json)
 {
-    std::cout << "b4 device cout" << std::endl;
     std::string device = make_device_json_string(dlep_msg_json);
     std::cout << device << std::endl;
     mHandler.AddDeviceByJsonString(device);
