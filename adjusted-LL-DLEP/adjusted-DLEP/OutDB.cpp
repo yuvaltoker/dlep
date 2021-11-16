@@ -51,20 +51,21 @@ OutDB::insert_dlep_message_to_db(const std::string & message)
 void
 OutDB::insert_device_to_db(const json::JSON &dlep_msg_json)
 {
+    std::cout << "b4 device cout" << std::endl;
     std::string device = make_device_json_string(dlep_msg_json);
-    
+    std::cout << device << std::endl;
     mHandler.AddDeviceByJsonString(device);
 }
 
 std::string
 OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
 {
-    return std::string("{") +
-	                    "\"Ip\": \"" + dlep_msg_json.at("ModemAdress").ToString() +"\"," +
-	                    "\"NetworkType\": \"networktype\"," +
-	                    "\"RadioType\": \"radiotype\"," +
-	                    "\"SerialNumber\": \"serialnumber\"," +
-	                    "\"Key\": \"key\"" +
+    return std::string("{\n") +
+	                    "    \"Ip\": \"" + dlep_msg_json.at("ModemAddress").ToString() +"\",\n" +
+	                    "    \"NetworkType\": \"networktype\",\n" +
+	                    "    \"RadioType\": \"radiotype\",\n" +
+	                    "    \"SerialNumber\": \"serialnumber\",\n" +
+	                    "    \"Key\": \"key\"\n" +
                         "}"; 
 }
 
