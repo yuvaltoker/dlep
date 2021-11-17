@@ -31,6 +31,14 @@ OutDB::send_out(const std::string & message)
 }
 
 void
+OutDB::print_devices_base_info()
+{
+    std::cout << "devices _id and Ip: " << std::endl;
+    for (auto it = OutDB::devices_base_info.begin(); it != OutDB::devices_base_info.end(); ++it)
+        std::cout << (*it).first << " : " << (*it).second << std::endl;
+}
+
+void
 OutDB::message_handler(const std::string & message)
 {
     json::JSON dlep_msg_json = json::JSON::Load(message);
@@ -55,7 +63,7 @@ OutDB::insert_device_to_db(const json::JSON &dlep_msg_json)
     std::cout << device << std::endl;
     std::string oid_string = mHandler.AddDeviceByJsonString(device);
     device_base_info info = { oid_string, dlep_msg_json.at("ModemAddress").ToString() };
-    OutDB::devices_base_info.insert(info);
+    auto it = OutDB::devices_base_info.insert(OutDB::devices_base_info.begin(), info);
 }
 
 std::string
@@ -70,6 +78,6 @@ OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
                         "}"; 
 }
 
-vector<OutDB::device_base_info> OutDB::devices_base_info;
+std::vector<device_base_info> OutDB::devices_base_info;
 } // namespace internal
 } // namespace LL-DLEP
