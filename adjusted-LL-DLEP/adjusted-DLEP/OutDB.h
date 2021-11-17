@@ -7,11 +7,14 @@
 #include "OutWriter.h"
 
 #include <iostream>
+#include <vector>
 
 namespace LLDLEP
 {
 namespace internal
 {
+
+typedef std::pair< std::string, std::string > device_base_info;
 
 class OutDB : public OutWriter
 {
@@ -21,6 +24,8 @@ public:
     ~OutDB();
 
     bool send_out(const std::string & mesage);
+
+    static void print_devices_base_info();
 
 private:
     void message_handler(const std::string & message);
@@ -33,6 +38,7 @@ private:
 
     mongocxx::instance instance;
     MongoDbHandler mHandler;
+    static std::vector<device_base_info> devices_base_info;
     
 };
 

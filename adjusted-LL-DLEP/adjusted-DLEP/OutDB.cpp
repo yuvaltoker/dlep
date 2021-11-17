@@ -10,7 +10,7 @@ namespace LLDLEP
 {
 namespace internal
 {
-    OutDB::OutDB() :
+OutDB::OutDB() :
     OutWriter()
 {
 
@@ -53,7 +53,9 @@ OutDB::insert_device_to_db(const json::JSON &dlep_msg_json)
 {
     std::string device = make_device_json_string(dlep_msg_json);
     std::cout << device << std::endl;
-    mHandler.AddDeviceByJsonString(device);
+    std::string oid_string = mHandler.AddDeviceByJsonString(device);
+    device_base_info info = { oid_string, dlep_msg_json.at("ModemAddress").ToString() };
+    OutDB::devices_base_info.insert(info);
 }
 
 std::string
@@ -68,5 +70,6 @@ OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
                         "}"; 
 }
 
+vector<OutDB::device_base_info> OutDB::devices_base_info;
 } // namespace internal
 } // namespace LL-DLEP

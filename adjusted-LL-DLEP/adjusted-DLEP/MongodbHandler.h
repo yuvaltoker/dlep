@@ -40,19 +40,23 @@ class MongoDbHandler {
 
   }
 
-  bool AddDLEPMessageByJsonString(const std::string &json_input)
+  std::string AddDLEPMessageByJsonString(const std::string &json_input)
   {
     mongocxx::collection collection = db[dlepMessageCollection];
     bsoncxx::document::value doc = bsoncxx::from_json(json_input);
-    collection.insert_one(doc.view());
+    
+    auto retVal = collection.insert_one(doc.view());  // Part where document is uploaded to database
+    bsoncxx::oid oid = retVal->inserted_id().get_oid().value; // finding inserted object's id
+    return oid.to_string();
   }
 
   // insert dlep-message (as the json) to database
-  bool AddDLEPMessageByJson(const json::JSON &dlep_message) {
+  std::string AddDLEPMessageByJson(const json::JSON &dlep_message) 
+  {
     mongocxx::collection collection = db[dlepMessageCollection];
     auto builder = bsoncxx::builder::stream::document{};
 
-    bsoncxx::document::value doc_to_add =
+    bsoncxx::document::value doc =
         builder << "Time" << dlep_message.at("Time").ToString()
                 << "Protocol" << dlep_message.at("Protocol").ToString()
                 << "Stage" << dlep_message.at("Stage").ToString()
@@ -63,23 +67,27 @@ class MongoDbHandler {
                 //<< "DataItems" << dlep_message.at("DataItems").ToString() // dataitems - find how to do it
                 << bsoncxx::builder::stream::finalize;
     
-    collection.insert_one(doc_to_add.view());
-    return true;
+    auto retVal = collection.insert_one(doc.view());  // Part where document is uploaded to database
+    bsoncxx::oid oid = retVal->inserted_id().get_oid().value; // finding inserted object's id
+    return oid.to_string();
   }
 
-  bool AddDeviceByJsonString(const std::string &json_input)
+  std::string AddDeviceByJsonString(const std::string &json_input)
   {
     mongocxx::collection collection = db[deviceCollection];
     bsoncxx::document::value doc = bsoncxx::from_json(json_input);
-    collection.insert_one(doc.view());
+    
+    auto retVal = collection.insert_one(doc.view());  // Part where document is uploaded to database
+    bsoncxx::oid oid = retVal->inserted_id().get_oid().value; // finding inserted object's id
+    return oid.to_string();
   }
 
   // insert device (as the json) to database
-  bool AddDeviceByJson(const json::JSON &device) {
+  std::string AddDeviceByJson(const json::JSON &device) {
     mongocxx::collection collection = db[deviceCollection];
     auto builder = bsoncxx::builder::stream::document{};
 
-    bsoncxx::document::value doc_to_add =
+    bsoncxx::document::value doc =
         builder << "Ip" << device.at("ip").ToString()
                 << "NetworkType" << device.at("networkType").ToString()
                 << "RadioType" << device.at("radioType").ToString()
@@ -87,8 +95,10 @@ class MongoDbHandler {
                 << "Key" << device.at("key").ToString()
                 << bsoncxx::builder::stream::finalize;
     
-    collection.insert_one(doc_to_add.view());
-    return true;
+    auto retVal = collection.insert_one(doc.view());  // Part where document is uploaded to database
+    bsoncxx::oid oid = retVal->inserted_id().get_oid().value; // finding inserted object's id
+    return oid.to_string();
+
   }
 
   /*bool RemoveCharacterFromDb(const std::string &character_id) {
