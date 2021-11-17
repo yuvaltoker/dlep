@@ -47,7 +47,7 @@ services:
             - HEARTBEAT_INTERVAL=10
             - EXT_PAUSE=true
             - EXT_LID=true
-            - PEER_TYPE=im_modem
+            - PEER_TYPE=net_type\;modem\;serial_number\;key
         volumes:
             - /home/user2/work/idf/dlep/adjusted-LL-DLEP/adjusted-DLEP:/adjusted-dlep 
         container_name: modem1
