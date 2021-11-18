@@ -29,6 +29,9 @@ public:
     static void print_devices_base_info();
 
 private:
+
+    std::string get_id_by_ip(const std::string & ip);
+
     void message_handler(const std::string & message);
 
     void insert_dlep_message_to_db(const std::string & message);

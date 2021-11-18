@@ -38,6 +38,15 @@ OutDB::print_devices_base_info()
         std::cout << (*it).first << " : " << (*it).second << std::endl;
 }
 
+std::string
+OutDB::get_id_by_ip(const std::string & ip)
+{
+    for (auto it = OutDB::devices_base_info.begin(); it != OutDB::devices_base_info.end(); ++it)
+        if((*it).second == ip)
+            return (*it).first;
+    return "ip not found";
+}
+
 void
 OutDB::message_handler(const std::string & message)
 {
@@ -47,7 +56,10 @@ OutDB::message_handler(const std::string & message)
     {
         insert_device_to_db(dlep_msg_json);
     }
-    insert_dlep_message_to_db(message);
+
+    std::string device_id = get_id_by_ip(dlep_msg_json.at("ModemAddress").ToString());
+    dlep_msg_json["DeviceId"] = device_id;
+    insert_dlep_message_to_db(dlep_msg_json.dump());
 }
 
 void
@@ -69,16 +81,8 @@ OutDB::insert_device_to_db(const json::JSON &dlep_msg_json)
 std::string
 OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
 {
-    //std::cout << "im here first" << std::endl;
-    //std::cout << dlep_msg_json.at("DataItems") << std::endl;
-    //std::string items = dlep_msg_json.at("DataItems").at("\"Name\" : \"Peer_Type\"").at("Value").ToString();
     auto items = dlep_msg_json.at("DataItems");
    
-    /*for( int j =0; j < items.length();j++)
-    {
-        if(items.at(j))
-            std::cout << items.at(j) << "\n";
-    }*/
     std::string peer_type = "";
     for( auto &j : items.ArrayRange() )
     {
