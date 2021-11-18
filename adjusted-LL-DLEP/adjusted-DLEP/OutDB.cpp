@@ -79,7 +79,7 @@ OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
         if(items.at(j))
             std::cout << items.at(j) << "\n";
     }*/
-    std::string peer_type;
+    std::string peer_type = "";
     for( auto &j : items.ArrayRange() )
     {
         if(j.at("Name").ToString() == "Peer_Type")
@@ -87,14 +87,22 @@ OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
             peer_type = j.at("Value").ToString();
         }  
     }
-    
+    std::stringstream ss( peer_type );
+    std::vector<std::string> vect;
+
+    while( ss.good() )
+    {
+        std::string substr;
+        getline( ss, substr, ';' );
+        vect.push_back( substr );
+    }
 
     return std::string("{\n") +
 	                    "    \"Ip\": \"" + dlep_msg_json.at("ModemAddress").ToString() +"\",\n" +
-	                    "    \"NetworkType\": \"networktype\",\n" +
-	                    "    \"RadioType\": \"radiotype\",\n" +
-	                    "    \"SerialNumber\": \"serialnumber\",\n" +
-	                    "    \"Key\": \"key\"\n" +
+	                    "    \"NetworkType\": \"" + vect[1] + "\",\n" +
+	                    "    \"RadioType\": \"" + vect[2] + "\",\n" +
+	                    "    \"SerialNumber\": \"" + vect[3] + "\",\n" +
+	                    "    \"Key\": \"" + vect[4] + "\"\n" +
                         "}"; 
 }
 
