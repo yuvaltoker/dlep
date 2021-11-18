@@ -69,13 +69,26 @@ OutDB::insert_device_to_db(const json::JSON &dlep_msg_json)
 std::string
 OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
 {
+    //std::cout << "im here first" << std::endl;
+    //std::cout << dlep_msg_json.at("DataItems") << std::endl;
     //std::string items = dlep_msg_json.at("DataItems").at("\"Name\" : \"Peer_Type\"").at("Value").ToString();
-    //std::string items = dlep_msg_json.at("DataItems").at("Peer_Type").at("Value").ToString();
-    std::string items = dlep_msg_json.at("DataItems").at("Peer_Type").ToString();
-    std::cout << items << std::endl;
-    std::cout << "im here" << std::endl;
-    /*for( auto &j : items.ObjectRange() )
-        std::cout << "Object[ " << j.first << " ] = " << j.second << "\n";*/
+    auto items = dlep_msg_json.at("DataItems");
+   
+    /*for( int j =0; j < items.length();j++)
+    {
+        if(items.at(j))
+            std::cout << items.at(j) << "\n";
+    }*/
+    std::string peer_type;
+    for( auto &j : items.ArrayRange() )
+    {
+        if(j.at("Name").ToString() == "Peer_Type")
+        {
+            peer_type = j.at("Value").ToString();
+        }  
+    }
+    
+
     return std::string("{\n") +
 	                    "    \"Ip\": \"" + dlep_msg_json.at("ModemAddress").ToString() +"\",\n" +
 	                    "    \"NetworkType\": \"networktype\",\n" +
