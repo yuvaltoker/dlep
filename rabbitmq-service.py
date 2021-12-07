@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # this daemon service goal is to receive data from dlep (about new device)
 # and send it over rabbitmq to one of it's queues.
@@ -33,7 +33,6 @@ while True:
     buf = tcpsocket_connection.recv(buffer_size)  
     print(buf)
 
-    # edit the next section
     channel.basic_publish(exchange='',
                       routing_key=queue_name,
                       body=buf)
