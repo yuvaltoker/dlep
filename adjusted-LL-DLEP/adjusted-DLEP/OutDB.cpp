@@ -3,6 +3,7 @@
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
+using namespace boost::asio;
 
 using std::string;
 
@@ -11,7 +12,9 @@ namespace LLDLEP
 namespace internal
 {
 OutDB::OutDB() :
-    OutWriter()
+    OutWriter(),
+    rabbitmq_host("127.0.0.1"),
+    rabbitmq_port("12345")
 {
 
 }
@@ -76,6 +79,8 @@ OutDB::insert_device_to_db(const json::JSON &dlep_msg_json)
     std::string oid_string = mHandler.AddDeviceByJsonString(device);
     device_base_info info = { oid_string, dlep_msg_json.at("ModemAddress").ToString() };
     auto it = OutDB::devices_base_info.insert(OutDB::devices_base_info.begin(), info);
+
+    OutDB::send_update_over_rabbitmq(oid_string);
 }
 
 std::string
@@ -109,6 +114,83 @@ OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
 	                    "    \"Key\": \"" + vect[4] + "\"\n" +
                         "}"; 
 }
+
+bool 
+OUTDB::send_update_over_rabbitmq(const std::string & uid)
+{
+    if(OutDB::is_connected == false)
+    {
+        if(!OutDB::connect())
+        {
+            std::cout << "Could not connect to socket." << std::endl;
+            OutDB::close();
+            return false;
+        }
+    }
+    
+    boost::system::error_code error;
+    //sending
+    boost::asio::write( *(OutDB::sock), boost::asio::buffer(uid), error );
+    if( !error ) {
+       cout << "New device entered to device_ids: " << uid << endl;
+    }
+    else {
+       cout << "Sending message failed: " << error.message() << endl;
+       OutDB::close();
+       return false;
+    }
+    return true;
+}
+
+bool 
+OutDB::connect()
+{
+    cout << "Connecting to out server... " << endl;
+    try
+    {
+        boost::asio::io_service io_service;
+        //tcp::socket socket(io_service);
+        
+        // Creating a resolver's query.
+        boost::asio::ip::tcp::resolver::query resolver_query(rabbitmq_host,
+                                                             rabbitmq_port,
+                                                             boost::asio::ip::tcp::resolver::query::numeric_service);
+
+        // Creating a resolver.
+        boost::asio::ip::tcp::resolver resolver(io_service);
+     
+        // Resolving a DNS name.
+        boost::asio::ip::tcp::resolver::iterator it = resolver.resolve(resolver_query);
+        
+        // Creating a socket.
+        OutDB::sock = new boost::asio::ip::tcp::socket(io_service);
+
+        // asio::connect() method iterates over
+        // each endpoint until successfully connects to one
+        // of them. It will throw an exception if it fails
+        // to connect to all the endpoints or if other
+        // error occurs.
+        boost::asio::connect(*OutDB::sock, it);
+
+    }
+    catch (boost::system::system_error &e) {
+        std::cout << "Error occured! Error code = " << e.code()
+                  << ". Message: " << e.what();
+        OutDB::close();
+        OutDB::is_connected = false;
+        return false;
+    }
+    OutDB::is_connected = true;
+    return true;
+}
+
+void
+OutDB::close()
+{
+    OutDB::sock -> close();
+}
+
+
 
 std::vector<device_base_info> OutDB::devices_base_info;
 } // namespace internal

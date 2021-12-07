@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <boost/asio.hpp>
 
 namespace LLDLEP
 {
@@ -40,9 +41,18 @@ private:
 
     std::string make_device_json_string(const json::JSON &dlep_msg_json);
 
+    bool send_update_over_rabbitmq(const std::string & uid);
+
+    bool connect();
+
+    void close();
+
     mongocxx::instance instance;
     MongoDbHandler mHandler;
     static std::vector<device_base_info> devices_base_info;
+    boost::asio::ip::tcp::socket* sock;
+    std::string rabbitmq_host;
+    std::string rabbitmq_port;
     
 };
 
