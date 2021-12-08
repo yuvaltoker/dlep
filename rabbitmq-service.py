@@ -10,6 +10,8 @@ import pika
 # for socket use
 import socket,os
 
+import sys
+
 # tcp server configuration
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
 host = '127.0.0.1'
@@ -34,7 +36,7 @@ tcpsocket_connection,address = sock.accept()
 while True:     
     buf = tcpsocket_connection.recv(buffer_size)  
     print(buf)
-
+    sys.stdout.flush()
     channel.basic_publish(exchange='',
                       routing_key=queue_name,
                       body=buf)

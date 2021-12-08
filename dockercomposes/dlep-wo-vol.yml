@@ -3,35 +3,42 @@ services:
 
     router:
         #image: yuvaltoker/adjusted-dlep:1.1.12
-        image: test-changes-dlep:1.7
-        #build:
-        #    context: ..
-        #    dockerfile: ../dockerfiles/build-dlep-enviroment-dockerfile
+        #image: test-changes-dlep:1.7
+        build:
+            context: ..
+            dockerfile: ./dockerfiles/build-dlep-enviroment-dockerfile
         tty: true
         stdin_open: true
-        depends_on: 
-            - "server"
+        restart: on-failure
+        depends_on:
+            - mongodb
+            - rabbitmq
         networks:
             - net1
         environment:
             - IMPLEMENTATION=router
-            - UI_PORT=3090
-            - UI_HOST=sam-server
+            - OUT_WRITER=out_db
             - DISCOVERY_IFACE=eth0
             - DISCOVERY_INTERVAL=15
             - HEARTBEAT_INTERVAL=10
             - EXT_PAUSE=true
             - EXT_LID=true
             - PEER_TYPE=im_router
+            - RMQ_HOST=rabbitmq
+            - WAIT_HOSTS=rabbitmq:5672
         container_name: test-router
             
     modem:
         #image: yuvaltoker/adjusted-dlep:1.1.12
-        image: test-changes-dlep:1.7
+        #image: test-changes-dlep:1.7
+        build:
+            context: ..
+            dockerfile: ./dockerfiles/build-dlep-enviroment-dockerfile
         tty: true
         stdin_open: true
-        depends_on: 
-            - "server"
+        depends_on:
+            - mongodb
+            - rabbitmq
         networks:
             - net1
         environment:
@@ -40,18 +47,57 @@ services:
             - HEARTBEAT_INTERVAL=10
             - EXT_PAUSE=true
             - EXT_LID=true
-            - PEER_TYPE=im_modem
+            - PEER_TYPE=net_type\;modem\;serial_number\;key
         container_name: test-modem
 
-    server:
-        image: samyon196/tcpsvr
-        tty: true
-        stdin_open: true
+    #server:
+    #    image: samyon196/tcpsvr
+    #    tty: true
+    #    stdin_open: true
+    #    networks:
+    #        - net1
+    #    environment:
+    #        - PORT=3090
+    #    container_name: sam-server
+
+    mongodb:
+        image: mongo
+        container_name: mongodb
         networks:
             - net1
+        ports: 
+            - "27017:27017"
+        restart: always
         environment:
-            - PORT=3090
-        container_name: sam-server
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+
+    mongo-express:
+        image: mongo-express
+        container_name: mongo-express
+        networks:
+            - net1
+        ports: 
+            - "8081:8081"
+        restart: always
+        environment:
+            ME_CONFIG_MONGODB_ADMINUSERNAME: root
+            ME_CONFIG_MONGODB_ADMINPASSWORD: example
+            ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
+
+    rabbitmq:
+        image: rabbitmq:3.9.8-management-alpine
+        container_name: rabbitmq
+        networks:
+            - net1
+        ports: 
+            - "15672:15672"
+            - "5672:5672"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:15672"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
 
 
 networks:

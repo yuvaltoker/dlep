@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# exec-rabbitmq-server-if-router() {
-#     if [ "$IMPLEMENTATION" = "router" ]; then
-# 		python rabbitmq-service.py &
-# 	fi
-# }
+exec-rabbitmq-server-if-router() {
+    if [ "$IMPLEMENTATION" = "router" ]; then
+		nohup python rabbitmq-service.py > rabbitmq-service-log.txt 2>&1 &
+		#python rabbitmq-service.py &
+	fi
+}
 
 # adjusting dlep-draft-8175.xml by the extensions from enviroment variables:
 
@@ -49,7 +50,7 @@ if [ ! -z "$PEER_TYPE" ]; then
 	command_string+=" peer-type $PEER_TYPE"
 fi
 
-# exec-rabbitmq-server-if-router
+exec-rabbitmq-server-if-router
 
 echo "$command_string"
 eval "$command_string"

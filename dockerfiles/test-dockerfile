@@ -1,5 +1,4 @@
 # What image do we start from
-#FROM ubuntu:16.04
 FROM ubuntu:latest
 
 # preventing dialog error
@@ -32,7 +31,6 @@ RUN apt-get install -y cmake
 ##############################
 RUN apt-get update
 # for the g++ compiler
-#RUN apt-get install -y build-essential
 RUN apt-get install -y libboost-all-dev
 RUN apt-get install -y libssl-dev
 RUN apt-get install -y wget
@@ -81,7 +79,6 @@ RUN python -m pip install pika --upgrade
 RUN pip install --upgrade pip enum34
 
 COPY ./rabbitmq-service.py /
-#RUN python ./rabbitmq-service.py
 
 #######################################
 
@@ -89,7 +86,7 @@ COPY ./rabbitmq-service.py /
 ADD ./choose-implement.sh /
 RUN chmod +x choose-implement.sh
 
-RUN python3 -m pip install redis
+#RUN python3 -m pip install redis
 
 RUN mkdir /adjusted-dlep
 
