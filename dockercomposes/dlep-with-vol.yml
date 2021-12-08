@@ -15,7 +15,7 @@ services:
         networks:
             - net1
         environment:
-            - OUT_WRITER=out_logger
+            - OUT_WRITER=out_db
             - IMPLEMENTATION=router
             - UI_PORT=3090
             - UI_HOST=sam-server
