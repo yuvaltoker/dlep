@@ -20,7 +20,8 @@ sock.bind((host, port))
 
 # rabbitmq configuration (direct queue)
 queue_name = 'device_ids'
-rmq_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+rabbitmq_host = os.getenv('RMQ_HOST')
+rmq_connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host))
 channel = rmq_connection.channel()
 channel.queue_declare(queue=queue_name)
 

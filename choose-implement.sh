@@ -6,6 +6,12 @@
 # bla bla adjusted-dlep/config/protocol/dlep-rfc-8175.xml - where the file in the container
 # bla bla adjusted-LL-DLEP/adjusted-DLEP/config/protocol/dlep-rfc-8175.xml - where the file in host
 
+exec-rabbitmq-server-if-router() {
+    if [ "$IMPLEMENTATION" = "router" ]; then
+		python rabbitmq-service.py &
+	fi
+}
+
 if [ "$EXT_PAUSE" = "true" ]; then
 	sed -i "/<!-- <xi:include href=\"pause-extension-8651.xml\"\/> -->/c\    <xi:include href=\"pause-extension-8651.xml\"/>" /usr/local/etc/dlep/dlep-rfc-8175.xml
 fi
@@ -41,6 +47,8 @@ fi
 if [ ! -z "$PEER_TYPE" ]; then
 	command_string+=" peer-type $PEER_TYPE"
 fi
+
+exec-rabbitmq-server-if-router
 
 echo "$command_string"
 eval "$command_string"

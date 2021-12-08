@@ -25,6 +25,7 @@ services:
             - EXT_PAUSE=true
             - EXT_LID=true
             - PEER_TYPE=im_router
+            - RMQ_HOST=rabbitmq
         volumes:
             - /home/user2/work/idf/dlep/adjusted-LL-DLEP/adjusted-DLEP:/adjusted-dlep    
         container_name: router1

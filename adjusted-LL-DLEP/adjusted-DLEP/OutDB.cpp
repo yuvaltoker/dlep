@@ -116,9 +116,9 @@ OutDB::make_device_json_string(const json::JSON &dlep_msg_json)
 }
 
 bool 
-OUTDB::send_update_over_rabbitmq(const std::string & uid)
+OutDB::send_update_over_rabbitmq(const std::string & uid)
 {
-    if(OutDB::is_connected == false)
+    if(is_connected == false)
     {
         if(!OutDB::connect())
         {
