@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 # this daemon service goal is to receive data from dlep (about new device)
 # and send it over rabbitmq to one of it's queues.
@@ -16,6 +16,7 @@ host = '127.0.0.1'
 port = 12345
 buffer_size = 1024
 sock.bind((host, port))  
+
 
 # rabbitmq configuration (direct queue)
 queue_name = 'device_ids'
