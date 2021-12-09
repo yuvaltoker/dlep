@@ -279,9 +279,11 @@ Dlep::initialize()
         }
         if(!modem)
         {
-            ConfigOutLoggerMsg out_msg("DLEP",
+            /*ConfigOutLoggerMsg out_msg("DLEP",
                                         config_parameters);
-            out_logger.send_out(out_msg.get_message());
+            out_writer->send_out(out_msg.get_message());*/
+            msg << "I am at configuration";
+            LOG(DLEP_LOG_INFO, msg);
         }
         
         if (start_dlep())

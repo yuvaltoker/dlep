@@ -14,11 +14,14 @@
 #include "DlepInit.h"
 #include "ExampleDlepClientImpl.h"
 #include "Table.h"
+#include "OutDB.h"
+#include "OutLogger.h" // for out_writer initialization
 
 // We use the readline library for interactive input and line editing
 #include <readline/readline.h>
 #include <readline/history.h>
 
+#include <cstdlib>
 #include <boost/lexical_cast.hpp>
 #include <algorithm> // for std::max
 #include <iostream>
@@ -1153,11 +1156,29 @@ private:
     }
 }; // class DlepCli
 
+// Sets the OutWriter by given type.
+// For future use, this function can be used with every out printer,
+// for this to work, see @OutWriter class and make an inherited class (see OutLogger class for example).
+// In addition, after making a class, add a new case to this function
+void set_out_writer(const std::string & out_type)
+{
+    if(out_type == "out_logger")
+    {
+        out_writer = new LLDLEP::internal::OutLogger();
+    }else if(out_type == "out_db")
+    {
+        out_writer = new LLDLEP::internal::OutDB();
+    }
+}
 
 // Main program so that we can link an executable program.
 int main(int argc, char ** argv)
 {
     DlepClientImpl client;
+    char* env_out_writer_type;
+    std::string out_writer_type;
+    char* who_am_i;
+    std::string who_am_i_string;
 
     if (! client.parse_args(argc, argv))
     {
@@ -1174,6 +1195,23 @@ int main(int argc, char ** argv)
     }
 
     client.print_config();
+    who_am_i = getenv("IMPLEMENTATION");
+    if(who_am_i != NULL)
+    {
+        who_am_i_string = who_am_i;
+        if(who_am_i_string == "router")
+        {
+            // Set OutWriter by given environment variable:
+            out_writer_type = "out_db";
+            env_out_writer_type = getenv("OUT_WRITER");
+            if(env_out_writer_type != NULL)
+            {
+                out_writer_type = env_out_writer_type;
+            }
+            set_out_writer(out_writer_type);
+        }  
+    }
+    
 
     LLDLEP::DlepService * dlep_service = LLDLEP::DlepInit(client);
 
@@ -1184,6 +1222,7 @@ int main(int argc, char ** argv)
         DlepCli cli(&client, dlep_service);
         cli.run();
         dlep_service->terminate();
+        delete out_writer;
         delete dlep_service;
     }
     else

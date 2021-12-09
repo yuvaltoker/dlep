@@ -14,7 +14,8 @@
 #include "ProtocolConfig.h"
 #include "ProtocolMessage.h"
 #include "ProgressionOutLoggerMsg.h"
-#include "OutLogger.h"
+//#include "OutLogger.h"
+#include "DlepInit.h" // for the out_writer
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
@@ -113,7 +114,7 @@ PeerDiscovery::stop()
 DlepMessageBuffer
 PeerDiscovery::get_message_to_send()
 {
-//    std::ostringstream msg;
+    std::ostringstream msg;
     boost::recursive_mutex::scoped_lock lock(dlep->mutex);
 
     ProtocolMessage pm {dlep->protocfg, dlep->logger};
@@ -127,6 +128,9 @@ PeerDiscovery::get_message_to_send()
     assert(err == "");
 
     // Copy the protocol message into an OutLoggerMsg, then send it out
+    
+    msg << "b4 peer discovery";
+    LOG(DLEP_LOG_INFO, msg);
 
     ProgressionOutLoggerMsg out_msg("DLEP",
                                     "S",
@@ -136,8 +140,10 @@ PeerDiscovery::get_message_to_send()
                                     "",
                                     pm.get_data_items(),
                                     dlep->protocfg);
-    LLDLEP::internal::OutLogger out_logger;
-    out_logger.send_out(out_msg.get_message());
+    out_writer->send_out(out_msg.get_message());
+
+    msg << "after peer discovery";
+    LOG(DLEP_LOG_INFO, msg);
 
     // Copy the protocol message into a DlepMessageBuffer
 
@@ -308,10 +314,8 @@ PeerDiscovery::handle_peer_offer(ProtocolMessage & pm,
                                     "",
                                     pm.get_data_items(),
                                     dlep->protocfg);
-
-    std::cout << "after" << endl;                     
-    LLDLEP::internal::OutLogger out_logger;
-    out_logger.send_out(out_msg.get_message());
+                                                        
+    out_writer->send_out(out_msg.get_message());
 
     // By default, connect to the configured session port and the
     // address from whence the Peer Offer came.

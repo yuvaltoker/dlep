@@ -12,7 +12,7 @@
 
 #include "DlepClient.h"
 #include "DlepService.h"
-#include "OutLogger.h"
+#include "OutWriter.h"
 
 using namespace LLDLEP;
 using namespace LLDLEP::internal;
@@ -23,7 +23,7 @@ using namespace LLDLEP::internal;
 /// not in this namespace, you are most likely doing something wrong.
 namespace LLDLEP
 {
-    extern LLDLEP::internal::OutLogger out_logger;
+    extern LLDLEP::internal::OutWriter* out_writer;
 
 /// Main entry point into the DLEP Service library.
 ///

@@ -78,17 +78,19 @@ ProgressionOutLoggerMsg::build_message()
     add_direction_to_message();
     message += "\n    ";
     add_modem_address_to_message();
-    message += "\n    ";
+    
     if(protocfg != nullptr)
     {
+        message += "\n    ";
         add_data_items_to_message();
-    }
-    message += "\n    ";
+    } 
     if(error != "")
     {
-        add_error_to_message();
+        message += "\n    ";
+        add_error_to_message();     
     } 
-    message += "\n}\n";
+    message += "\n";
+    message += "}";
 }
 
 void
