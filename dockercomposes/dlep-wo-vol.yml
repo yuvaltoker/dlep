@@ -2,7 +2,7 @@ version: "3.8"
 services:
 
     router:
-        #image: yuvaltoker/adjusted-dlep:1.1.12
+        #image: yuvaltoker/adjusted-dlep:1.2.1
         #image: test-changes-dlep:1.7
         build:
             context: ..
@@ -25,11 +25,12 @@ services:
             - EXT_LID=true
             - PEER_TYPE=im_router
             - RMQ_HOST=rabbitmq
-            - WAIT_HOSTS=rabbitmq:5672
+            - MONGODB_URL=mongodb://root:example@mongodb:27017
+            - WAIT_HOSTS=rabbitmq:5672,mongodb:27017
         container_name: test-router
             
-    modem:
-        #image: yuvaltoker/adjusted-dlep:1.1.12
+    modem1:
+        #image: yuvaltoker/adjusted-dlep:1.2.1
         #image: test-changes-dlep:1.7
         build:
             context: ..
@@ -48,7 +49,29 @@ services:
             - EXT_PAUSE=true
             - EXT_LID=true
             - PEER_TYPE=net_type\;modem\;serial_number\;key
-        container_name: test-modem
+        container_name: test-modem1
+
+    #modem2:
+    #    image: yuvaltoker/adjusted-dlep:1.2.1
+    #    #image: test-changes-dlep:1.7
+    #    #build:
+    #    #    context: ..
+    #    #    dockerfile: ./dockerfiles/build-dlep-enviroment-dockerfile
+    #    tty: true
+    #    stdin_open: true
+    #    depends_on:
+    #        - mongodb
+    #        - rabbitmq
+    #    networks:
+    #        - net1
+    #    environment:
+    #        - IMPLEMENTATION=modem
+    #        - DISCOVERY_IFACE=eth0
+    #        - HEARTBEAT_INTERVAL=10
+    #        - EXT_PAUSE=true
+    #        - EXT_LID=true
+    #        - PEER_TYPE=net_type\;modem\;serial_number\;key
+    #    container_name: test-modem2
 
     #server:
     #    image: samyon196/tcpsvr

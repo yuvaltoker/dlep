@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdlib>
 #include <cstdint>
 #include <string>
 #include <iostream>
@@ -18,6 +19,7 @@ using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::basic::kvp;
 
 using namespace bsoncxx;
+using namespace std;
 
 
 namespace LLDLEP
@@ -25,8 +27,7 @@ namespace LLDLEP
 namespace internal
 {
 
-
-constexpr char MongoDbUri[] = "mongodb://root:example@mongodb:27017";
+const char* MongoDbUri = getenv("MONGODB_URL");
 constexpr char DatabaseName[] = "rri";
 constexpr char dlepMessageCollection[] = "DlepMessage";
 constexpr char deviceCollection[] = "Devices";
