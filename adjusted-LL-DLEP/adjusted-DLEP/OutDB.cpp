@@ -132,7 +132,7 @@ OutDB::send_update_over_rabbitmq(const std::string & uid)
     //sending
     boost::asio::write( *(OutDB::sock), boost::asio::buffer(uid), error );
     if( !error ) {
-       std::cout << "New device entered to device_ids: " << uid << std::endl;
+       std::cout << "New device entered to device_up: " << uid << std::endl;
     }
     else {
        std::cout << "Sending message failed: " << error.message() << std::endl;

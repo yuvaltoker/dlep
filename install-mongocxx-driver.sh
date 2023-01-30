@@ -6,9 +6,10 @@ function install_mongocxx_dependencies() {
   TOP_DIR=$(pwd)
   apt-get install -y libmongoc-1.0-0 libbson-1.0 cmake libssl-dev libsasl2-dev zlib1g-dev
 
-  wget https://github.com/mongodb/mongo-c-driver/releases/download/1.17.0/mongo-c-driver-1.17.0.tar.gz
-  tar xzf mongo-c-driver-1.17.0.tar.gz
-  cd mongo-c-driver-1.17.0
+# changing 1.17.0 (mongocxx-3.6) into 1.22.1 (mongocxx-3.7)
+  wget https://github.com/mongodb/mongo-c-driver/releases/download/1.22.1/mongo-c-driver-1.22.1.tar.gz
+  tar xzf mongo-c-driver-1.22.1.tar.gz
+  cd mongo-c-driver-1.22.1
   mkdir cmake-build
   cd cmake-build
   cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF ..
@@ -26,7 +27,7 @@ function install_mongocxx_dependencies() {
   make
   make install
   cd $TOP_DIR
-  rm -rf mongo-c-driver-1.17.0*
+  rm -rf mongo-c-driver-1.22.1*
 }
 
 function main() {

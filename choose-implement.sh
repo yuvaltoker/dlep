@@ -2,7 +2,7 @@
 
 exec-rabbitmq-server-if-router() {
     if [ "$IMPLEMENTATION" = "router" ]; then
-		nohup python rabbitmq-service.py > rabbitmq-service-log.txt 2>&1 &
+		nohup python3 rabbitmq-service.py > rabbitmq-service-log.txt 2>&1 &
 		#python rabbitmq-service.py &
 	fi
 }

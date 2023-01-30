@@ -122,6 +122,14 @@ services:
             timeout: 10s
             retries: 5
 
+    dozzle:
+            container_name: dozzle
+            image: amir20/dozzle:latest
+            volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+            ports:
+              - "5555:8080"
+
 
 networks:
     net1:
