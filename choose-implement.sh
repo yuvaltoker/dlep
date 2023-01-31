@@ -2,6 +2,7 @@
 
 exec-rmq-mdb-server-if-router() {
     if [ "$IMPLEMENTATION" = "router" ]; then
+		echo 'im here trying'
 		nohup python3 rmq-mdb-service.py > rmq-mdb-service-log.txt 2>&1 &
 	fi
 }

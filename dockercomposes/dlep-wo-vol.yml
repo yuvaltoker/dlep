@@ -1,6 +1,5 @@
 version: "3.8"
 services:
-
     router:
         #image: yuvaltoker/adjusted-dlep:1.2.1
         #image: test-changes-dlep:1.7
@@ -28,7 +27,7 @@ services:
             - MONGODB_URL=mongodb://root:example@mongodb:27017
             - WAIT_HOSTS=rabbitmq:5672,mongodb:27017
         container_name: test-router
-            
+
     modem1:
         #image: yuvaltoker/adjusted-dlep:1.2.1
         #image: test-changes-dlep:1.7
@@ -88,7 +87,7 @@ services:
         container_name: mongodb
         networks:
             - net1
-        ports: 
+        ports:
             - "27017:27017"
         restart: always
         environment:
@@ -100,7 +99,7 @@ services:
         container_name: mongo-express
         networks:
             - net1
-        ports: 
+        ports:
             - "8081:8081"
         restart: always
         environment:
@@ -113,7 +112,7 @@ services:
         container_name: rabbitmq
         networks:
             - net1
-        ports: 
+        ports:
             - "15672:15672"
             - "5672:5672"
         healthcheck:
@@ -122,9 +121,15 @@ services:
             timeout: 10s
             retries: 5
 
+    dozzle:
+        container_name: dozzle
+        image: amir20/dozzle:latest
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+            - "5555:8080"
 
 networks:
     net1:
         name: net1
         driver: bridge
-

@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-
-# this daemon service goal is to receive data from dlep (about new device)
-# and send it over rabbitmq to one of it's queues.
-# all of this because I failed (temporary (I hope)) to use rabbitmq on cpp language.
-
 # for rabbitmq use
 import pika
 
@@ -11,6 +5,9 @@ import pika
 import socket,os
 
 import sys
+
+def handle_message(buffer: str):
+    print('aaaaaaaaaaaaaaaaaaaaaa\nbuffer recieved:\n{}\naaaaaaaaaaaaaaaaaa\n'.format(buffer))
 
 # tcp server configuration
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
@@ -34,12 +31,13 @@ tcpsocket_connection,address = sock.accept()
 
 # the life of the daemon overhere
 while True:     
-    buf = tcpsocket_connection.recv(buffer_size)  
-    print(buf)
+    buff = tcpsocket_connection.recv(buffer_size)  
+    print(buff)
+    handle_message(buff)
     sys.stdout.flush()
     channel.basic_publish(exchange='',
                       routing_key=queue_name,
-                      body=buf)
+                      body=buff)
 	
 rmq_connection.close()
 tcpsocket_connection.close()

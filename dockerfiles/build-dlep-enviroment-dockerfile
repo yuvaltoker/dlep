@@ -1,5 +1,5 @@
 # What image do we start from
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
 # preventing dialog error
 ENV DEBIAN_FRONTEND noninteractive
@@ -14,6 +14,7 @@ RUN apt-get install -y nano
 RUN apt-get install -y libboost-thread-dev
 RUN apt-get install -y libboost-system-dev
 RUN apt-get install -y libboost-test-dev
+RUN apt-get install -y libboost-all-dev g++
 RUN apt-get install -y libxml2
 RUN apt-get install -y libxml2-dev
 RUN apt-get install -y libxml2-utils
@@ -95,6 +96,7 @@ RUN chmod +x /wait
 COPY ./rmq-mdb-service.py /
 # adjusted dlep files, then install
 RUN mkdir /adjusted-dlep
+RUN mkdir /adjusted-dlep/build/
 ADD ./adjusted-LL-DLEP/adjusted-DLEP/ /adjusted-dlep/
 RUN cd /adjusted-dlep/build/ && cmake .. && make && make install
 # exec file to choose router/modem and its consequences
