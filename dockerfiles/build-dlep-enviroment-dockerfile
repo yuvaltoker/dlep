@@ -9,7 +9,6 @@ ENV DEBIAN_FRONTEND noninteractive
 ##################################
 RUN apt-get update
 RUN apt-get install -y build-essential
-RUN apt-get install -y python3-pip
 
 RUN apt-get install -y nano
 RUN apt-get install -y libboost-thread-dev
@@ -26,66 +25,61 @@ RUN apt-get install -y graphviz
 RUN apt-get install -y cmake
 
 ##################################
-
-####################################
-#       mongodb  dependencies      #
-####################################
-RUN apt-get update
-# for the g++ compiler
-RUN apt-get install -y libboost-all-dev
-RUN apt-get install -y libssl-dev
-RUN apt-get install -y wget
-
-# for remove and install cmake correctly
-RUN apt remove --purge --auto-remove -y cmake
-RUN apt update && apt install -y software-properties-common lsb-release && apt clean all
-RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
-RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
-RUN apt update && apt install -y kitware-archive-keyring && rm /etc/apt/trusted.gpg.d/kitware.gpg
-RUN apt update && apt install -y cmake
-
-# for install-mongocxx-driver.sh script
-RUN apt-get install -y git
-#for the install-server-dependencies
-RUN apt install -y curl
-
-RUN mkdir /mongocxx-example
-
-ADD ./install-mongocxx-driver.sh /
-RUN chmod +x install-mongocxx-driver.sh
-RUN ./install-mongocxx-driver.sh
-
-ADD ./install-server-dependencies.sh /
-RUN chmod +x install-server-dependencies.sh
-RUN ./install-server-dependencies.sh
-
-# the next line is currently a mistery for me- the code doesn't work without it:
-# error while loading shared libraries: libmongocxx.so._noabi: cannot open shared object file: No such file or directory
-# but, when vim is getting installed the problem is fixed
-RUN apt-get install -y vim
-
-####################################
+#       python dependencies      #
+##################################
+# install python dependencies
+RUN apt update && apt upgrade -y
+RUN apt-get install -y python3.8 python3-pip curl
+RUN apt-get install -y software-properties-common
 
 ####################################################
 #      catchNgo rabbitmq service dependencies      #
 ####################################################
-# install python dependencies
+# install rmq dependencies
 RUN apt update && apt upgrade -y
-RUN apt install -y python 
-RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py && python get-pip.py
-RUN python -m pip install pika --upgrade
-RUN pip install --upgrade pip enum34
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN pip3 install pika
+RUN pip3 install mpire
 
-COPY ./rabbitmq-service.py /
+####################################
+#       mongodb  dependencies      #
+####################################
+# mongodb with python lib
+RUN pip3 install pymongo pandas
 
-####################################################
-
-ADD ./sourceHash.txt .
-RUN mkdir /adjusted-dlep
-ADD ./adjusted-LL-DLEP/adjusted-DLEP/ /adjusted-dlep/
-
-RUN cd /adjusted-dlep/build/ && cmake .. && make && make install
-
+#RUN apt-get update
+## for the g++ compiler
+#RUN apt-get install -y libboost-all-dev
+#RUN apt-get install -y libssl-dev
+#RUN apt-get install -y wget
+#
+## for remove and install cmake correctly
+#RUN apt remove --purge --auto-remove -y cmake
+#RUN apt update && apt install -y software-properties-common lsb-release && apt clean all
+#RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+#RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
+#RUN apt update && apt install -y kitware-archive-keyring && rm /etc/apt/trusted.gpg.d/kitware.gpg
+#RUN apt update && apt install -y cmake
+#
+## for install-mongocxx-driver.sh script
+#RUN apt-get install -y git
+##for the install-server-dependencies
+#RUN apt install -y curl
+#
+#RUN mkdir /mongocxx-example
+#
+#ADD ./install-mongocxx-driver.sh /
+#RUN chmod +x install-mongocxx-driver.sh
+#RUN ./install-mongocxx-driver.sh
+#
+#ADD ./install-server-dependencies.sh /
+#RUN chmod +x install-server-dependencies.sh
+#RUN ./install-server-dependencies.sh
+#
+## the next line is currently a mistery for me- the code doesn't work without it:
+## error while loading shared libraries: libmongocxx.so._noabi: cannot open shared object file: No such file or directory
+## but, when vim is getting installed the problem is fixed
+#RUN apt-get install -y vim
 
 ##################################################
 #      waiting for other containers service      #
@@ -94,13 +88,21 @@ RUN cd /adjusted-dlep/build/ && cmake .. && make && make install
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
 RUN chmod +x /wait
 
-## Add your application to the docker image
+##########################
+#      adding files      #
+##########################
+# rabbitmq and mongodb service
+COPY ./rmq-mdb-service.py /
+# adjusted dlep files, then install
+RUN mkdir /adjusted-dlep
+ADD ./adjusted-LL-DLEP/adjusted-DLEP/ /adjusted-dlep/
+RUN cd /adjusted-dlep/build/ && cmake .. && make && make install
+# exec file to choose router/modem and its consequences
 ADD ./choose-implement.sh .
 RUN chmod 777 choose-implement.sh
 
-##################################################
-
-## Launch the wait tool and then your application
+##################
+#      cmd       #
+##################
+# launch the wait tool and then your application
 CMD /wait && /choose-implement.sh
-
-# ENTRYPOINT ./choose-implement.sh

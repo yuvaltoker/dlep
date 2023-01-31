@@ -1,9 +1,8 @@
 #!/bin/bash
 
-exec-rabbitmq-server-if-router() {
+exec-rmq-mdb-server-if-router() {
     if [ "$IMPLEMENTATION" = "router" ]; then
-		nohup python rabbitmq-service.py > rabbitmq-service-log.txt 2>&1 &
-		#python rabbitmq-service.py &
+		nohup python3 rmq-mdb-service.py > rmq-mdb-service-log.txt 2>&1 &
 	fi
 }
 
@@ -50,7 +49,7 @@ if [ ! -z "$PEER_TYPE" ]; then
 	command_string+=" peer-type $PEER_TYPE"
 fi
 
-exec-rabbitmq-server-if-router
+exec-rmq-mdb-server-if-router
 
 echo "$command_string"
 eval "$command_string"
