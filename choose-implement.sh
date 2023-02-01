@@ -3,7 +3,8 @@
 exec-rmq-mdb-server-if-router() {
     if [ "$IMPLEMENTATION" = "router" ]; then
 		echo 'im here trying'
-		nohup python3 rmq-mdb-service.py > rmq-mdb-service-log.txt 2>&1 &
+		python3 rmq-mdb-service.py &
+		#nohup python3 rmq-mdb-service.py > rmq-mdb-service-log.txt 2>&1 &
 	fi
 }
 
@@ -51,6 +52,9 @@ if [ ! -z "$PEER_TYPE" ]; then
 fi
 
 exec-rmq-mdb-server-if-router
+
+WAIT_HOSTS='127.0.0.1:12345'
+/wait
 
 echo "$command_string"
 eval "$command_string"
