@@ -157,10 +157,9 @@ OutDB::send_update_over_socket(const std::string & message)
         }
     }
     boost::system::error_code err;
-    boost::asio::ip::udp::endpoint end_point = boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(rmq_mdb_host), rmq_mdb_port);
     try
     {
-        auto sent = OutDB::sock -> send_to(boost::asio::buffer(message), end_point, 0, err);
+        boost::asio::write(*OutDB::sock, boost::asio::buffer(message), err);
         if( !err ) 
         {
             std::cout << "Sent message to rmq_mdb successfully: " << message << std::endl;
@@ -186,14 +185,12 @@ OutDB::connect()
     try
     {
         boost::asio::io_service ios;
-        // step 1. Get the host ('127.0.0.1') and port (13245)
-        // Step 2. Creating an endpoint designating 
-        // a target server application.
-        boost::asio::ip::udp::endpoint end_point(boost::asio::ip::address::from_string(rmq_mdb_host),
+        // socket creation
+        OutDB::sock = new boost::asio::ip::tcp::socket(ios);
+
+        boost::asio::ip::tcp::endpoint end_point(boost::asio::ip::address::from_string(rmq_mdb_host),
             rmq_mdb_port);
         
-        // Creating a socket.
-        OutDB::sock = new boost::asio::ip::udp::socket(ios, end_point.protocol());
 
         // asio::connect() method iterates over
         // each endpoint until successfully connects to one

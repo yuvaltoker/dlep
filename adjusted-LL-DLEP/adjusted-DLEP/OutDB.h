@@ -48,7 +48,7 @@ private:
     void close();
 
     static std::vector<device_base_info> devices_base_info;
-    boost::asio::ip::udp::socket* sock;
+    boost::asio::ip::tcp::socket* sock;
     std::string rmq_mdb_host;
     int rmq_mdb_port;
     
