@@ -24,7 +24,10 @@ services:
             - EXT_LID=true
             - PEER_TYPE=im_router
             - RMQ_HOST=rabbitmq
-            - MONGODB_URL=mongodb://root:example@mongodb:27017
+            - QUEUE_NAMES=device_up,device_down
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=example
+            - ME_CONFIG_MONGODB_URL=mongodb://root:example@mongodb:27017/
             - WAIT_HOSTS=rabbitmq:5672,mongodb:27017
         container_name: test-router
 
