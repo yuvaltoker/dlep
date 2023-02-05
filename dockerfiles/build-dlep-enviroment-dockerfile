@@ -48,40 +48,6 @@ RUN pip3 install mpire
 # mongodb with python lib
 RUN pip3 install pymongo pandas
 
-#RUN apt-get update
-## for the g++ compiler
-#RUN apt-get install -y libboost-all-dev
-#RUN apt-get install -y libssl-dev
-#RUN apt-get install -y wget
-#
-## for remove and install cmake correctly
-#RUN apt remove --purge --auto-remove -y cmake
-#RUN apt update && apt install -y software-properties-common lsb-release && apt clean all
-#RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
-#RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
-#RUN apt update && apt install -y kitware-archive-keyring && rm /etc/apt/trusted.gpg.d/kitware.gpg
-#RUN apt update && apt install -y cmake
-#
-## for install-mongocxx-driver.sh script
-#RUN apt-get install -y git
-##for the install-server-dependencies
-#RUN apt install -y curl
-#
-#RUN mkdir /mongocxx-example
-#
-#ADD ./install-mongocxx-driver.sh /
-#RUN chmod +x install-mongocxx-driver.sh
-#RUN ./install-mongocxx-driver.sh
-#
-#ADD ./install-server-dependencies.sh /
-#RUN chmod +x install-server-dependencies.sh
-#RUN ./install-server-dependencies.sh
-#
-## the next line is currently a mistery for me- the code doesn't work without it:
-## error while loading shared libraries: libmongocxx.so._noabi: cannot open shared object file: No such file or directory
-## but, when vim is getting installed the problem is fixed
-#RUN apt-get install -y vim
-
 ##################################################
 #      waiting for other containers service      #
 ##################################################
@@ -108,3 +74,4 @@ RUN chmod 777 choose-implement.sh
 ##################
 # launch the wait tool and then your application
 CMD /wait && /choose-implement.sh
+

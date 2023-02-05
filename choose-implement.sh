@@ -2,9 +2,8 @@
 
 exec-rmq-mdb-server-if-router() {
     if [ "$IMPLEMENTATION" = "router" ]; then
-		echo 'im here trying'
+		echo 'running the rmq-mdb-service'
 		python3 rmq-mdb-service.py &
-		#nohup python3 rmq-mdb-service.py > rmq-mdb-service-log.txt 2>&1 &
 	fi
 }
 
@@ -13,7 +12,6 @@ exec-rmq-mdb-server-if-router() {
 # bla bla /usr/local/etc/dlep/dlep-rfc-8175.xml - where the file will be eventually
 # bla bla adjusted-dlep/config/protocol/dlep-rfc-8175.xml - where the file in the container
 # bla bla adjusted-LL-DLEP/adjusted-DLEP/config/protocol/dlep-rfc-8175.xml - where the file in host
-
 
 if [ "$EXT_PAUSE" = "true" ]; then
 	sed -i "/<!-- <xi:include href=\"pause-extension-8651.xml\"\/> -->/c\    <xi:include href=\"pause-extension-8651.xml\"/>" /usr/local/etc/dlep/dlep-rfc-8175.xml
@@ -53,6 +51,7 @@ fi
 
 exec-rmq-mdb-server-if-router
 
+# turning the wait hosts to the rmq-mdb-service port on localhost
 WAIT_HOSTS='127.0.0.1:12345'
 /wait
 

@@ -64,32 +64,23 @@ ProgressionOutLoggerMsg::get_message()
 void 
 ProgressionOutLoggerMsg::build_message()
 {
-    message += "{\n    ";
+    message += "{";
     add_timeStamp_to_message(message);
-    message += "\n    ";
     add_protocol_to_message(message);
-    message += "\n    ";
     add_stage_to_message(message);
-    message += "\n    ";
     add_status_to_message();
-    message += "\n    ";
     add_msg_type_to_message();
-    message += "\n    ";
     add_direction_to_message();
-    message += "\n    ";
     add_modem_address_to_message();
     
     if(protocfg != nullptr)
     {
-        message += "\n    ";
         add_data_items_to_message();
     } 
     if(error != "")
     {
-        message += "\n    ";
         add_error_to_message();     
     } 
-    message += "\n";
     message += "}";
 }
 
@@ -127,10 +118,6 @@ void
 ProgressionOutLoggerMsg::add_data_item_to_message(const DataItem & di)
 {
     const LLDLEP::DataItemInfo di_info = protocfg->get_data_item_info(di.name());
-    /*if (di_info.sub_data_items.size() > 0)
-        message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string(&di_info) + "\"";
-    else
-        message += "\"Name\":\"" + di.name() + "\",\"Value\":\"" + di.value_to_string() + "\"";*/
     if (di_info.sub_data_items.size() > 0)
         message += di.to_jason(&di_info);
     else
@@ -143,13 +130,13 @@ ProgressionOutLoggerMsg::add_data_items_to_message()
     message += "\"DataItems\":[";
     for (const DataItem & di : msg_data_items)
     {
-        message += "\n        {";
+        message += "{";
         add_data_item_to_message(di);
         message += "},";
     }
     if(message.back() == ',')
         message.resize(message.size() - 1); // removing the last ','. the last object should not have ','.
-    message += "\n    ]";
+    message += "]";
 }
 
 } // namespace internal
