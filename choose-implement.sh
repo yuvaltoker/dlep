@@ -3,7 +3,9 @@
 exec-rmq-mdb-server-if-router() {
     if [ "$IMPLEMENTATION" = "router" ]; then
 		echo 'running the rmq-mdb-service'
-		python3 rmq-mdb-service.py &
+		# turning the wait hosts to the rmq-mdb-service port on localhost
+		WAIT_HOSTS='127.0.0.1:12345'
+		python3 rmq-mdb-service.py & /wait
 	fi
 }
 
@@ -50,10 +52,6 @@ if [ ! -z "$PEER_TYPE" ]; then
 fi
 
 exec-rmq-mdb-server-if-router
-
-# turning the wait hosts to the rmq-mdb-service port on localhost
-WAIT_HOSTS='127.0.0.1:12345'
-/wait
 
 echo "$command_string"
 eval "$command_string"
