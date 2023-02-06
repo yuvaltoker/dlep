@@ -159,10 +159,11 @@ OutDB::send_update_over_socket(const std::string & message)
     boost::system::error_code err;
     try
     {
-        boost::asio::write(*OutDB::sock, boost::asio::buffer(message), err);
+        std::string new_msg = std::to_string(message.size()) + message;
+        boost::asio::write(*OutDB::sock, boost::asio::buffer(new_msg), err);
         if( !err ) 
         {
-            std::cout << "Sent message to rmq_mdb successfully: " << message << std::endl;
+            std::cout << "Sent message to rmq_mdb successfully: " << new_msg << std::endl;
         }
         else
         {

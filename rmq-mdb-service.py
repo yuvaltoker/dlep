@@ -1,4 +1,5 @@
 # for rabbitmq use
+from typing import List, Tuple
 import pika
 # for socket use
 import socket, os
@@ -55,10 +56,11 @@ class MongodbHandler:
             json_object = {key: value for key, value in results.items()}
         return json_object
 
-    def insert_document(self, collection_name: str, document: dict):
+    def insert_document(self, collection_name: str, document: dict) -> str:
         collection = self.db[collection_name]
         uid = collection.insert_one(document)
-        return uid.inserted_id
+        print(f'\n\n(info - rmq-mdb-service) Inserted:\n{uid}\n{uid.inserted_id}\n\n')
+        return str(uid.inserted_id)
 
     def delete_document(self, collection_name: str, document_id: str):
         collection = self.db[collection_name]
@@ -67,23 +69,56 @@ class MongodbHandler:
 
 def on_new_client(conn, addr, buffer_size, mdb_handler, rmq_handler):
     print(f'\n\n(info - rmq-mdb-service) Got new client:\n{addr}\n\n')
+    stream = ''
     while True:
         msg = conn.recv(buffer_size)
         if not msg:
             break
-        json_msg = json.loads(msg)
-        handle_message(json_msg, mdb_handler, rmq_handler)
+        # adding the new stream of messages) to the last one
+        stream = stream + msg.decode()
+        print(f'\n\n(info - rmq-mdb-service) Just got the stream, dividing it:\n{stream}\n\n')
+        json_msgs, stream = extract_json_objects(stream=stream)
+        for json_msg in json_msgs:
+            print(f'\n\n(info - rmq-mdb-service) handling the next message:\n{json_msg}\n\n')
+            handle_message(json_msg, mdb_handler, rmq_handler)
     print(f'\n\n(info - rmq-mdb-service) Connection close\n\n')
     conn.close()
+
+def extract_json_objects(stream: str) -> Tuple[List[dict], str]:
+    sections = []
+    while len(stream) > 0:
+        size_end = stream.find("{")
+        if size_end == -1:
+            break
+        size = int(stream[:size_end])
+        brace_count = 1
+        json_end = size_end + 1
+        while brace_count > 0 and json_end < len(stream):
+            if stream[json_end] == "{":
+                brace_count += 1
+            elif stream[json_end] == "}":
+                brace_count -= 1
+            json_end += 1
+        if json_end == len(stream):
+            break
+        json_str = stream[size_end:json_end]
+        print(f'\n\njson str is getting loaded:\n{json_str}\n\n')
+        sections.append(json.loads(json_str))
+        stream = stream[json_end + 1:]
+    return sections, stream
 
 def handle_message(json_msg: dict, mdb_handler: MongodbHandler, rmq_handler: RmqHandler):
     print(f'\n\n(info - rmq-mdb-service) Got new message from dlep:\n{json_msg}\n\n')
     if json_msg['Stage'] == 'Progression' and json_msg['MessageType'] == 'Peer_Offer':
+        print(f'\n\n(info - rmq-mdb-service) At Peer Offer before:\n{json_msg}\n\n')
         new_device(json_msg=json_msg, mdb_handler=mdb_handler, rmq_handler=rmq_handler)
+        print(f'\n\n(info - rmq-mdb-service) At Peer Offer after:\n{json_msg}\n\n')
     if json_msg['Stage'] == 'Progression' and json_msg['MessageType'] == 'Peer_down':
         device_down(ip=json_msg['ModemAddress'], mdb_handler=mdb_handler, rmq_handler=rmq_handler)
-    device_id = get_id_by_ip(ip=json_msg['ModemAddress'], mdb_handler=mdb_handler)
-    json_msg['DeviceId'] = device_id
+    if json_msg['Direction'] == 'MtR':
+        # in case of modem sending the message, adding the device_id:
+        device_id = get_id_by_ip(ip=json_msg['ModemAddress'], mdb_handler=mdb_handler)
+        json_msg['DeviceId'] = device_id
     insert_msg_to_db(json_msg=json_msg, mdb_handler=mdb_handler)
 
 def new_device(json_msg: dict, mdb_handler: MongodbHandler, rmq_handler: RmqHandler):
@@ -107,6 +142,7 @@ def new_device(json_msg: dict, mdb_handler: MongodbHandler, rmq_handler: RmqHand
     device_document['serialNumber'] = peer_type_item[3]
     device_document['key'] = peer_type_item[4]
     # next we push the device to mongodb, taking the device_id as result
+    print(f'\n\n(info - rmq-mdb-service) Right before Inserting device:\n{json_msg}\n\n')
     device_id = mdb_handler.insert_document('Devices', device_document)
     print(f'\n\n(info - rmq-mdb-service) Insert to mdb new device:\n{device_document}\n\n')
     # next we send the device_id over the rmq
@@ -115,6 +151,7 @@ def new_device(json_msg: dict, mdb_handler: MongodbHandler, rmq_handler: RmqHand
     
 def insert_msg_to_db(json_msg: dict, mdb_handler: MongodbHandler):
     '''inserts the given json message to mongodb'''
+    print(f'\n\n(info - rmq-mdb-service) Right before inserting a message to db:\n{json_msg}\n\n')
     mdb_handler.insert_document('DlepMessage', json_msg)
     print(f'\n\n(info - rmq-mdb-service) Insert to mdb new dldep message:\n{json_msg}\n\n')
 
@@ -145,8 +182,8 @@ def main_func():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
     host = '127.0.0.1'
     port = 12345
-    buffer_size = 2048
-    sock.bind((host, port))  
+    buffer_size = 4096
+    sock.bind((host, port))
     sock.listen(5)
     # rabbitmq configuration
     rmq_handler = RmqHandler()

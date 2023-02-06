@@ -1445,11 +1445,11 @@ public:
         {
             if(i != 0)
                 ss << ",";
-            ss << "\n                ";
+            ss << "";
             ss << sdi.to_jason(parent_di_info) << "}";
             i++;
         }
-        ss << "\n        ]";
+        ss << "]";
     }
 
     
@@ -1457,7 +1457,7 @@ public:
     std::string operator()(const Div_sub_data_items_t & operand) const
     {
         std::ostringstream ss;
-        ss << "\"Name\":\"" << di_name << "\",\n        \"SubDataItems\":";
+        ss << "\"Name\":\"" << di_name << "\",\"SubDataItems\":";
         sub_data_items_to_jason(operand.sub_data_items, ss);
         return ss.str();
     }
@@ -1468,7 +1468,7 @@ public:
         std::ostringstream ss;
         ss << "\"Name\":\"" << di_name << "\",\"Value\":\"";
         ss << operand.field1;
-        ss << "\",\n        \"SubDataItems\":";
+        ss << "\",\"SubDataItems\":";
         sub_data_items_to_jason(operand.sub_data_items, ss);
         return ss.str();
     }

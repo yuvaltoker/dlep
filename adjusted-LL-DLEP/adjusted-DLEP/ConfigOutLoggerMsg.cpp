@@ -34,13 +34,11 @@ ConfigOutLoggerMsg::get_message()
 void 
 ConfigOutLoggerMsg::build_message()
 {
-    message += "{\n    ";
+    message += "{";
     add_protocol_to_message(message);
-    message += "\n    ";
     add_stage_to_message(message);
-    message += "\n    ";
     add_parameters_to_message();
-    message += "\n}\n";
+    message += "}";
 }
 
 void 
@@ -56,13 +54,13 @@ ConfigOutLoggerMsg::add_parameters_to_message()
     message += "\"Parameters\":[";
     for (const Parameter & par : parameters)
     {
-        message += "\n        {";
+        message += "{";
         add_parameter_to_message(par);
         message += "},";
     }
     if(message.back() == ',')
         message.resize(message.size() - 1); // removing the last ','. the last object should not have ','.
-    message += "\n    ]";
+    message += "]";
 }
 
 } // namespace internal
