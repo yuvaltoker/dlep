@@ -54,6 +54,28 @@ services:
             - PEER_TYPE=net_type\;modem\;serial_number\;key
         container_name: test-modem1
 
+    modem2:
+        #image: yuvaltoker/adjusted-dlep:1.2.1
+        #image: test-changes-dlep:1.7
+        build:
+            context: ..
+            dockerfile: ./dockerfiles/build-dlep-enviroment-dockerfile
+        tty: true
+        stdin_open: true
+        depends_on:
+            - mongodb
+            - rabbitmq
+        networks:
+            - net1
+        environment:
+            - IMPLEMENTATION=modem
+            - DISCOVERY_IFACE=eth0
+            - HEARTBEAT_INTERVAL=10
+            - EXT_PAUSE=true
+            - EXT_LID=true
+            - PEER_TYPE=net_type\;modem\;serial_number\;key
+        container_name: test-modem2
+
     mongodb:
         image: mongo
         container_name: mongodb

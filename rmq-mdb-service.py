@@ -59,7 +59,6 @@ class MongodbHandler:
     def insert_document(self, collection_name: str, document: dict) -> str:
         collection = self.db[collection_name]
         uid = collection.insert_one(document)
-        print(f'\n\n(info - rmq-mdb-service) Inserted:\n{uid}\n{uid.inserted_id}\n\n')
         return str(uid.inserted_id)
 
     def delete_document(self, collection_name: str, document_id: str):
@@ -68,7 +67,6 @@ class MongodbHandler:
 
 
 def on_new_client(conn, addr, buffer_size, mdb_handler, rmq_handler):
-    print(f'\n\n(info - rmq-mdb-service) Got new client:\n{addr}\n\n')
     stream = ''
     while True:
         msg = conn.recv(buffer_size)
@@ -76,12 +74,11 @@ def on_new_client(conn, addr, buffer_size, mdb_handler, rmq_handler):
             break
         # adding the new stream of messages) to the last one
         stream = stream + msg.decode()
-        print(f'\n\n(info - rmq-mdb-service) Just got the stream, dividing it:\n{stream}\n\n')
         json_msgs, stream = extract_json_objects(stream=stream)
         for json_msg in json_msgs:
-            print(f'\n\n(info - rmq-mdb-service) handling the next message:\n{json_msg}\n\n')
+            print(f'\n(info - rmq-mdb-service) handling the next message:\n{json_msg}\n')
             handle_message(json_msg, mdb_handler, rmq_handler)
-    print(f'\n\n(info - rmq-mdb-service) Connection close\n\n')
+    print(f'\n(info - rmq-mdb-service) Connection close\n')
     conn.close()
 
 def extract_json_objects(stream: str) -> Tuple[List[dict], str]:
@@ -102,26 +99,28 @@ def extract_json_objects(stream: str) -> Tuple[List[dict], str]:
         if json_end == len(stream):
             break
         json_str = stream[size_end:json_end]
-        print(f'\n\njson str is getting loaded:\n{json_str}\n\n')
         sections.append(json.loads(json_str))
         stream = stream[json_end + 1:]
     return sections, stream
 
 def handle_message(json_msg: dict, mdb_handler: MongodbHandler, rmq_handler: RmqHandler):
-    print(f'\n\n(info - rmq-mdb-service) Got new message from dlep:\n{json_msg}\n\n')
+    '''got message from dlep, handles it'''
+    # in case of Peer_Offer message, new_device_handler being called
     if json_msg['Stage'] == 'Progression' and json_msg['MessageType'] == 'Peer_Offer':
-        print(f'\n\n(info - rmq-mdb-service) At Peer Offer before:\n{json_msg}\n\n')
-        new_device(json_msg=json_msg, mdb_handler=mdb_handler, rmq_handler=rmq_handler)
-        print(f'\n\n(info - rmq-mdb-service) At Peer Offer after:\n{json_msg}\n\n')
-    if json_msg['Stage'] == 'Progression' and json_msg['MessageType'] == 'Peer_down':
-        device_down(ip=json_msg['ModemAddress'], mdb_handler=mdb_handler, rmq_handler=rmq_handler)
+        new_device_handler(json_msg=json_msg, mdb_handler=mdb_handler, rmq_handler=rmq_handler)
+    # in case of modem to router message we're adding the device_id, by the given modem ip, to the message 
     if json_msg['Direction'] == 'MtR':
         # in case of modem sending the message, adding the device_id:
         device_id = get_id_by_ip(ip=json_msg['ModemAddress'], mdb_handler=mdb_handler)
-        json_msg['DeviceId'] = device_id
+        json_msg['DeviceId'] = str(device_id)
+    # inserting the message to db for future use
     insert_msg_to_db(json_msg=json_msg, mdb_handler=mdb_handler)
+    # in case of Peer_Down message, device_down_handler being called
+    if json_msg['Stage'] == 'Progression' and json_msg['MessageType'] == 'Peer_Down':
+        device_down_handler(ip=json_msg['ModemAddress'], mdb_handler=mdb_handler, rmq_handler=rmq_handler)
+    
 
-def new_device(json_msg: dict, mdb_handler: MongodbHandler, rmq_handler: RmqHandler):
+def new_device_handler(json_msg: dict, mdb_handler: MongodbHandler, rmq_handler: RmqHandler):
     '''handles new device situation, MongoDBwise and RMQwise'''
     '''the json msg we are handle here is Peer_Offer from modem'''
     device_document = {}
@@ -142,30 +141,27 @@ def new_device(json_msg: dict, mdb_handler: MongodbHandler, rmq_handler: RmqHand
     device_document['serialNumber'] = peer_type_item[3]
     device_document['key'] = peer_type_item[4]
     # next we push the device to mongodb, taking the device_id as result
-    print(f'\n\n(info - rmq-mdb-service) Right before Inserting device:\n{json_msg}\n\n')
     device_id = mdb_handler.insert_document('Devices', device_document)
-    print(f'\n\n(info - rmq-mdb-service) Insert to mdb new device:\n{device_document}\n\n')
+    print(f'\n(info - rmq-mdb-service) Inserted to mdb new device:\n{device_document}\n')
     # next we send the device_id over the rmq
     rmq_handler.send('', 'device_up', device_id)
-    print(f'\n\n(info - rmq-mdb-service) Sending device_up over rmq:\n{device_id}\n\n')
+    print(f'\n(info - rmq-mdb-service) Sent device_up over rmq:\n{device_id}\n')
     
 def insert_msg_to_db(json_msg: dict, mdb_handler: MongodbHandler):
     '''inserts the given json message to mongodb'''
-    print(f'\n\n(info - rmq-mdb-service) Right before inserting a message to db:\n{json_msg}\n\n')
     mdb_handler.insert_document('DlepMessage', json_msg)
-    print(f'\n\n(info - rmq-mdb-service) Insert to mdb new dldep message:\n{json_msg}\n\n')
 
-def device_down(ip: str, mdb_handler: MongodbHandler, rmq_handler: RmqHandler):
+def device_down_handler(ip: str, mdb_handler: MongodbHandler, rmq_handler: RmqHandler):
     '''handles device down, sends over rmq on device_down queue the device_id'''
     '''the json msg we are handle here is Peer_Down from modem'''
     # getting the device id by the given ip
     device_id = get_id_by_ip(ip=ip, mdb_handler=mdb_handler)
     # then we will delete the device from 'Devices' colleciton
     mdb_handler.delete_document('Devices', device_id)
-    print(f'\n\n(info - rmq-mdb-service) Delete from mdb device:\n{device_id}\n\n')
+    print(f'\n(info - rmq-mdb-service) Deleted from mdb device:\n{device_id}\n')
     # now we will send the device_id over the queue 'device_down'
-    rmq_handler.send('', 'device_down', device_id)
-    print(f'\n\n(info - rmq-mdb-service) Sending device_down over rmq:\n{device_id}\n\n')
+    rmq_handler.send('', 'device_down', str(device_id))
+    print(f'\n(info - rmq-mdb-service) Sending device_down over rmq:\n{device_id}\n')
 
 
 def get_id_by_ip(ip: str, mdb_handler: MongodbHandler):
@@ -173,7 +169,7 @@ def get_id_by_ip(ip: str, mdb_handler: MongodbHandler):
     device_id = mdb_handler.get_one_filtered_with_fields(collection_name='Devices',
         query={'ip': ip}, 
         fields={'_id'})
-    return device_id
+    return device_id['_id']
 
 
 def main_func():
