@@ -14,11 +14,10 @@ from pymongo import MongoClient
 class RmqHandler:
     def __init__(self):
         self.rabbitmq_host = os.getenv('RMQ_HOST')
-        self.queue_names = os.getenv('QUEUE_NAMES').split(',')
         self.rmq_connection = pika.BlockingConnection(pika.ConnectionParameters(self.rabbitmq_host))
         self.channel = self.rmq_connection.channel()
-        for queue_name in self.queue_names:
-            self.channel.queue_declare(queue=queue_name)
+        self.channel.queue_declare(queue='device_up')
+        self.channel.queue_declare(queue='device_down')
 
     def send(self, msg_exchange: str, msg_routing_key: str, msg_body: str):
         self.channel.basic_publish(exchange=msg_exchange,
